@@ -36,7 +36,82 @@
   font-size: 14px;
   color: var(--c-ink-3);
 }
-.tier-section { margin-bottom: 16px; }
-.tier-header { margin-bottom: 8px; }
-.tier-title { font-size: 16px; font-weight: 700; color: var(--c-ink); }
+
+/* 三档 */
+.tier-section { margin-bottom: 24px; }
+.tier-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.tier-title { font-size: 16px; font-weight: 600; color: var(--c-ink); }
 .tier-grid { display: flex; flex-direction: column; gap: 12px; }
+
+/* 项目卡片（从 match 页复制，页面 wxss 不跨页生效） */
+.program-card {
+  padding: 20px;
+}
+.program-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.program-school {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-ink);
+  display: block;
+}
+.program-rank {
+  font-size: 10px;
+  color: var(--c-ink-3);
+  display: block;
+  margin-top: 2px;
+}
+.program-tier-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.tier-badge-reach { background: var(--c-primary-l); color: var(--c-primary); }
+.tier-badge-match { background: var(--c-accent-l); color: #2f7d4d; }
+.tier-badge-safety { background: var(--c-surface); color: var(--c-ink-2); }
+
+.program-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.program-detail-item {
+  width: calc(50% - 2px);
+  font-size: 10px;
+  color: var(--c-ink-3);
+}
+
+/* 推荐理由 / 风险 */
+.program-reasons {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+.program-reason {
+  font-size: 11px;
+  color: #2f7d4d;
+  background: var(--c-accent-l);
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+.program-risks {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+.program-risk {
+  font-size: 11px;
+  color: #b4633a;
+  background: #f6e3d8;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
