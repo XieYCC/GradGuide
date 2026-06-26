@@ -235,15 +235,15 @@ Page({
   onSliderChange(e) {
     const key = e.currentTarget.dataset.key;
     const val = parseFloat(e.detail.value);
-    this.data.state[key] = val;
-    this.setData({ state: this.data.state });
+    const newState = { ...this.data.state, [key]: val };
+    this.setData({ state: newState });
     this.update();
   },
 
   onBoostChange(e) {
     const key = e.currentTarget.dataset.boost;
-    this.data.state[key] = e.detail.value.length > 0;
-    this.setData({ state: this.data.state });
+    const newState = { ...this.data.state, [key]: e.detail.value.length > 0 };
+    this.setData({ state: newState });
     this.update();
   },
 

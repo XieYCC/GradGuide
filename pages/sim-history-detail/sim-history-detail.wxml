@@ -1,8 +1,31 @@
 <view class="page-history-detail">
-  <view class="history-detail-header" wx:if="{{detail}}">
-    <text class="history-detail-name">{{detail.name}}</text>
-    <text class="history-detail-time">{{detail.timestamp}}</text>
-    <text class="history-detail-score">综合评分: {{detail.score}}</text>
+  <view class="overview-card" wx:if="{{detail}}">
+    <view class="overview-top">
+      <view class="overview-info">
+        <view class="overview-tag">
+          <text>模拟结果 · {{detail.timestamp}}</text>
+        </view>
+        <view class="overview-title">为你匹配到 <text class="overview-count">{{detail.simResult.reach.length + detail.simResult.match.length + detail.simResult.safety.length}}</text> 个 Program</view>
+        <view class="overview-meta">
+          <text>综合评分 {{detail.score}}</text>
+          <text wx:if="{{detail.diff && detail.diff.totalDelta > 0}}">净新增 +{{detail.diff.totalDelta}}</text>
+        </view>
+      </view>
+      <view class="overview-stats">
+        <view class="overview-stat">
+          <text class="overview-stat-num">{{detail.simResult.reach.length}}</text>
+          <text class="overview-stat-label">冲刺</text>
+        </view>
+        <view class="overview-stat">
+          <text class="overview-stat-num">{{detail.simResult.match.length}}</text>
+          <text class="overview-stat-label">匹配</text>
+        </view>
+        <view class="overview-stat">
+          <text class="overview-stat-num">{{detail.simResult.safety.length}}</text>
+          <text class="overview-stat-label">保底</text>
+        </view>
+      </view>
+    </view>
   </view>
 
   <text class="history-detail-empty" wx:if="{{!detail}}">数据异常</text>
