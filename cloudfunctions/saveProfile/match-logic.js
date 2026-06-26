@@ -378,8 +378,61 @@ function runMatch(programs, profile) {
   }
 }
 
+function calcDiff(baseline, simResult) {
+  const toMap = arr => new Map(arr.map(p => [p._id, p]))
+
+  const baselineReach = toMap(baseline.reach || [])
+  const baselineMatch = toMap(baseline.match || [])
+  const baselineSafety = toMap(baseline.safety || [])
+  const simReach = toMap(simResult.reach || [])
+  const simMatch = toMap(simResult.match || [])
+  const simSafety = toMap(simResult.safety || [])
+
+  const newReach = (simResult.reach || []).filter(p => !baselineReach.has(p._id))
+  const newMatch = (simResult.match || []).filter(p => !baselineMatch.has(p._id))
+  const newSafety = (simResult.safety || []).filter(p => !baselineSafety.has(p._id))
+
+  const upgraded = []
+  const downgraded = []
+
+  // reach → match
+  ;(baseline.reach || []).forEach(p => { if (simMatch.has(p._id)) upgraded.push({ ...p, from: 'reach', to: 'match' }) })
+  // reach → safety
+  ;(baseline.reach || []).forEach(p => { if (simSafety.has(p._id)) upgraded.push({ ...p, from: 'reach', to: 'safety' }) })
+  // match → safety
+  ;(baseline.match || []).forEach(p => { if (simSafety.has(p._id)) upgraded.push({ ...p, from: 'match', to: 'safety' }) })
+  // safety → match
+  ;(baseline.safety || []).forEach(p => { if (simMatch.has(p._id)) downgraded.push({ ...p, from: 'safety', to: 'match' }) })
+  // match → reach
+  ;(baseline.match || []).forEach(p => { if (simReach.has(p._id)) downgraded.push({ ...p, from: 'match', to: 'reach' }) })
+  // safety → reach
+  ;(baseline.safety || []).forEach(p => { if (simReach.has(p._id)) downgraded.push({ ...p, from: 'safety', to: 'reach' }) })
+
+  const diff = {
+    reach: {
+      baseline: (baseline.reach || []).length,
+      after: (simResult.reach || []).length,
+      delta: (simResult.reach || []).length - (baseline.reach || []).length
+    },
+    match: {
+      baseline: (baseline.match || []).length,
+      after: (simResult.match || []).length,
+      delta: (simResult.match || []).length - (baseline.match || []).length
+    },
+    safety: {
+      baseline: (baseline.safety || []).length,
+      after: (simResult.safety || []).length,
+      delta: (simResult.safety || []).length - (baseline.safety || []).length
+    },
+    totalDelta: (simResult.reach || []).length + (simResult.match || []).length + (simResult.safety || []).length -
+      (baseline.reach || []).length - (baseline.match || []).length - (baseline.safety || []).length
+  }
+
+  return { diff, newPrograms: { reach: newReach, match: newMatch, safety: newSafety }, upgradedPrograms: upgraded, downgradedPrograms: downgraded }
+}
+
 // ──────────────────────────────────────────────
 // Step 12: exports
 // ──────────────────────────────────────────────
 
-module.exports = { runMatch, calcFitScore, getSelectivityBand, BAND_MAP, TARGET_COUNTS, allocateBuckets, qualifiesForExtremeReach, filterBySchoolBand }
+module.exports = { runMatch, calcFitScore, getSelectivityBand, BAND_MAP, TARGET_COUNTS, allocateBuckets, calcDiff, qualifiesForExtremeReach, filterBySchoolBand }
