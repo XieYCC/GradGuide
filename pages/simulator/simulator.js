@@ -2,9 +2,9 @@
 const { calcScore, calcTier, fmtDelta } = require('../../utils/util');
 const app = getApp();
 
-const baseline = { gpa: 3.65, toefl: 98, gre: 0, paper: false, research: false, intern: false, award: false };
-const baseScore = 73;
-const baseTier = { reach: 5, match: 10, safe: 6 };
+const baseline = { gpa: 3.0, toefl: 80, gre: 0, paper: false, research: false, intern: false, award: false };
+const baseScore = 53;
+const baseTier = { reach: 3, match: 8, safe: 4 };
 
 Page({
   data: {
@@ -18,9 +18,9 @@ Page({
     simulating: false,
     // keep existing fields
     state: { gpa: '', toefl: '', gre: '', paper: false, research: false, intern: false, award: false },
-    baseScore: 73,
-    baseTier: { reach: 5, match: 10, safe: 6 },
-    score: 73,
+    baseScore: 53,
+    baseTier: { reach: 3, match: 8, safe: 4 },
+    score: 53,
     tier: { reach: 0, match: 0, safe: 0 },
     scoreDelta: 0,
     unlockedList: [],
@@ -68,6 +68,7 @@ Page({
         award: false
       }
     })
+    this.update()
   },
 
   // 云端生成 TODO
