@@ -52,34 +52,34 @@
 
         <text class="sim-boost-title">额外补强</text>
         <view class="sim-boost-list">
-          <label class="sim-boost-item">
-            <checkbox value="paper" checked="{{state.paper}}" data-boost="paper" bindchange="onBoostChange" />
+          <view class="sim-boost-item" data-boost="paper" bindtap="onBoostChange">
+            <view class="sim-boost-check {{state.paper ? 'sim-boost-check-on' : ''}}">{{state.paper ? '✓' : ''}}</view>
             <view class="sim-boost-content">
               <text class="sim-boost-name">+1 篇顶会论文（在投也算）</text>
               <text class="sim-boost-impact">影响：科研维度 +25</text>
             </view>
-          </label>
-          <label class="sim-boost-item">
-            <checkbox value="research" checked="{{state.research}}" data-boost="research" bindchange="onBoostChange" />
+          </view>
+          <view class="sim-boost-item" data-boost="research" bindtap="onBoostChange">
+            <view class="sim-boost-check {{state.research ? 'sim-boost-check-on' : ''}}">{{state.research ? '✓' : ''}}</view>
             <view class="sim-boost-content">
               <text class="sim-boost-name">+1 段海外暑研（CMU/UCB等）</text>
               <text class="sim-boost-impact">影响：科研 +15，推荐信 +20</text>
             </view>
-          </label>
-          <label class="sim-boost-item">
-            <checkbox value="intern" checked="{{state.intern}}" data-boost="intern" bindchange="onBoostChange" />
+          </view>
+          <view class="sim-boost-item" data-boost="intern" bindtap="onBoostChange">
+            <view class="sim-boost-check {{state.intern ? 'sim-boost-check-on' : ''}}">{{state.intern ? '✓' : ''}}</view>
             <view class="sim-boost-content">
               <text class="sim-boost-name">+1 段顶级大厂实习（Google/Meta）</text>
               <text class="sim-boost-impact">影响：实习 +10</text>
             </view>
-          </label>
-          <label class="sim-boost-item">
-            <checkbox value="award" checked="{{state.award}}" data-boost="award" bindchange="onBoostChange" />
+          </view>
+          <view class="sim-boost-item" data-boost="award" bindtap="onBoostChange">
+            <view class="sim-boost-check {{state.award ? 'sim-boost-check-on' : ''}}">{{state.award ? '✓' : ''}}</view>
             <view class="sim-boost-content">
               <text class="sim-boost-name">+ ACM 区域赛金奖 / Kaggle 银</text>
               <text class="sim-boost-impact">影响：科研/竞赛 +12</text>
             </view>
-          </label>
+          </view>
         </view>
 
         <button class="sim-reset-btn" bindtap="onReset">重置为当前真实情况</button>
