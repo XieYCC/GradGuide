@@ -1,0 +1,33 @@
+<view class="page-profile-step">
+  <view class="profile-step-header">
+    <text class="profile-step-num">第 3/5 步</text>
+    <text class="profile-step-title">你的 GPA 和标化成绩</text>
+  </view>
+  <view class="profile-step-form">
+    <view class="profile-field">
+      <text class="profile-field-label">GPA</text>
+      <view class="profile-field-row">
+        <input class="profile-input" type="digit" value="{{gpa}}" bindinput="onGpaInput" placeholder="3.65" />
+        <picker bindchange="onScaleChange" value="{{gpaScales.indexOf(gpaScale)}}" range="{{gpaScales}}">
+          <text class="profile-picker">{{gpaScale}}</text>
+        </picker>
+      </view>
+    </view>
+    <view class="profile-field">
+      <text class="profile-field-label">TOEFL / IELTS</text>
+      <input class="profile-input" type="digit" value="{{toefl}}" bindinput="onToeflInput" placeholder="98" />
+    </view>
+    <view class="profile-field">
+      <text class="profile-field-label">GRE</text>
+      <input class="profile-input" type="digit" value="{{gre}}" bindinput="onGreInput" placeholder="320" />
+    </view>
+    <view class="profile-field">
+      <text class="profile-field-label">专业排名（选填）</text>
+      <input class="profile-input" type="text" value="{{rank}}" bindinput="onRankInput" placeholder="例: 15/120" />
+    </view>
+  </view>
+  <view class="profile-step-footer">
+    <button class="btn btn-light" bindtap="onPrev">上一步</button>
+    <button class="btn btn-primary" bindtap="onNext">下一步</button>
+  </view>
+</view>

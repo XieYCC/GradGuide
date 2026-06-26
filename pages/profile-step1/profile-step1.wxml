@@ -1,0 +1,14 @@
+<view class="page-profile-step">
+  <view class="profile-step-header">
+    <text class="profile-step-num">第 1/5 步</text>
+    <text class="profile-step-title">你的学校层次是？</text>
+  </view>
+  <view class="profile-step-options">
+    <view class="profile-option {{selected === item ? 'option-active' : ''}}" wx:for="{{schoolLevels}}" wx:key="*this" data-value="{{item}}" bindtap="onSelect">
+      <text>{{item}}</text>
+    </view>
+  </view>
+  <view class="profile-step-footer">
+    <button class="btn btn-primary" bindtap="onNext">下一步</button>
+  </view>
+</view>

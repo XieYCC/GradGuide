@@ -17,7 +17,7 @@ Page({
     showResult: false,
     simulating: false,
     // keep existing fields
-    state: { gpa: '', toefl: '', gre: '', paper: false, research: false, intern: false, award: false },
+    state: { gpa: '', toefl: '', gre: '', paper: false, research: false, intern: false, award: false, baseResearchCount: 0, baseInternCount: 0, basePaperCount: 0, baseAwardCount: 0 },
     baseScore: 53,
     baseTier: { reach: 3, match: 8, safe: 4 },
     score: 53,
@@ -61,11 +61,15 @@ Page({
       state: {
         gpa: profile.gpa || 3.0,
         toefl: profile.toefl || 80,
-        gre: profile.gre || 0,
+        gre: profile.gre || 270,
         paper: false,
         research: false,
         intern: false,
-        award: false
+        award: false,
+        baseResearchCount: (profile.research || []).length,
+        baseInternCount: (profile.internships || []).length,
+        basePaperCount: (profile.research || []).filter(r => r.type && r.type.includes('论文')).length,
+        baseAwardCount: 0
       }
     })
     this.update()
@@ -261,7 +265,16 @@ Page({
 
   update() {
     const s = this.data.state;
-    const score = calcScore(s);
+    const scoreState = {
+      gpa: s.gpa || 0,
+      toefl: s.toefl || 0,
+      gre: s.gre || 0,
+      paperCount: (s.basePaperCount || 0) + (s.paper ? 1 : 0),
+      researchCount: (s.baseResearchCount || 0) + (s.research ? 1 : 0),
+      internCount: (s.baseInternCount || 0) + (s.intern ? 1 : 0),
+      awardCount: (s.baseAwardCount || 0) + (s.award ? 1 : 0)
+    };
+    const score = calcScore(scoreState);
     const tier = calcTier(score, this.data.baseScore, this.data.baseTier);
     const delta = score - this.data.baseScore;
 

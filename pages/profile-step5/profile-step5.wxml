@@ -1,0 +1,34 @@
+<view class="page-profile-step">
+  <view class="profile-step-header">
+    <text class="profile-step-num">第 5/5 步</text>
+    <text class="profile-step-title">你的申请目标</text>
+  </view>
+
+  <view class="profile-step-form">
+    <view class="profile-section-block">
+      <text class="profile-sub-label">目标地区（可多选）</text>
+      <view class="profile-chip-group">
+        <view class="profile-chip {{item.active ? 'chip-active' : ''}}" wx:for="{{regionOptions}}" wx:key="name" data-type="region" data-index="{{item.index}}" bindtap="toggleItem">{{item.name}}</view>
+      </view>
+    </view>
+
+    <view class="profile-section-block">
+      <text class="profile-sub-label">目标专业（可多选）</text>
+      <view class="profile-chip-group">
+        <view class="profile-chip {{item.active ? 'chip-active' : ''}}" wx:for="{{majorOptions}}" wx:key="name" data-type="major" data-index="{{item.index}}" bindtap="toggleItem">{{item.name}}</view>
+      </view>
+    </view>
+
+    <view class="profile-section-block">
+      <text class="profile-sub-label">最看重的因素</text>
+      <picker bindchange="onPriorityChange" value="{{priorities.indexOf(priority)}}" range="{{priorities}}">
+        <text class="profile-picker profile-picker-wide">{{priority || '请选择'}}</text>
+      </picker>
+    </view>
+  </view>
+
+  <view class="profile-step-footer">
+    <button class="btn btn-light" bindtap="onPrev">上一步</button>
+    <button class="btn btn-primary" bindtap="onFinish">完成</button>
+  </view>
+</view>

@@ -1,0 +1,37 @@
+<view class="page-profile-step">
+  <view class="profile-step-header">
+    <text class="profile-step-num">第 4/5 步</text>
+    <text class="profile-step-title">科研与实习经历</text>
+    <text class="profile-step-desc">选填，可点击"跳过"</text>
+  </view>
+
+  <view class="profile-step-form">
+    <view class="profile-section-block">
+      <text class="profile-sub-label">科研 / 论文经历</text>
+      <view class="profile-item" wx:for="{{research}}" wx:for-index="i" wx:key="i">
+        <input class="profile-input" placeholder="项目名称" value="{{item.name}}" data-section="research" data-index="{{i}}" data-field="name" bindinput="onInputChange" />
+        <picker bindchange="onTypeChange" data-section="research" data-index="{{i}}" range="{{researchTypes}}">
+          <text class="profile-picker">{{item.type || '选择类型'}}</text>
+        </picker>
+      </view>
+      <text class="profile-add" bindtap="onResearchAdd">+ 添加经历</text>
+    </view>
+
+    <view class="profile-section-block">
+      <text class="profile-sub-label">实习经历</text>
+      <view class="profile-item" wx:for="{{internships}}" wx:for-index="i" wx:key="i">
+        <input class="profile-input" placeholder="公司/岗位" value="{{item.name}}" data-section="internships" data-index="{{i}}" data-field="name" bindinput="onInputChange" />
+        <picker bindchange="onTypeChange" data-section="internships" data-index="{{i}}" range="{{internTypes}}">
+          <text class="profile-picker">{{item.type || '选择类型'}}</text>
+        </picker>
+      </view>
+      <text class="profile-add" bindtap="onInternAdd">+ 添加经历</text>
+    </view>
+  </view>
+
+  <view class="profile-step-footer">
+    <button class="btn btn-light" bindtap="onPrev">上一步</button>
+    <button class="btn btn-primary" bindtap="onNext">下一步</button>
+    <button class="btn btn-light" bindtap="onSkip">跳过</button>
+  </view>
+</view>
