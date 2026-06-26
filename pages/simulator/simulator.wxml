@@ -1,0 +1,293 @@
+<!-- 提升模拟器 & TODO -->
+<view class="page-simulator">
+
+  <view class="sim-header">
+    <text class="h-lg">如果...那么... <text class="sim-header-sub">提升模拟器</text></text>
+    <text class="sim-desc">拖动下面的滑块/勾选项目，实时看到你的可申请学校池如何变化</text>
+  </view>
+
+  <view class="sim-grid">
+    <!-- 左：控制面板 -->
+    <view class="sim-left">
+      <view class="card sim-control-card">
+        <text class="h-md sim-control-title">调节你的"假设"</text>
+
+        <view class="sim-slider-group">
+          <view class="sim-slider-head">
+            <text>GPA（当前 3.65）</text>
+            <text class="sim-slider-val">{{state.gpa.toFixed(2)}}</text>
+          </view>
+          <slider min="3" max="4" step="0.01" value="{{state.gpa}}" data-key="gpa" bindchange="onSliderChange" activeColor="#2e5d50" backgroundColor="#e4e4e4" block-size="16" />
+          <view class="sim-slider-range">
+            <text>3.0</text>
+            <text>4.0</text>
+          </view>
+        </view>
+
+        <view class="sim-slider-group">
+          <view class="sim-slider-head">
+            <text>TOEFL（当前 98）</text>
+            <text class="sim-slider-val">{{state.toefl}}</text>
+          </view>
+          <slider min="80" max="118" step="1" value="{{state.toefl}}" data-key="toefl" bindchange="onSliderChange" activeColor="#2e5d50" backgroundColor="#e4e4e4" block-size="16" />
+          <view class="sim-slider-range">
+            <text>80</text>
+            <text>118</text>
+          </view>
+        </view>
+
+        <view class="sim-slider-group">
+          <view class="sim-slider-head">
+            <text>GRE（当前 {{state.gre > 0 ? state.gre : '未考'}}）</text>
+            <text class="sim-slider-val">{{state.gre > 0 ? state.gre : '未考'}}</text>
+          </view>
+          <slider min="0" max="340" step="1" value="{{state.gre}}" data-key="gre" bindchange="onSliderChange" activeColor="#2e5d50" backgroundColor="#e4e4e4" block-size="16" />
+          <view class="sim-slider-range">
+            <text>未考</text>
+            <text>340</text>
+          </view>
+        </view>
+
+        <view class="sim-divider"></view>
+
+        <text class="sim-boost-title">额外补强</text>
+        <view class="sim-boost-list">
+          <label class="sim-boost-item">
+            <checkbox data-boost="paper" bindchange="onBoostChange" />
+            <view class="sim-boost-content">
+              <text class="sim-boost-name">+1 篇顶会论文（在投也算）</text>
+              <text class="sim-boost-impact">影响：科研维度 +25</text>
+            </view>
+          </label>
+          <label class="sim-boost-item">
+            <checkbox data-boost="research" bindchange="onBoostChange" />
+            <view class="sim-boost-content">
+              <text class="sim-boost-name">+1 段海外暑研（CMU/UCB等）</text>
+              <text class="sim-boost-impact">影响：科研 +15，推荐信 +20</text>
+            </view>
+          </label>
+          <label class="sim-boost-item">
+            <checkbox data-boost="intern" bindchange="onBoostChange" />
+            <view class="sim-boost-content">
+              <text class="sim-boost-name">+1 段顶级大厂实习（Google/Meta）</text>
+              <text class="sim-boost-impact">影响：实习 +10</text>
+            </view>
+          </label>
+          <label class="sim-boost-item">
+            <checkbox data-boost="award" bindchange="onBoostChange" />
+            <view class="sim-boost-content">
+              <text class="sim-boost-name">+ ACM 区域赛金奖 / Kaggle 银</text>
+              <text class="sim-boost-impact">影响：科研/竞赛 +12</text>
+            </view>
+          </label>
+        </view>
+
+        <button class="sim-reset-btn" bindtap="onReset">重置为当前真实情况</button>
+      </view>
+    </view>
+
+    <!-- 右：结果 -->
+    <view class="sim-right">
+      <!-- 学校池 (baseline) -->
+      <view class="card sim-pool-card" wx:if="{{!showResult && baseline}}">
+        <text class="h-md sim-pool-title">当前选校结果</text>
+        <view class="sim-pool-grid">
+          <view class="sim-pool-item sim-pool-reach">
+            <text class="sim-pool-label">冲刺</text>
+            <text class="sim-pool-num">{{baseline.reach.length}}</text>
+            <text class="sim-pool-unit">个 Program</text>
+          </view>
+          <view class="sim-pool-item sim-pool-match">
+            <text class="sim-pool-label">匹配</text>
+            <text class="sim-pool-num">{{baseline.match.length}}</text>
+            <text class="sim-pool-unit">个 Program</text>
+          </view>
+          <view class="sim-pool-item sim-pool-safe">
+            <text class="sim-pool-label">保底</text>
+            <text class="sim-pool-num">{{baseline.safety.length}}</text>
+            <text class="sim-pool-unit">个 Program</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 模拟结果（diff） -->
+      <view class="card sim-pool-card" wx:if="{{showResult && diff}}">
+        <text class="h-md sim-pool-title">模拟后选校变化</text>
+        <view class="sim-pool-grid">
+          <view class="sim-pool-item sim-pool-reach">
+            <text class="sim-pool-label">冲刺</text>
+            <text class="sim-pool-num">{{diff.reach.after}}</text>
+            <text class="sim-pool-delta {{diff.reach.delta > 0 ? 'up' : diff.reach.delta < 0 ? 'down' : ''}}">
+              {{diff.reach.delta > 0 ? '+' : ''}}{{diff.reach.delta}}
+            </text>
+          </view>
+          <view class="sim-pool-item sim-pool-match">
+            <text class="sim-pool-label">匹配</text>
+            <text class="sim-pool-num">{{diff.match.after}}</text>
+            <text class="sim-pool-delta {{diff.match.delta > 0 ? 'up' : diff.match.delta < 0 ? 'down' : ''}}">
+              {{diff.match.delta > 0 ? '+' : ''}}{{diff.match.delta}}
+            </text>
+          </view>
+          <view class="sim-pool-item sim-pool-safe">
+            <text class="sim-pool-label">保底</text>
+            <text class="sim-pool-num">{{diff.safety.after}}</text>
+            <text class="sim-pool-delta {{diff.safety.delta > 0 ? 'up' : diff.safety.delta < 0 ? 'down' : ''}}">
+              {{diff.safety.delta > 0 ? '+' : ''}}{{diff.safety.delta}}
+            </text>
+          </view>
+        </view>
+        <text class="sim-diff-total">总新增: {{diff.totalDelta > 0 ? '+' + diff.totalDelta : diff.totalDelta}} 个项目</text>
+      </view>
+
+      <!-- 新增项目详情 -->
+      <view class="card" wx:if="{{showResult && (newPrograms.reach.length > 0 || newPrograms.match.length > 0 || newPrograms.safety.length > 0 || upgradedPrograms.length > 0)}}">
+        <text class="h-md">变化详情</text>
+        <view wx:if="{{newPrograms.reach.length > 0}}">
+          <text class="sim-diff-section-title">新增冲刺:</text>
+          <text class="sim-diff-item" wx:for="{{newPrograms.reach}}" wx:key="_id">{{item.school}}（{{item.fitScore}}分）</text>
+        </view>
+        <view wx:if="{{newPrograms.match.length > 0}}">
+          <text class="sim-diff-section-title">新增匹配:</text>
+          <text class="sim-diff-item" wx:for="{{newPrograms.match}}" wx:key="_id">{{item.school}}（{{item.fitScore}}分）</text>
+        </view>
+        <view wx:if="{{newPrograms.safety.length > 0}}">
+          <text class="sim-diff-section-title">新增保底:</text>
+          <text class="sim-diff-item" wx:for="{{newPrograms.safety}}" wx:key="_id">{{item.school}}（{{item.fitScore}}分）</text>
+        </view>
+        <view wx:if="{{upgradedPrograms.length > 0}}">
+          <text class="sim-diff-section-title">提升档位:</text>
+          <text class="sim-diff-item" wx:for="{{upgradedPrograms}}" wx:key="_id">{{item.school}}：{{item.from}} → {{item.to}}</text>
+        </view>
+        <view wx:if="{{downgradedPrograms.length > 0}}">
+          <text class="sim-diff-section-title">下降档位:</text>
+          <text class="sim-diff-item" wx:for="{{downgradedPrograms}}" wx:key="_id">{{item.school}}：{{item.from}} → {{item.to}}</text>
+        </view>
+      </view>
+
+      <!-- 模拟按钮 -->
+      <button class="btn btn-primary" bindtap="onSimulate" loading="{{simulating}}" disabled="{{simulating}}">开始模拟</button>
+      <button class="btn btn-light" bindtap="onReset">重置</button>
+
+      <!-- 综合得分 -->
+      <view class="card sim-score-card">
+        <text class="h-md sim-score-title">综合评分变化</text>
+        <view class="sim-score-body">
+          <view class="sim-score-bar-wrap">
+            <view class="sim-score-labels">
+              <text>当前: 73</text>
+              <text>模拟后: <text class="sim-score-new">{{score}}</text></text>
+            </view>
+            <view class="sim-score-bar">
+              <view class="sim-score-bar-bg" style="width:73%"></view>
+              <view class="sim-score-bar-fill" style="width:{{score}}%"></view>
+            </view>
+          </view>
+          <text class="sim-score-delta {{scoreDelta > 0 ? 'sim-delta-up' : scoreDelta < 0 ? 'sim-delta-down' : 'sim-delta-zero'}}">
+            {{scoreDelta > 0 ? '↑ +' + scoreDelta : scoreDelta < 0 ? '↓ ' + scoreDelta : '±0'}}
+          </text>
+        </view>
+        <view class="sim-score-actions">
+          <button class="btn btn-primary sim-save-btn" bindtap="onSaveResult" loading="{{saving}}" disabled="{{saving}}">保存本次模拟结果</button>
+          <button class="btn btn-light sim-history-btn" bindtap="toggleHistory">
+            {{showHistory ? '收起历史记录' : '查看历史记录 (' + history.length + ')'}}
+          </button>
+        </view>
+      </view>
+
+      <!-- 历史记录面板 -->
+      <view class="card sim-history-card" wx:if="{{showHistory}}">
+        <text class="h-md sim-history-title">模拟历史记录</text>
+        <view class="sim-history-empty" wx:if="{{history.length === 0}}">
+          <text>暂无记录，保存一次模拟结果吧</text>
+        </view>
+        <view class="sim-history-item" wx:for="{{history}}" wx:for-index="idx" wx:key="index">
+          <view class="sim-history-meta">
+            <text class="sim-history-time">{{item.timestamp}}</text>
+            <view class="sim-history-score-row">
+              <text class="sim-history-score">评分: {{item.score}}</text>
+              <text class="sim-history-tier">冲刺 {{item.tier.reach}} / 匹配 {{item.tier.match}} / 保底 {{item.tier.safe}}</text>
+            </view>
+          </view>
+          <view class="sim-history-actions">
+            <text class="sim-history-load" data-index="{{idx}}" bindtap="onLoadHistory">加载</text>
+            <text class="sim-history-del" data-timestamp="{{item.timestamp}}" bindtap="onDeleteHistory">删除</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- TODO 报告 - 免费模块 -->
+      <view class="card sim-todo-card" id="todo">
+        <view class="sim-todo-header">
+          <text class="h-md">为你定制的提升 TODO 报告</text>
+        </view>
+        <text class="sim-todo-desc">基于你的当前背景和目标，我们生成了一份按时间分层的可执行清单</text>
+
+        <!-- 加载中 -->
+        <view class="sim-todo-loading" wx:if="{{loadingTodos}}">
+          <text>正在生成个性化 TODO 清单...</text>
+        </view>
+
+        <!-- 本周可做 -->
+        <view class="sim-todo-section" wx:else>
+          <text class="sim-todo-section-title">本周可做</text>
+          <view class="sim-todo-list" wx:if="{{todoItems.thisWeek.length > 0}}">
+            <view class="sim-todo-item" wx:for="{{todoItems.thisWeek}}" wx:key="id" data-section="thisWeek" data-id="{{id}}" bindtap="onTodoCheck">
+              <checkbox checked="{{checked}}" />
+              <view class="sim-todo-text">
+                <text class="{{checked ? 'sim-todo-done' : ''}}">{{text}}</text>
+                <text class="sim-todo-meta" wx:if="{{time}}">{{time}} · 影响：{{impact}}</text>
+              </view>
+            </view>
+          </view>
+          <text class="sim-todo-empty" wx:else>本周暂无专属待办，继续保持！</text>
+        </view>
+
+        <!-- 本月目标 -->
+        <view class="sim-todo-section">
+          <text class="sim-todo-section-title">本月目标</text>
+          <view class="sim-todo-list" wx:if="{{todoItems.thisMonth.length > 0}}">
+            <view class="sim-todo-item" wx:for="{{todoItems.thisMonth}}" wx:key="id" data-section="thisMonth" data-id="{{id}}" bindtap="onTodoCheck">
+              <checkbox checked="{{checked}}" />
+              <text class="{{checked ? 'sim-todo-done' : ''}}">{{text}}</text>
+            </view>
+          </view>
+          <text class="sim-todo-empty" wx:else>暂无本月目标</text>
+        </view>
+
+        <!-- 本季度 -->
+        <view class="sim-todo-section">
+          <text class="sim-todo-section-title">本季度</text>
+          <view class="sim-todo-list" wx:if="{{todoItems.thisQuarter.length > 0}}">
+            <view class="sim-todo-item" wx:for="{{todoItems.thisQuarter}}" wx:key="id" data-section="thisQuarter" data-id="{{id}}" bindtap="onTodoCheck">
+              <checkbox checked="{{checked}}" />
+              <text class="{{checked ? 'sim-todo-done' : ''}}">{{text}}</text>
+            </view>
+          </view>
+          <text class="sim-todo-empty" wx:else>暂无本季度目标</text>
+        </view>
+      </view>
+
+      <!-- 顾问引流 -->
+      <view class="card sim-consult-card">
+        <view class="sim-consult-body">
+          <view class="sim-consult-icon">
+            <text>👤</text>
+          </view>
+          <view class="sim-consult-text">
+            <view class="sim-consult-head">
+              <text class="sim-consult-title">想要顾问帮你 1v1 落地这份规划？</text>
+              <text class="tag tag-accent">推荐</text>
+            </view>
+            <text class="sim-consult-desc">已为你匹配到 3 位辅导过 985 CS 申请美港的资深顾问，均带过同类型 offer 案例</text>
+            <view class="sim-consult-tags">
+              <text class="tag tag-mute">985背景</text>
+              <text class="tag tag-mute">CMU/Columbia 案例</text>
+              <text class="tag tag-mute">前 BAT 招聘官</text>
+            </view>
+            <button class="btn btn-accent sim-consult-btn">免费 30 分钟咨询</button>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

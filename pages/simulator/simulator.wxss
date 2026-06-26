@@ -1,0 +1,516 @@
+/* 提升模拟器样式 */
+
+.sim-header {
+  padding: 24px 16px 8px;
+}
+
+.sim-header-sub {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--c-ink-3);
+}
+
+.sim-desc {
+  font-size: 12px;
+  color: var(--c-ink-3);
+  display: block;
+  margin-top: 4px;
+}
+
+.sim-grid {
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+/* 控制面板 */
+.sim-control-card {
+  padding: 24px;
+}
+
+.sim-control-title {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sim-slider-group {
+  margin-bottom: 20px;
+}
+
+.sim-slider-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.sim-slider-val {
+  color: var(--c-primary);
+  font-weight: 600;
+}
+
+.sim-slider-range {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--c-ink-3);
+  margin-top: 2px;
+}
+
+.sim-divider {
+  height: 1px;
+  background: var(--c-line);
+  margin: 16px 0;
+}
+
+.sim-boost-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--c-ink);
+  display: block;
+  margin-bottom: 12px;
+}
+
+.sim-boost-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sim-boost-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--c-line);
+}
+
+.sim-boost-content {
+  flex: 1;
+}
+
+.sim-boost-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--c-ink);
+  display: block;
+}
+
+.sim-boost-impact {
+  font-size: 10px;
+  color: var(--c-ink-3);
+  display: block;
+  margin-top: 2px;
+}
+
+.sim-reset-btn {
+  width: 100%;
+  margin-top: 16px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--c-line);
+  background: transparent;
+  font-size: 12px;
+  color: var(--c-ink-2);
+  text-align: center;
+}
+
+/* 学校池 */
+.sim-pool-card {
+  padding: 24px;
+}
+
+.sim-pool-title {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sim-pool-grid {
+  display: flex;
+  gap: 12px;
+}
+
+.sim-pool-item {
+  flex: 1;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.sim-pool-reach {
+  background: var(--c-primary-l);
+}
+
+.sim-pool-match {
+  background: var(--c-accent-l);
+}
+
+.sim-pool-safe {
+  background: var(--c-surface);
+}
+
+.sim-pool-label {
+  font-size: 10px;
+  font-weight: 600;
+  display: block;
+}
+
+.sim-pool-reach .sim-pool-label { color: var(--c-primary); }
+.sim-pool-match .sim-pool-label { color: #2f7d4d; }
+.sim-pool-safe .sim-pool-label { color: var(--c-ink); }
+
+.sim-pool-num-row {
+  margin-top: 4px;
+}
+
+.sim-pool-num {
+  font-size: 30px;
+  font-weight: 600;
+}
+
+.sim-pool-reach .sim-pool-num { color: var(--c-primary); }
+.sim-pool-match .sim-pool-num { color: #2f7d4d; }
+.sim-pool-safe .sim-pool-num { color: var(--c-ink); }
+
+.sim-pool-unit {
+  font-size: 10px;
+  color: var(--c-ink-3);
+  display: block;
+  margin-top: 4px;
+}
+
+.sim-unlocked {
+  margin-top: 20px;
+  padding: 16px;
+  background: var(--c-surface);
+  border-radius: 8px;
+}
+
+.sim-unlocked-title {
+  font-size: 12px;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sim-unlocked-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sim-unlocked-tag {
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--c-primary-l);
+  color: var(--c-primary);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.sim-unlocked-empty {
+  font-size: 10px;
+  color: var(--c-ink-3);
+  display: block;
+}
+
+/* 综合评分 */
+.sim-score-card {
+  padding: 24px;
+}
+
+.sim-score-title {
+  margin-bottom: 12px;
+}
+
+.sim-score-body {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sim-score-bar-wrap {
+  flex: 1;
+}
+
+.sim-score-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--c-ink-3);
+  margin-bottom: 4px;
+}
+
+.sim-score-new {
+  color: var(--c-primary);
+  font-weight: 700;
+}
+
+.sim-score-bar {
+  height: 12px;
+  background: var(--c-surface);
+  border-radius: 999px;
+  position: relative;
+  overflow: hidden;
+}
+
+.sim-score-bar-bg {
+  position: absolute;
+  height: 100%;
+  background: var(--c-line);
+  border-radius: 999px;
+}
+
+.sim-score-bar-fill {
+  position: absolute;
+  height: 100%;
+  background: var(--c-primary);
+  border-radius: 999px;
+  transition: width .6s ease-out;
+}
+
+.sim-score-delta {
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.sim-score-actions {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sim-save-btn {
+  font-size: 12px;
+  padding: 10px;
+}
+
+.sim-history-btn {
+  font-size: 11px;
+  padding: 8px;
+  width: 100%;
+}
+
+/* 历史记录 */
+.sim-history-card {
+  padding: 24px;
+}
+
+.sim-history-title {
+  margin-bottom: 12px;
+}
+
+.sim-history-empty {
+  padding: 16px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--c-ink-3);
+  background: var(--c-surface);
+  border-radius: 8px;
+}
+
+.sim-history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid var(--c-line);
+}
+
+.sim-history-item:last-child {
+  border-bottom: none;
+}
+
+.sim-history-time {
+  font-size: 10px;
+  color: var(--c-ink-3);
+  display: block;
+  margin-bottom: 2px;
+}
+
+.sim-history-score-row {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--c-ink);
+}
+
+.sim-history-score {
+  font-weight: 600;
+  color: var(--c-primary);
+}
+
+.sim-history-tier {
+  color: var(--c-ink-2);
+}
+
+.sim-history-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.sim-history-load {
+  font-size: 11px;
+  color: var(--c-primary);
+  font-weight: 600;
+}
+
+.sim-history-del {
+  font-size: 11px;
+  color: #b4633a;
+}
+
+.sim-delta-up { color: var(--c-accent); }
+.sim-delta-down { color: #b4633a; }
+.sim-delta-zero { color: var(--c-ink-3); }
+
+/* TODO 报告 - 免费 */
+.sim-todo-card {
+  padding: 24px;
+  border: 2px solid var(--c-primary);
+  position: relative;
+}
+
+.sim-todo-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.sim-todo-desc {
+  font-size: 12px;
+  color: var(--c-ink-3);
+  display: block;
+  margin-bottom: 20px;
+}
+
+.sim-todo-section {
+  margin-bottom: 20px;
+}
+
+.sim-todo-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--c-primary);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.sim-todo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sim-todo-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--c-ink);
+}
+
+.sim-todo-text {
+  flex: 1;
+}
+
+.sim-todo-meta {
+  font-size: 10px;
+  color: var(--c-ink-3);
+  display: block;
+  margin-top: 2px;
+}
+
+.sim-todo-done {
+  text-decoration: line-through;
+  color: var(--c-ink-3);
+}
+
+.sim-todo-loading {
+  text-align: center;
+  padding: 24px;
+  font-size: 12px;
+  color: var(--c-ink-3);
+}
+
+.sim-todo-empty {
+  display: block;
+  font-size: 11px;
+  color: var(--c-ink-3);
+  padding: 8px 0;
+}
+
+/* 顾问 */
+.sim-consult-card {
+  padding: 24px;
+}
+
+.sim-consult-body {
+  display: flex;
+  gap: 16px;
+}
+
+.sim-consult-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  background: var(--c-accent-l);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.sim-consult-text {
+  flex: 1;
+}
+
+.sim-consult-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.sim-consult-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--c-ink);
+}
+
+.sim-consult-desc {
+  font-size: 12px;
+  color: var(--c-ink-3);
+  display: block;
+}
+
+.sim-consult-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.sim-consult-btn {
+  margin-top: 12px;
+}
+
+.sim-pool-delta { font-size: 12px; font-weight: 600; }
+.sim-pool-delta.up { color: var(--c-accent); }
+.sim-pool-delta.down { color: #b4633a; }
+.sim-diff-total { display: block; margin-top: 8px; font-size: 13px; font-weight: 600; color: var(--c-ink); }
+.sim-diff-section-title { display: block; margin-top: 12px; font-size: 12px; font-weight: 600; color: var(--c-ink-2); }
+.sim-diff-item { display: block; font-size: 12px; color: var(--c-ink-3); margin-top: 4px; }
