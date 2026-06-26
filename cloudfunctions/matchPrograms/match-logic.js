@@ -118,19 +118,32 @@ function calcStandardizedScore(program, profile) {
 const SCHOOL_LEVELS = ['985 · C9 联盟', '985', '211', '双一流', '海外本科', '中外合办', '双非一本', '双非二本']
 const BAND_LEVELS = ['elite', 'high', 'mid', 'friendly']
 
+// 用户院校等级 → 默认应归属的 band 等级
+const SCHOOL_BAND_MAP = {
+  '985 · C9 联盟': 0,   // 默认 elite
+  '985':            1,   // 默认 high
+  '211':            2,   // 默认 mid
+  '双一流':          2,   // 默认 mid
+  '海外本科':        1,   // 默认 high
+  '中外合办':        2,   // 默认 mid
+  '双非一本':        2,   // 默认 mid
+  '双非二本':        3    // 默认 friendly
+}
+
 function calcSchoolScore(schoolLevel, selectivityBand) {
-  const ui = SCHOOL_LEVELS.indexOf(schoolLevel)
+  const defaultBand = SCHOOL_BAND_MAP[schoolLevel]
+  if (defaultBand === undefined) return 0
   const bi = BAND_LEVELS.indexOf(selectivityBand)
-  if (ui === -1) return 0
   if (bi === -1) return 0
 
-  const diff = bi - ui
+  const diff = bi - defaultBand
 
-  if (diff <= 0) return 12
-  if (diff === 1) return 8
-  if (diff === 2) return 2
-  if (diff === 3) return -8
-  return -4
+  if (diff <= -2) return 12   // 用户默认等级明显高于项目要求
+  if (diff === -1) return 8   // 稍高一级
+  if (diff === 0) return 4    // 与用户默认等级刚好匹配
+  if (diff === 1) return 0    // 稍低一级，等级匹配中性
+  if (diff === 2) return -5   // 低两级
+  return -10                  // 低三级及以上
 }
 
 // ──────────────────────────────────────────────
