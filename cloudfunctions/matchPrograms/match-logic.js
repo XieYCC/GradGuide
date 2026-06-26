@@ -243,29 +243,14 @@ function allocateBuckets(scored, profile) {
   const matchPool = scored.filter(p => p.fitScore >= 70 && p.fitScore < 80)
   const safetyPool = scored.filter(p => p.fitScore >= 80)
 
+  // 分数越高越安全：保底取高分，匹配取中段，冲刺取低分但仍按分数从高到低
   const reachSorted = sortByPreferenceThenScore(reachPool, profile)
   const matchSorted = sortByPreferenceThenScore(matchPool, profile)
   const safetySorted = sortByPreferenceThenScore(safetyPool, profile, { preferFriendly: true })
 
-  const reach = takeFromPool(reachSorted, TARGET_COUNTS.reach.ideal, selectedIds)
-  const match = takeFromPool(matchSorted, TARGET_COUNTS.match.ideal, selectedIds)
   const safety = takeFromPool(safetySorted, TARGET_COUNTS.safety.ideal, selectedIds)
-
-  // Fill reach from lower-scoring match candidates when reach is below min.
-  if (reach.length < TARGET_COUNTS.reach.min) {
-    const matchLow = [...matchSorted].sort((a, b) => a.fitScore - b.fitScore)
-    reach.push(...takeFromPool(matchLow, TARGET_COUNTS.reach.min - reach.length, selectedIds))
-  }
-
-  // Fill match from high-scoring reach candidates and low-scoring safety candidates.
-  if (match.length < TARGET_COUNTS.match.min) {
-    const reachHigh = [...reachSorted].sort((a, b) => b.fitScore - a.fitScore)
-    match.push(...takeFromPool(reachHigh, TARGET_COUNTS.match.min - match.length, selectedIds))
-  }
-  if (match.length < TARGET_COUNTS.match.min) {
-    const safetyLow = [...safetySorted].sort((a, b) => a.fitScore - b.fitScore)
-    match.push(...takeFromPool(safetyLow, TARGET_COUNTS.match.min - match.length, selectedIds))
-  }
+  const match = takeFromPool(matchSorted, TARGET_COUNTS.match.ideal, selectedIds)
+  const reach = takeFromPool(reachSorted, TARGET_COUNTS.reach.ideal, selectedIds)
 
   // Fill safety from high-scoring match candidates, friendly/mid first.
   if (safety.length < TARGET_COUNTS.safety.min) {
@@ -283,12 +268,27 @@ function allocateBuckets(scored, profile) {
   }
 
   // If score buckets are too sparse, fill safety from the highest remaining non-elite candidates.
-  // This preserves the "no elite in safety" rule while keeping output useful for weaker profiles.
   if (safety.length < TARGET_COUNTS.safety.min) {
     const remainingNonElite = [...scored]
       .filter(p => getSelectivityBand(p) !== 'elite')
       .sort((a, b) => b.fitScore - a.fitScore)
     safety.push(...takeFromPool(remainingNonElite, TARGET_COUNTS.safety.min - safety.length, selectedIds))
+  }
+
+  // Fill match from low-scoring safety candidates and high-scoring reach candidates.
+  if (match.length < TARGET_COUNTS.match.min) {
+    const safetyLow = [...safetySorted].sort((a, b) => a.fitScore - b.fitScore)
+    match.push(...takeFromPool(safetyLow, TARGET_COUNTS.match.min - match.length, selectedIds))
+  }
+  if (match.length < TARGET_COUNTS.match.min) {
+    const reachHigh = [...reachSorted].sort((a, b) => b.fitScore - a.fitScore)
+    match.push(...takeFromPool(reachHigh, TARGET_COUNTS.match.min - match.length, selectedIds))
+  }
+
+  // Fill reach from lower-scoring match candidates when reach is below min.
+  if (reach.length < TARGET_COUNTS.reach.min) {
+    const matchLow = [...matchSorted].sort((a, b) => a.fitScore - b.fitScore)
+    reach.push(...takeFromPool(matchLow, TARGET_COUNTS.reach.min - reach.length, selectedIds))
   }
 
   return { reach, match, safety }
