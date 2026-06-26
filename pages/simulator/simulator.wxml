@@ -14,8 +14,8 @@
 
         <view class="sim-slider-group">
           <view class="sim-slider-head">
-            <text>GPA（当前 3.65）</text>
-            <text class="sim-slider-val">{{state.gpa ? state.gpa.toString() : '未填'}}</text>
+            <text>GPA（当前 {{state.gpa}}）</text>
+            <text class="sim-slider-val">{{state.gpa}}</text>
           </view>
           <slider min="3" max="4" step="0.01" value="{{state.gpa}}" data-key="gpa" bindchange="onSliderChange" activeColor="#2e5d50" backgroundColor="#e4e4e4" block-size="16" />
           <view class="sim-slider-range">
@@ -26,7 +26,7 @@
 
         <view class="sim-slider-group">
           <view class="sim-slider-head">
-            <text>TOEFL（当前 98）</text>
+            <text>TOEFL（当前 {{state.toefl}}）</text>
             <text class="sim-slider-val">{{state.toefl}}</text>
           </view>
           <slider min="80" max="118" step="1" value="{{state.toefl}}" data-key="toefl" bindchange="onSliderChange" activeColor="#2e5d50" backgroundColor="#e4e4e4" block-size="16" />
@@ -145,11 +145,11 @@
         <view class="sim-score-body">
           <view class="sim-score-bar-wrap">
             <view class="sim-score-labels">
-              <text>当前: 73</text>
+              <text>当前: {{score}}</text>
               <text>模拟后: <text class="sim-score-new">{{score}}</text></text>
             </view>
             <view class="sim-score-bar">
-              <view class="sim-score-bar-bg" style="width:73%"></view>
+              <view class="sim-score-bar-bg" style="width:{{score}}%"></view>
               <view class="sim-score-bar-fill" style="width:{{score}}%"></view>
             </view>
           </view>

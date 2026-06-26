@@ -575,6 +575,8 @@
   border: 1px solid var(--c-line);
   border-radius: 8px;
   font-size: 14px;
+  height: 44px;
+  line-height: 44px;
   box-sizing: border-box;
   margin-bottom: 20px;
 }
