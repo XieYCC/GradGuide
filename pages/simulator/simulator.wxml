@@ -272,7 +272,7 @@
     <input class="sim-save-modal-input" value="{{saveName}}" bindinput="onSaveNameInput" placeholder="输入模拟结果名称" />
     <view class="sim-save-modal-actions">
       <button class="btn btn-light" bindtap="closeSaveModal">取消</button>
-      <button class="btn btn-primary" bindtap="confirmSave">确认保存</button>
+      <button class="btn btn-primary" bindtap="confirmSave" loading="{{saving}}" disabled="{{saving}}">确认保存</button>
     </view>
   </view>
 </view>

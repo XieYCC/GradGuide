@@ -176,11 +176,13 @@ Page({
   },
 
   async confirmSave() {
+    if (this.data.saving) return
     if (!this.data.saveName.trim()) {
       wx.showToast({ title: '请输入名称', icon: 'none' })
       return
     }
 
+    this.setData({ saving: true })
     try {
       await wx.cloud.callFunction({
         name: 'saveSimResult',
@@ -195,11 +197,12 @@ Page({
         }
       })
       wx.showToast({ title: '保存成功', icon: 'success' })
-      this.setData({ showSaveModal: false })
+      this.setData({ showSaveModal: false, saving: false })
       this.loadHistory()
     } catch (err) {
       console.error('[save] failed', err)
       wx.showToast({ title: '保存失败', icon: 'none' })
+      this.setData({ saving: false })
     }
   },
 
