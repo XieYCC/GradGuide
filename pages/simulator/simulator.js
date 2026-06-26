@@ -29,7 +29,9 @@ Page({
     showHistory: false,
     loadingTodos: true,
     loadingHistory: false,
-    saving: false
+    saving: false,
+    showSaveModal: false,
+    saveName: ''
   },
 
   onLoad() {
@@ -57,9 +59,9 @@ Page({
     const profile = app.globalData.userProfile || {}
     this.setData({
       state: {
-        gpa: profile.gpa || '',
-        toefl: profile.toefl || '',
-        gre: profile.gre || '',
+        gpa: profile.gpa || 3.0,
+        toefl: profile.toefl || 80,
+        gre: profile.gre || 0,
         paper: false,
         research: false,
         intern: false,
@@ -150,29 +152,50 @@ Page({
     }
   },
 
-  // 保存当前模拟结果
-  async onSaveResult() {
-    if (this.data.saving) return;
-    this.setData({ saving: true });
+  // 保存当前模拟结果 — 弹出命名弹窗
+  onSaveResult() {
+    if (!this.data.simResult) {
+      wx.showToast({ title: '请先进行一次模拟', icon: 'none' })
+      return
+    }
+    const defaultName = '模拟结果 ' + new Date().toISOString().slice(0, 10)
+    this.setData({ showSaveModal: true, saveName: defaultName })
+  },
+
+  closeSaveModal() {
+    this.setData({ showSaveModal: false })
+  },
+
+  onSaveNameInput(e) {
+    this.setData({ saveName: e.detail.value })
+  },
+
+  async confirmSave() {
+    if (!this.data.saveName.trim()) {
+      wx.showToast({ title: '请输入名称', icon: 'none' })
+      return
+    }
 
     try {
       await wx.cloud.callFunction({
         name: 'saveSimResult',
         data: {
-          state: { ...this.data.state },
-          score: this.data.score,
-          tier: { ...this.data.tier },
-          unlocked: [...this.data.unlockedList]
+          name: this.data.saveName.trim(),
+          diff: this.data.diff,
+          newPrograms: this.data.newPrograms,
+          upgradedPrograms: this.data.upgradedPrograms,
+          downgradedPrograms: this.data.downgradedPrograms,
+          simResult: this.data.simResult,
+          score: this.data.score
         }
-      });
-      wx.showToast({ title: '结果已保存', icon: 'success' });
-      this.loadHistory();
+      })
+      wx.showToast({ title: '保存成功', icon: 'success' })
+      this.setData({ showSaveModal: false })
+      this.loadHistory()
     } catch (err) {
-      console.error('[onSaveResult]', err);
-      wx.showToast({ title: '保存失败，请重试', icon: 'none' });
+      console.error('[save] failed', err)
+      wx.showToast({ title: '保存失败', icon: 'none' })
     }
-
-    this.setData({ saving: false });
   },
 
   // 删除历史记录
@@ -191,17 +214,13 @@ Page({
     }
   },
 
-  // 加载历史记录到模拟器
+  // 加载历史记录到详情页
   onLoadHistory(e) {
-    const idx = e.currentTarget.dataset.index;
-    const record = this.data.history[idx];
-    if (!record) return;
-    this.setData({
-      state: { ...record.state },
-      showHistory: false
-    });
-    this.update();
-    wx.showToast({ title: '已加载历史配置', icon: 'success' });
+    const idx = e.currentTarget.dataset.index
+    const record = this.data.history[idx]
+    if (!record) return
+    const dataStr = encodeURIComponent(JSON.stringify(record))
+    wx.navigateTo({ url: '/pages/sim-history-detail/sim-history-detail?data=' + dataStr })
   },
 
   toggleHistory() {

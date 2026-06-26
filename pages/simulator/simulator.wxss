@@ -226,6 +226,7 @@
 /* 综合评分 */
 .sim-score-card {
   padding: 24px;
+  margin-bottom: 16px;
 }
 
 .sim-score-title {
@@ -512,5 +513,75 @@
 .sim-pool-delta.up { color: var(--c-accent); }
 .sim-pool-delta.down { color: #b4633a; }
 .sim-diff-total { display: block; margin-top: 8px; font-size: 13px; font-weight: 600; color: var(--c-ink); }
-.sim-diff-section-title { display: block; margin-top: 12px; font-size: 12px; font-weight: 600; color: var(--c-ink-2); }
-.sim-diff-item { display: block; font-size: 12px; color: var(--c-ink-3); margin-top: 4px; }
+
+/* 模拟操作按钮行 */
+.sim-action-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+.sim-btn-start {
+  flex: 1;
+}
+.sim-btn-reset {
+  width: auto;
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
+/* 历史记录名称 */
+.sim-history-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-ink);
+  display: block;
+  margin-bottom: 2px;
+}
+
+/* 保存命名弹窗 */
+.sim-save-modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sim-save-modal-mask {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+}
+.sim-save-modal-body {
+  position: relative;
+  width: 300px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  z-index: 1;
+}
+.sim-save-modal-title {
+  display: block;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--c-ink);
+  margin-bottom: 16px;
+  text-align: center;
+}
+.sim-save-modal-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--c-line);
+  border-radius: 8px;
+  font-size: 14px;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+}
+.sim-save-modal-actions {
+  display: flex;
+  gap: 12px;
+}
+.sim-save-modal-actions .btn {
+  flex: 1;
+}

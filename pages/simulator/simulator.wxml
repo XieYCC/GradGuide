@@ -15,7 +15,7 @@
         <view class="sim-slider-group">
           <view class="sim-slider-head">
             <text>GPA（当前 3.65）</text>
-            <text class="sim-slider-val">{{state.gpa.toFixed(2)}}</text>
+            <text class="sim-slider-val">{{state.gpa ? state.gpa.toString() : '未填'}}</text>
           </view>
           <slider min="3" max="4" step="0.01" value="{{state.gpa}}" data-key="gpa" bindchange="onSliderChange" activeColor="#2e5d50" backgroundColor="#e4e4e4" block-size="16" />
           <view class="sim-slider-range">
@@ -116,57 +116,28 @@
         <view class="sim-pool-grid">
           <view class="sim-pool-item sim-pool-reach">
             <text class="sim-pool-label">冲刺</text>
-            <text class="sim-pool-num">{{diff.reach.after}}</text>
-            <text class="sim-pool-delta {{diff.reach.delta > 0 ? 'up' : diff.reach.delta < 0 ? 'down' : ''}}">
-              {{diff.reach.delta > 0 ? '+' : ''}}{{diff.reach.delta}}
-            </text>
+            <text class="sim-pool-num">{{newPrograms.reach.length}}</text>
+            <text class="sim-pool-unit">个新增</text>
           </view>
           <view class="sim-pool-item sim-pool-match">
             <text class="sim-pool-label">匹配</text>
-            <text class="sim-pool-num">{{diff.match.after}}</text>
-            <text class="sim-pool-delta {{diff.match.delta > 0 ? 'up' : diff.match.delta < 0 ? 'down' : ''}}">
-              {{diff.match.delta > 0 ? '+' : ''}}{{diff.match.delta}}
-            </text>
+            <text class="sim-pool-num">{{newPrograms.match.length}}</text>
+            <text class="sim-pool-unit">个新增</text>
           </view>
           <view class="sim-pool-item sim-pool-safe">
             <text class="sim-pool-label">保底</text>
-            <text class="sim-pool-num">{{diff.safety.after}}</text>
-            <text class="sim-pool-delta {{diff.safety.delta > 0 ? 'up' : diff.safety.delta < 0 ? 'down' : ''}}">
-              {{diff.safety.delta > 0 ? '+' : ''}}{{diff.safety.delta}}
-            </text>
+            <text class="sim-pool-num">{{newPrograms.safety.length}}</text>
+            <text class="sim-pool-unit">个新增</text>
           </view>
         </view>
-        <text class="sim-diff-total">总新增: {{diff.totalDelta > 0 ? '+' + diff.totalDelta : diff.totalDelta}} 个项目</text>
-      </view>
-
-      <!-- 新增项目详情 -->
-      <view class="card" wx:if="{{showResult && (newPrograms.reach.length > 0 || newPrograms.match.length > 0 || newPrograms.safety.length > 0 || upgradedPrograms.length > 0)}}">
-        <text class="h-md">变化详情</text>
-        <view wx:if="{{newPrograms.reach.length > 0}}">
-          <text class="sim-diff-section-title">新增冲刺:</text>
-          <text class="sim-diff-item" wx:for="{{newPrograms.reach}}" wx:key="_id">{{item.school}}（{{item.fitScore}}分）</text>
-        </view>
-        <view wx:if="{{newPrograms.match.length > 0}}">
-          <text class="sim-diff-section-title">新增匹配:</text>
-          <text class="sim-diff-item" wx:for="{{newPrograms.match}}" wx:key="_id">{{item.school}}（{{item.fitScore}}分）</text>
-        </view>
-        <view wx:if="{{newPrograms.safety.length > 0}}">
-          <text class="sim-diff-section-title">新增保底:</text>
-          <text class="sim-diff-item" wx:for="{{newPrograms.safety}}" wx:key="_id">{{item.school}}（{{item.fitScore}}分）</text>
-        </view>
-        <view wx:if="{{upgradedPrograms.length > 0}}">
-          <text class="sim-diff-section-title">提升档位:</text>
-          <text class="sim-diff-item" wx:for="{{upgradedPrograms}}" wx:key="_id">{{item.school}}：{{item.from}} → {{item.to}}</text>
-        </view>
-        <view wx:if="{{downgradedPrograms.length > 0}}">
-          <text class="sim-diff-section-title">下降档位:</text>
-          <text class="sim-diff-item" wx:for="{{downgradedPrograms}}" wx:key="_id">{{item.school}}：{{item.from}} → {{item.to}}</text>
-        </view>
+        <text class="sim-diff-total">净新增: {{newPrograms.reach.length + newPrograms.match.length + newPrograms.safety.length}} 个项目</text>
       </view>
 
       <!-- 模拟按钮 -->
-      <button class="btn btn-primary" bindtap="onSimulate" loading="{{simulating}}" disabled="{{simulating}}">开始模拟</button>
-      <button class="btn btn-light" bindtap="onReset">重置</button>
+      <view class="sim-action-row">
+        <button class="btn btn-primary sim-btn-start" bindtap="onSimulate" loading="{{simulating}}" disabled="{{simulating}}">开始模拟</button>
+        <button class="btn btn-light sim-btn-reset" bindtap="onReset">重置</button>
+      </view>
 
       <!-- 综合得分 -->
       <view class="card sim-score-card">
@@ -202,14 +173,15 @@
         </view>
         <view class="sim-history-item" wx:for="{{history}}" wx:for-index="idx" wx:key="index">
           <view class="sim-history-meta">
+            <text class="sim-history-name" wx:if="{{item.name}}">{{item.name}}</text>
             <text class="sim-history-time">{{item.timestamp}}</text>
             <view class="sim-history-score-row">
               <text class="sim-history-score">评分: {{item.score}}</text>
-              <text class="sim-history-tier">冲刺 {{item.tier.reach}} / 匹配 {{item.tier.match}} / 保底 {{item.tier.safe}}</text>
+              <text class="sim-history-tier">冲刺 {{item.simResult && item.simResult.reach ? item.simResult.reach.length : 0}} / 匹配 {{item.simResult && item.simResult.match ? item.simResult.match.length : 0}} / 保底 {{item.simResult && item.simResult.safety ? item.simResult.safety.length : 0}}</text>
             </view>
           </view>
           <view class="sim-history-actions">
-            <text class="sim-history-load" data-index="{{idx}}" bindtap="onLoadHistory">加载</text>
+            <text class="sim-history-load" data-index="{{idx}}" bindtap="onLoadHistory">查看</text>
             <text class="sim-history-del" data-timestamp="{{item.timestamp}}" bindtap="onDeleteHistory">删除</text>
           </view>
         </view>
@@ -288,6 +260,19 @@
           </view>
         </view>
       </view>
+    </view>
+  </view>
+</view>
+
+<!-- 保存命名弹窗 -->
+<view class="sim-save-modal" wx:if="{{showSaveModal}}">
+  <view class="sim-save-modal-mask" bindtap="closeSaveModal"></view>
+  <view class="sim-save-modal-body">
+    <text class="sim-save-modal-title">保存模拟结果</text>
+    <input class="sim-save-modal-input" value="{{saveName}}" bindinput="onSaveNameInput" placeholder="输入模拟结果名称" />
+    <view class="sim-save-modal-actions">
+      <button class="btn btn-light" bindtap="closeSaveModal">取消</button>
+      <button class="btn btn-primary" bindtap="confirmSave">确认保存</button>
     </view>
   </view>
 </view>
