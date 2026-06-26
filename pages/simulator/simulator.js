@@ -242,7 +242,8 @@ Page({
 
   onBoostChange(e) {
     const key = e.currentTarget.dataset.boost;
-    const newState = { ...this.data.state, [key]: e.detail.value.length > 0 };
+    const current = this.data.state[key] || false;
+    const newState = { ...this.data.state, [key]: !current };
     this.setData({ state: newState });
     this.update();
   },
