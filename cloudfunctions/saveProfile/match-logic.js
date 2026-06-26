@@ -33,6 +33,12 @@ const BAND_MAP = {
   '双非二本':        { visible: ['friendly'],                   extremeReach: ['mid'] }
 }
 
+const TARGET_COUNTS = {
+  reach: { min: 2, ideal: 3, max: 3 },
+  match: { min: 8, ideal: 10, max: 10 },
+  safety: { min: 3, ideal: 4, max: 5 }
+}
+
 function qualifiesForExtremeReach(profile) {
   const gpa = profile.gpa || 0
   const toefl = profile.toefl || 0
@@ -195,6 +201,99 @@ function calcPreferenceScore(program, profile) {
   return Math.min(5, score)
 }
 
+function preferenceScoreForSort(program, profile) {
+  return calcPreferenceScore(program, profile)
+}
+
+function sortByPreferenceThenScore(pool, profile, options) {
+  const preferFriendly = options && options.preferFriendly
+  const bandWeight = { friendly: 0, mid: 1, high: 2, elite: 3 }
+
+  return [...pool].sort((a, b) => {
+    const prefDiff = preferenceScoreForSort(b, profile) - preferenceScoreForSort(a, profile)
+    if (prefDiff !== 0) return prefDiff
+
+    if (preferFriendly) {
+      const aBand = getSelectivityBand(a)
+      const bBand = getSelectivityBand(b)
+      const bandDiff = (bandWeight[aBand] || 2) - (bandWeight[bBand] || 2)
+      if (bandDiff !== 0) return bandDiff
+    }
+
+    return b.fitScore - a.fitScore
+  })
+}
+
+function takeFromPool(pool, count, selectedIds) {
+  const taken = []
+  for (const item of pool) {
+    const id = item._id || item.id || `${item.school}-${item.major}`
+    if (selectedIds.has(id)) continue
+    taken.push(item)
+    selectedIds.add(id)
+    if (taken.length >= count) break
+  }
+  return taken
+}
+
+function allocateBuckets(scored, profile) {
+  const selectedIds = new Set()
+
+  const reachPool = scored.filter(p => p.fitScore < 70)
+  const matchPool = scored.filter(p => p.fitScore >= 70 && p.fitScore < 80)
+  const safetyPool = scored.filter(p => p.fitScore >= 80)
+
+  const reachSorted = sortByPreferenceThenScore(reachPool, profile)
+  const matchSorted = sortByPreferenceThenScore(matchPool, profile)
+  const safetySorted = sortByPreferenceThenScore(safetyPool, profile, { preferFriendly: true })
+
+  const reach = takeFromPool(reachSorted, TARGET_COUNTS.reach.ideal, selectedIds)
+  const match = takeFromPool(matchSorted, TARGET_COUNTS.match.ideal, selectedIds)
+  const safety = takeFromPool(safetySorted, TARGET_COUNTS.safety.ideal, selectedIds)
+
+  // Fill reach from lower-scoring match candidates when reach is below min.
+  if (reach.length < TARGET_COUNTS.reach.min) {
+    const matchLow = [...matchSorted].sort((a, b) => a.fitScore - b.fitScore)
+    reach.push(...takeFromPool(matchLow, TARGET_COUNTS.reach.min - reach.length, selectedIds))
+  }
+
+  // Fill match from high-scoring reach candidates and low-scoring safety candidates.
+  if (match.length < TARGET_COUNTS.match.min) {
+    const reachHigh = [...reachSorted].sort((a, b) => b.fitScore - a.fitScore)
+    match.push(...takeFromPool(reachHigh, TARGET_COUNTS.match.min - match.length, selectedIds))
+  }
+  if (match.length < TARGET_COUNTS.match.min) {
+    const safetyLow = [...safetySorted].sort((a, b) => a.fitScore - b.fitScore)
+    match.push(...takeFromPool(safetyLow, TARGET_COUNTS.match.min - match.length, selectedIds))
+  }
+
+  // Fill safety from high-scoring match candidates, friendly/mid first.
+  if (safety.length < TARGET_COUNTS.safety.min) {
+    const matchHighFriendly = [...matchSorted]
+      .filter(p => ['friendly', 'mid'].includes(getSelectivityBand(p)))
+      .sort((a, b) => b.fitScore - a.fitScore)
+    safety.push(...takeFromPool(matchHighFriendly, TARGET_COUNTS.safety.min - safety.length, selectedIds))
+  }
+
+  if (safety.length < TARGET_COUNTS.safety.min) {
+    const matchHighNonElite = [...matchSorted]
+      .filter(p => getSelectivityBand(p) !== 'elite')
+      .sort((a, b) => b.fitScore - a.fitScore)
+    safety.push(...takeFromPool(matchHighNonElite, TARGET_COUNTS.safety.min - safety.length, selectedIds))
+  }
+
+  // If score buckets are too sparse, fill safety from the highest remaining non-elite candidates.
+  // This preserves the "no elite in safety" rule while keeping output useful for weaker profiles.
+  if (safety.length < TARGET_COUNTS.safety.min) {
+    const remainingNonElite = [...scored]
+      .filter(p => getSelectivityBand(p) !== 'elite')
+      .sort((a, b) => b.fitScore - a.fitScore)
+    safety.push(...takeFromPool(remainingNonElite, TARGET_COUNTS.safety.min - safety.length, selectedIds))
+  }
+
+  return { reach, match, safety }
+}
+
 // ──────────────────────────────────────────────
 // Step 9: generateReasons / generateRisks
 // ──────────────────────────────────────────────
@@ -267,17 +366,14 @@ function runMatch(programs, profile) {
     }
   })
 
-  const reach = scored.filter(p => p.fitScore >= 50 && p.fitScore < 70)
-    .sort((a, b) => b.fitScore - a.fitScore)
-  const match = scored.filter(p => p.fitScore >= 70 && p.fitScore < 80)
-    .sort((a, b) => b.fitScore - a.fitScore)
-  const safety = scored.filter(p => p.fitScore >= 80 && p.fitScore <= 90)
-    .sort((a, b) => b.fitScore - a.fitScore)
+  const allocated = allocateBuckets(scored, profile)
 
   return {
-    reach, match, safety,
+    reach: allocated.reach,
+    match: allocated.match,
+    safety: allocated.safety,
     extremeReachCount: extremeCount,
-    version: 'v1',
+    version: 'v2',
     calculatedAt: new Date()
   }
 }
@@ -286,4 +382,4 @@ function runMatch(programs, profile) {
 // Step 12: exports
 // ──────────────────────────────────────────────
 
-module.exports = { runMatch, calcFitScore, getSelectivityBand, BAND_MAP, qualifiesForExtremeReach, filterBySchoolBand }
+module.exports = { runMatch, calcFitScore, getSelectivityBand, BAND_MAP, TARGET_COUNTS, allocateBuckets, qualifiesForExtremeReach, filterBySchoolBand }
