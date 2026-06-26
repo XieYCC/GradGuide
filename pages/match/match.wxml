@@ -1,0 +1,269 @@
+<!-- 选校匹配 -->
+<view class="page-match">
+
+  <!-- 概览卡 -->
+  <view class="overview-card" wx:if="{{!noMatchData}}">
+    <view class="overview-top">
+      <view class="overview-info">
+        <view class="overview-tag">
+          <text>你的档案 · </text>
+          <text class="overview-edit" bindtap="goToProfile">编辑</text>
+        </view>
+        <view class="overview-title">为你匹配到 <text class="overview-count">{{reach.length + match.length + safety.length}}</text> 个 Program</view>
+        <view class="overview-meta">
+          <text>{{userProfile.school || '未填写'}}{{userProfile.schoolLevel ? ' · ' + userProfile.schoolLevel : ''}}</text>
+          <text wx:if="{{userProfile.gpa}}">GPA {{userProfile.gpa}}/4.0</text>
+          <text wx:if="{{userProfile.toefl}}">TOEFL {{userProfile.toefl}}</text>
+          <text wx:if="{{userProfile.gre}}">GRE {{userProfile.gre}}</text>
+          <text wx:if="{{showTargetInfo}}">{{targetInfoText}}</text>
+        </view>
+      </view>
+      <view class="overview-stats">
+        <view class="overview-stat">
+          <text class="overview-stat-num">{{reach.length}}</text>
+          <text class="overview-stat-label">冲刺</text>
+        </view>
+        <view class="overview-stat">
+          <text class="overview-stat-num">{{match.length}}</text>
+          <text class="overview-stat-label">匹配</text>
+        </view>
+        <view class="overview-stat">
+          <text class="overview-stat-num">{{safety.length}}</text>
+          <text class="overview-stat-label">保底</text>
+        </view>
+      </view>
+    </view>
+    <view class="overview-actions">
+      <button class="btn btn-light" bindtap="goToDiagnosis">查看短板诊断</button>
+      <button class="btn overview-btn-ghost" bindtap="goToSimulator">提升模拟器</button>
+    </view>
+  </view>
+
+  <!-- 无匹配数据时展示的概览卡 -->
+  <view class="overview-card overview-empty" wx:else>
+    <text>请先完成个人信息填写，获取精准选校推荐</text>
+    <button class="btn btn-primary" bindtap="goToProfile">填写信息</button>
+  </view>
+
+  <!-- 筛选 -->
+  <view class="filter-bar card">
+    <view class="filter-group">
+      <text class="filter-label">地区:</text>
+      <view class="filter-btns">
+        <view class="filter-btn {{curRegion === 'all' ? 'filter-btn-active' : ''}}" data-filter="all" bindtap="filterRegion">全部</view>
+        <view class="filter-btn {{curRegion === 'US' ? 'filter-btn-active' : ''}}" data-filter="US" bindtap="filterRegion">美国</view>
+        <view class="filter-btn {{curRegion === 'HK' ? 'filter-btn-active' : ''}}" data-filter="HK" bindtap="filterRegion">香港</view>
+        <view class="filter-btn {{curRegion === 'UK' ? 'filter-btn-active' : ''}}" data-filter="UK" bindtap="filterRegion">英国</view>
+      </view>
+    </view>
+    <view class="filter-divider"></view>
+    <view class="filter-group">
+      <text class="filter-label">专业:</text>
+      <view class="filter-btns">
+        <view class="filter-btn {{curMajor === 'all' ? 'filter-btn-active' : ''}}" data-major="all" bindtap="filterMajor">全部</view>
+        <view class="filter-btn {{curMajor === 'CS' ? 'filter-btn-active' : ''}}" data-major="CS" bindtap="filterMajor">CS / DS</view>
+        <view class="filter-btn {{curMajor === 'MKT' ? 'filter-btn-active' : ''}}" data-major="MKT" bindtap="filterMajor">MKT / BA</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 三档结果 -->
+  <view class="tier-container">
+    <!-- 冲刺 -->
+    <view class="tier-section" wx:if="{{reach.length > 0}}">
+      <view class="tier-header">
+        <view class="tier-title">
+          <text>冲刺（{{reach.length}}）</text>
+        </view>
+        <text class="tier-desc">录取概率 10%-30% · 建议重点冲刺</text>
+      </view>
+      <view class="tier-grid">
+        <view class="program-card card" wx:for="{{reach}}" wx:key="_id">
+          <view class="program-top">
+            <view class="program-info">
+              <text class="program-school">{{item.school}}</text>
+              <text class="program-rank">{{item.rank}}</text>
+            </view>
+            <view class="program-tier-badge tier-badge-reach">
+              <text>{{item.fitScore}} 分</text>
+            </view>
+          </view>
+          <view class="program-details">
+            <view class="program-detail-item">
+              <text>均 GPA {{item.avgGpa}}</text>
+            </view>
+            <view class="program-detail-item">
+              <text>TOEFL ≥ {{item.toefl}}</text>
+            </view>
+            <view class="program-detail-item">
+              <text>GRE: {{item.gre}}</text>
+            </view>
+            <view class="program-detail-item">
+              <text>DDL: {{item.deadline}}</text>
+            </view>
+            <view class="program-detail-item">
+              <text>学费: {{item.tuition}}</text>
+            </view>
+            <view class="program-detail-item">
+              <text>学制: {{item.duration}}</text>
+            </view>
+          </view>
+          <view class="program-highlight">
+            <text>{{item.highlight}}</text>
+          </view>
+          <view class="program-reasons" wx:if="{{item.reasons && item.reasons.length}}">
+            <text class="program-reason" wx:for="{{item.reasons}}" wx:for-item="r" wx:key="*this">+ {{r}}</text>
+          </view>
+          <view class="program-risks" wx:if="{{item.risks && item.risks.length}}">
+            <text class="program-risk" wx:for="{{item.risks}}" wx:for-item="r" wx:key="*this">- {{r}}</text>
+          </view>
+          <view class="program-footer">
+            <text class="program-status status-warn">背景略低于平均</text>
+            <view class="program-actions">
+              <text class="program-action {{favoriteIds.indexOf(item._id) > -1 ? 'action-faved' : ''}}" data-id="{{item._id}}" bindtap="toggleFavorite">
+                {{favoriteIds.indexOf(item._id) > -1 ? '♥ 已收藏' : '♡ 收藏'}}
+              </text>
+              <text class="program-action-detail">详情</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 匹配 -->
+    <view class="tier-section" wx:if="{{match.length > 0}}">
+      <view class="tier-header">
+        <view class="tier-title">
+          <text>匹配（{{match.length}}）</text>
+        </view>
+        <text class="tier-desc">录取概率 30%-70% · 各维度基本对齐</text>
+      </view>
+      <view class="tier-grid">
+        <view class="program-card card" wx:for="{{match}}" wx:key="_id">
+          <view class="program-top">
+            <view class="program-info">
+              <text class="program-school">{{item.school}}</text>
+              <text class="program-rank">{{item.rank}}</text>
+            </view>
+            <view class="program-tier-badge tier-badge-match">
+              <text>{{item.fitScore}} 分</text>
+            </view>
+          </view>
+          <view class="program-details">
+            <view class="program-detail-item">
+              <text>均 GPA {{item.avgGpa}}</text>
+            </view>
+            <view class="program-detail-item">
+              <text>TOEFL ≥ {{item.toefl}}</text>
+            </view>
+            <view class="program-detail-item">
+              <text>GRE: {{item.gre}}</text>
+            </view>
+            <view class="program-detail-item">
+              <text>DDL: {{item.deadline}}</text>
+            </view>
+            <view class="program-detail-item">
+              <text>学费: {{item.tuition}}</text>
+            </view>
+            <view class="program-detail-item">
+              <text>学制: {{item.duration}}</text>
+            </view>
+          </view>
+          <view class="program-highlight">
+            <text>{{item.highlight}}</text>
+          </view>
+          <view class="program-reasons" wx:if="{{item.reasons && item.reasons.length}}">
+            <text class="program-reason" wx:for="{{item.reasons}}" wx:for-item="r" wx:key="*this">+ {{r}}</text>
+          </view>
+          <view class="program-risks" wx:if="{{item.risks && item.risks.length}}">
+            <text class="program-risk" wx:for="{{item.risks}}" wx:for-item="r" wx:key="*this">- {{r}}</text>
+          </view>
+          <view class="program-footer">
+            <text class="program-status status-ok">各维度基本对齐</text>
+            <view class="program-actions">
+              <text class="program-action {{favoriteIds.indexOf(item._id) > -1 ? 'action-faved' : ''}}" data-id="{{item._id}}" bindtap="toggleFavorite">
+                {{favoriteIds.indexOf(item._id) > -1 ? '♥ 已收藏' : '♡ 收藏'}}
+              </text>
+              <text class="program-action-detail">详情</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 保底 -->
+    <view class="tier-section" wx:if="{{safety.length > 0}}">
+      <view class="tier-header">
+        <view class="tier-title">
+          <text>保底（{{safety.length}}）</text>
+        </view>
+        <text class="tier-desc">录取概率 >70% · 优势明显，建议保底</text>
+      </view>
+      <view class="tier-grid">
+        <view class="program-card card" wx:for="{{safety}}" wx:key="_id">
+          <view class="program-top">
+            <view class="program-info">
+              <text class="program-school">{{item.school}}</text>
+              <text class="program-rank">{{item.rank}}</text>
+            </view>
+            <view class="program-tier-badge tier-badge-safety">
+              <text>{{item.fitScore}} 分</text>
+            </view>
+          </view>
+          <view class="program-details">
+            <view class="program-detail-item">
+              <text>均 GPA {{item.avgGpa}}</text>
+            </view>
+            <view class="program-detail-item">
+              <text>TOEFL ≥ {{item.toefl}}</text>
+            </view>
+            <view class="program-detail-item">
+              <text>GRE: {{item.gre}}</text>
+            </view>
+            <view class="program-detail-item">
+              <text>DDL: {{item.deadline}}</text>
+            </view>
+            <view class="program-detail-item">
+              <text>学费: {{item.tuition}}</text>
+            </view>
+            <view class="program-detail-item">
+              <text>学制: {{item.duration}}</text>
+            </view>
+          </view>
+          <view class="program-highlight">
+            <text>{{item.highlight}}</text>
+          </view>
+          <view class="program-reasons" wx:if="{{item.reasons && item.reasons.length}}">
+            <text class="program-reason" wx:for="{{item.reasons}}" wx:for-item="r" wx:key="*this">+ {{r}}</text>
+          </view>
+          <view class="program-risks" wx:if="{{item.risks && item.risks.length}}">
+            <text class="program-risk" wx:for="{{item.risks}}" wx:for-item="r" wx:key="*this">- {{r}}</text>
+          </view>
+          <view class="program-footer">
+            <text class="program-status status-ok">优势明显，建议保底</text>
+            <view class="program-actions">
+              <text class="program-action {{favoriteIds.indexOf(item._id) > -1 ? 'action-faved' : ''}}" data-id="{{item._id}}" bindtap="toggleFavorite">
+                {{favoriteIds.indexOf(item._id) > -1 ? '♥ 已收藏' : '♡ 收藏'}}
+              </text>
+              <text class="program-action-detail">详情</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 引流条 -->
+  <view class="cta-card card">
+    <view class="cta-left">
+      <view class="cta-icon">
+        <text>💬</text>
+      </view>
+      <view class="cta-text">
+        <text class="cta-title">已有 38 位顾问辅导过类似背景的学生</text>
+        <text class="cta-desc">985 · CS · GPA 3.6+ · 申请美港名校 CS</text>
+      </view>
+    </view>
+    <button class="btn btn-accent">免费匹配顾问</button>
+  </view>
+</view>
