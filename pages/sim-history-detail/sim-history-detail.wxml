@@ -1,0 +1,111 @@
+<view class="page-history-detail">
+  <view class="history-detail-header" wx:if="{{detail}}">
+    <text class="history-detail-name">{{detail.name}}</text>
+    <text class="history-detail-time">{{detail.timestamp}}</text>
+    <text class="history-detail-score">综合评分: {{detail.score}}</text>
+  </view>
+
+  <text class="history-detail-empty" wx:if="{{!detail}}">数据异常</text>
+
+  <!-- 冲刺 -->
+  <view class="tier-section" wx:if="{{detail && detail.simResult && detail.simResult.reach.length > 0}}">
+    <view class="tier-header">
+      <view class="tier-title"><text>冲刺（{{detail.simResult.reach.length}}）</text></view>
+    </view>
+    <view class="tier-grid">
+      <view class="program-card card" wx:for="{{detail.simResult.reach}}" wx:key="_id">
+        <view class="program-top">
+          <view class="program-info">
+            <text class="program-school">{{item.school}}</text>
+            <text class="program-rank">{{item.rank}}</text>
+          </view>
+          <view class="program-tier-badge tier-badge-reach">
+            <text>{{item.fitScore}} 分</text>
+          </view>
+        </view>
+        <view class="program-details">
+          <view class="program-detail-item"><text>均 GPA {{item.avgGpa}}</text></view>
+          <view class="program-detail-item"><text>TOEFL ≥ {{item.toefl}}</text></view>
+          <view class="program-detail-item"><text>GRE: {{item.gre}}</text></view>
+          <view class="program-detail-item"><text>DDL: {{item.deadline}}</text></view>
+          <view class="program-detail-item"><text>学费: {{item.tuition}}</text></view>
+          <view class="program-detail-item"><text>学制: {{item.duration}}</text></view>
+        </view>
+        <view class="program-reasons" wx:if="{{item.reasons && item.reasons.length}}">
+          <text class="program-reason" wx:for="{{item.reasons}}" wx:for-item="r" wx:key="*this">{{r}}</text>
+        </view>
+        <view class="program-risks" wx:if="{{item.risks && item.risks.length}}">
+          <text class="program-risk" wx:for="{{item.risks}}" wx:for-item="r" wx:key="*this">{{r}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 匹配 -->
+  <view class="tier-section" wx:if="{{detail && detail.simResult && detail.simResult.match.length > 0}}">
+    <view class="tier-header">
+      <view class="tier-title"><text>匹配（{{detail.simResult.match.length}}）</text></view>
+    </view>
+    <view class="tier-grid">
+      <view class="program-card card" wx:for="{{detail.simResult.match}}" wx:key="_id">
+        <view class="program-top">
+          <view class="program-info">
+            <text class="program-school">{{item.school}}</text>
+            <text class="program-rank">{{item.rank}}</text>
+          </view>
+          <view class="program-tier-badge tier-badge-match">
+            <text>{{item.fitScore}} 分</text>
+          </view>
+        </view>
+        <view class="program-details">
+          <view class="program-detail-item"><text>均 GPA {{item.avgGpa}}</text></view>
+          <view class="program-detail-item"><text>TOEFL ≥ {{item.toefl}}</text></view>
+          <view class="program-detail-item"><text>GRE: {{item.gre}}</text></view>
+          <view class="program-detail-item"><text>DDL: {{item.deadline}}</text></view>
+          <view class="program-detail-item"><text>学费: {{item.tuition}}</text></view>
+          <view class="program-detail-item"><text>学制: {{item.duration}}</text></view>
+        </view>
+        <view class="program-reasons" wx:if="{{item.reasons && item.reasons.length}}">
+          <text class="program-reason" wx:for="{{item.reasons}}" wx:for-item="r" wx:key="*this">{{r}}</text>
+        </view>
+        <view class="program-risks" wx:if="{{item.risks && item.risks.length}}">
+          <text class="program-risk" wx:for="{{item.risks}}" wx:for-item="r" wx:key="*this">{{r}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 保底 -->
+  <view class="tier-section" wx:if="{{detail && detail.simResult && detail.simResult.safety.length > 0}}">
+    <view class="tier-header">
+      <view class="tier-title"><text>保底（{{detail.simResult.safety.length}}）</text></view>
+    </view>
+    <view class="tier-grid">
+      <view class="program-card card" wx:for="{{detail.simResult.safety}}" wx:key="_id">
+        <view class="program-top">
+          <view class="program-info">
+            <text class="program-school">{{item.school}}</text>
+            <text class="program-rank">{{item.rank}}</text>
+          </view>
+          <view class="program-tier-badge tier-badge-safety">
+            <text>{{item.fitScore}} 分</text>
+          </view>
+        </view>
+        <view class="program-details">
+          <view class="program-detail-item"><text>均 GPA {{item.avgGpa}}</text></view>
+          <view class="program-detail-item"><text>TOEFL ≥ {{item.toefl}}</text></view>
+          <view class="program-detail-item"><text>GRE: {{item.gre}}</text></view>
+          <view class="program-detail-item"><text>DDL: {{item.deadline}}</text></view>
+          <view class="program-detail-item"><text>学费: {{item.tuition}}</text></view>
+          <view class="program-detail-item"><text>学制: {{item.duration}}</text></view>
+        </view>
+        <view class="program-reasons" wx:if="{{item.reasons && item.reasons.length}}">
+          <text class="program-reason" wx:for="{{item.reasons}}" wx:for-item="r" wx:key="*this">{{r}}</text>
+        </view>
+        <view class="program-risks" wx:if="{{item.risks && item.risks.length}}">
+          <text class="program-risk" wx:for="{{item.risks}}" wx:for-item="r" wx:key="*this">{{r}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

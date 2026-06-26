@@ -1,0 +1,42 @@
+.page-history-detail {
+  padding: 16px;
+  min-height: 100vh;
+  background: var(--c-surface);
+}
+.history-detail-header {
+  padding: 16px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid var(--c-line);
+  margin-bottom: 16px;
+}
+.history-detail-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--c-ink);
+  display: block;
+}
+.history-detail-time {
+  font-size: 11px;
+  color: var(--c-ink-3);
+  display: block;
+  margin-top: 4px;
+}
+.history-detail-score {
+  font-size: 13px;
+  color: var(--c-primary);
+  font-weight: 600;
+  display: block;
+  margin-top: 6px;
+}
+.history-detail-empty {
+  display: block;
+  text-align: center;
+  padding: 40px;
+  font-size: 14px;
+  color: var(--c-ink-3);
+}
+.tier-section { margin-bottom: 16px; }
+.tier-header { margin-bottom: 8px; }
+.tier-title { font-size: 16px; font-weight: 700; color: var(--c-ink); }
+.tier-grid { display: flex; flex-direction: column; gap: 12px; }
