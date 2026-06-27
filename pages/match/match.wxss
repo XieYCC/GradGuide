@@ -131,10 +131,13 @@
 .filter-label {
   font-size: var(--fs-body-sm);
   color: var(--c-ink-3);
+  width: 64rpx;
+  flex-shrink: 0;
 }
 
 .filter-btns {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--sp-1);
 }
 

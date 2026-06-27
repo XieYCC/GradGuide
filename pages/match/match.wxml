@@ -60,25 +60,26 @@
   <!-- 筛选 -->
   <view class="filter-bar card" wx:if="{{!loading && !noMatchData}}">
     <view class="filter-group">
+      <view class="filter-divider"></view>
       <text class="filter-label">地区:</text>
-      <scroll-view class="filter-scroll" scroll-x="true" enhanced show-scrollbar="{{false}}">
+      <view class="filter-btns">
         <view class="filter-btn {{curRegion === item.code ? 'filter-btn-active' : ''}}"
               wx:for="{{regionConfig}}" wx:key="code"
               hover-class="tap-scale"
               data-filter="{{item.code}}"
               bindtap="filterRegion">{{item.label}}</view>
-      </scroll-view>
+      </view>
     </view>
     <view class="filter-divider"></view>
     <view class="filter-group">
       <text class="filter-label">专业:</text>
-      <scroll-view class="filter-scroll" scroll-x="true" enhanced show-scrollbar="{{false}}">
+      <view class="filter-btns">
         <view class="filter-btn {{curMajor === item.code ? 'filter-btn-active' : ''}}"
               wx:for="{{majorConfig}}" wx:key="code"
               hover-class="tap-scale"
               data-major="{{item.code}}"
               bindtap="filterMajor">{{item.label}}</view>
-      </scroll-view>
+      </view>
     </view>
   </view>
 
