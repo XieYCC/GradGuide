@@ -30,13 +30,12 @@ Page({
     try {
       const res = await wx.cloud.callFunction({ name: 'getUser' })
       const user = res.result
-      const wxProfile = user.wxProfile || {}
-      // 合并而非覆盖:避免 getUser 旧数据冲掉本地刚编辑的字段
+      // 档案与微信资料分离存放
       app.globalData.userProfile = {
         ...(app.globalData.userProfile || {}),
-        ...(user.profile || {}),
-        wxProfile
+        ...(user.profile || {})
       }
+      app.globalData.wxProfile = user.wxProfile || app.globalData.wxProfile || {}
       app.globalData.isLoggedIn = true
     } catch (err) {
       console.error('[mine] getUser failed', err)
@@ -46,7 +45,7 @@ Page({
 
   syncData() {
     const profile = app.globalData.userProfile || {}
-    const wxProfile = profile.wxProfile || {}
+    const wxProfile = app.globalData.wxProfile || {}
     const hasProfile = !!(profile.school || profile.gpa)
     const avatarText = wxProfile.nickName ? wxProfile.nickName.slice(0, 1) : '?'
     this.setData({
@@ -59,7 +58,7 @@ Page({
   },
 
   goToProfile() {
-    wx.navigateTo({ url: '/pages/profile-step1/profile-step1' })
+    wx.navigateTo({ url: '/pages/profile/step1-school/step1-school' })
   },
 
   goToOnboarding() {
@@ -79,6 +78,6 @@ Page({
   },
 
   goToProfileInit() {
-    wx.navigateTo({ url: '/pages/profile-init/profile-init' })
+    wx.navigateTo({ url: '/pages/profile/init/init' })
   }
 })

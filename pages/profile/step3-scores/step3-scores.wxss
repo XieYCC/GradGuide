@@ -1,4 +1,4 @@
-@import "../../styles/profile-step.wxss";
+@import "/styles/profile-step.wxss";
 
 /* step3: 多段输入(学校/项目/绩点) + picker。
    所有表单原语已在共享文件，本页无额外样式。 */

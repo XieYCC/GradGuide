@@ -58,6 +58,6 @@ Page({
   },
 
   goToProfile() {
-    wx.navigateTo({ url: '/pages/profile-step1/profile-step1' })
+    wx.navigateTo({ url: '/pages/profile/step1-school/step1-school' })
   }
 })

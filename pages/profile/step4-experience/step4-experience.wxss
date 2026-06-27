@@ -1,4 +1,4 @@
-@import "../../styles/profile-step.wxss";
+@import "/styles/profile-step.wxss";
 
 /* step4: 科研/实习经历 (输入行 + picker + 添加)。
    表单原语已在共享文件。header/footer 默认值即本页所需。 */

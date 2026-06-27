@@ -31,6 +31,6 @@ Page({
     } catch (err) {
       console.error('[saveProfile]', err)
     }
-    wx.navigateTo({ url: '/pages/profile-step2/profile-step2' })
+    wx.navigateTo({ url: '/pages/profile/step2-grad/step2-grad' })
   }
 })

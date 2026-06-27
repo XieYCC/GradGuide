@@ -2,6 +2,16 @@
 const { classifyProgram } = require('../../utils/util');
 const app = getApp();
 
+// Canvas 颜色集中管理(令牌系统对 Canvas 无效,故抽常量方便协作者改色)
+const COLORS = {
+  grid: '#e4e4e4',
+  label: '#5c5c5c',
+  user: '#2e5d50',
+  userFill: 'rgba(46,93,80,0.22)',
+  bench: '#c98a4b',
+  benchFill: 'rgba(201,138,75,0.12)',
+};
+
 function calcUserDimensions(profile) {
   if (!profile) return [60, 60, 0, 0, 0, 0, 0];
 
@@ -62,6 +72,23 @@ Page({
     this.drawRadarAnimated();
   },
 
+  onHide() {
+    this._cleanupRadar();
+  },
+
+  onUnload() {
+    this._cleanupRadar();
+  },
+
+  // 清理雷达动画定时器,避免页面销毁后回调报错 + _radarAnimating 死锁
+  _cleanupRadar() {
+    if (this._radarTimer) {
+      clearTimeout(this._radarTimer);
+      this._radarTimer = null;
+    }
+    this._radarAnimating = false;
+  },
+
   async onPullDownRefresh() {
     this.calcDimensionsFromProfile();
     await this.loadBenchmarks();
@@ -83,7 +110,15 @@ Page({
     this.renderDimensions();
 
     const { calcScore } = require('../../utils/util');
-    const scoreState = {
+    const compositeScore = calcScore(this._buildScoreState(profile));
+    this.setData({ compositeDesc: this._buildScoreDesc(profile) });
+    this._countUp('compositeScore', compositeScore, 600);
+    this.setData({ profileTags: this._buildProfileTags(profile) });
+  },
+
+  // 构建评分入参(供 calcScore)
+  _buildScoreState(profile) {
+    return {
       gpa: profile.gpa || 0,
       toefl: profile.toefl || 0,
       gre: profile.gre || 0,
@@ -92,18 +127,21 @@ Page({
       internCount: (profile.internships || []).length,
       awardCount: 0
     };
-    const compositeScore = calcScore(scoreState);
-    const descPieces = [];
-    if (profile.gpa && profile.gpa >= 3.5) descPieces.push(`GPA ${profile.gpa} 具有竞争力`);
-    else if (profile.gpa && profile.gpa < 3.0) descPieces.push('GPA 偏低，建议提升');
-    if (!profile.toefl && !profile.gre) descPieces.push('标化成绩未填写');
-    if (profile.internships && profile.internships.length >= 2) descPieces.push(`${profile.internships.length}段实习不错`);
-    if (profile.research && profile.research.length > 0) descPieces.push(`${profile.research.length}段科研经历`);
-    this.setData({
-      compositeDesc: descPieces.length > 0 ? descPieces.join('；') : '填写更多档案信息获取精准诊断'
-    });
-    this._countUp('compositeScore', compositeScore, 600);
+  },
 
+  // 拼接综合评分描述文案(产品文案与算分分离)
+  _buildScoreDesc(profile) {
+    const pieces = [];
+    if (profile.gpa && profile.gpa >= 3.5) pieces.push(`GPA ${profile.gpa} 具有竞争力`);
+    else if (profile.gpa && profile.gpa < 3.0) pieces.push('GPA 偏低，建议提升');
+    if (!profile.toefl && !profile.gre) pieces.push('标化成绩未填写');
+    if (profile.internships && profile.internships.length >= 2) pieces.push(`${profile.internships.length}段实习不错`);
+    if (profile.research && profile.research.length > 0) pieces.push(`${profile.research.length}段科研经历`);
+    return pieces.length > 0 ? pieces.join('；') : '填写更多档案信息获取精准诊断';
+  },
+
+  // 构建档案标签(最多 6 个)
+  _buildProfileTags(profile) {
     const tags = [];
     if (profile.schoolLevel) tags.push(profile.schoolLevel);
     if (profile.gpa) tags.push(`GPA ${profile.gpa}`);
@@ -115,7 +153,7 @@ Page({
     if (profile.research) {
       profile.research.forEach(r => { if (r.name) tags.push(r.name); });
     }
-    this.setData({ profileTags: tags.slice(0, 6) });
+    return tags.slice(0, 6);
   },
 
   renderDimensions() {
@@ -145,6 +183,8 @@ Page({
   },
 
   _countUp(key, target, duration) {
+    // 已达终值则跳过,避免 onShow/onProfileReady 重复触发时数字从 0 重数
+    if (this.data[key] === target) return;
     if (this._countUpTimers && this._countUpTimers[key]) {
       clearInterval(this._countUpTimers[key]);
     }
@@ -208,6 +248,8 @@ Page({
     const { userData, benchByTier, indicators } = this.data;
     const benchData = benchByTier[tier];
     const count = indicators.length;
+    // 角度公式抽函数(原本重复 4 次)
+    const angleOf = (i) => (Math.PI * 2 * i) / count - Math.PI / 2;
 
     const ctx = wx.createCanvasContext('radarCanvas');
     const width = 300, height = 300;
@@ -218,7 +260,7 @@ Page({
 
     // 顶点终位坐标
     const vertsOf = (dataArr) => dataArr.map((val, i) => {
-      const a = (Math.PI * 2 * i) / count - Math.PI / 2;
+      const a = angleOf(i);
       const r = (val / 100) * radius;
       return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
     });
@@ -228,33 +270,33 @@ Page({
       const r = (radius / 4) * l;
       ctx.beginPath();
       for (let i = 0; i < count; i++) {
-        const a = (Math.PI * 2 * i) / count - Math.PI / 2;
+        const a = angleOf(i);
         const x = cx + r * Math.cos(a), y = cy + r * Math.sin(a);
         if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
       }
       ctx.closePath();
-      ctx.setStrokeStyle('#e4e4e4');
+      ctx.setStrokeStyle(COLORS.grid);
       ctx.setLineWidth(1);
       ctx.stroke();
     }
 
     // — 辐线 —
     for (let i = 0; i < count; i++) {
-      const a = (Math.PI * 2 * i) / count - Math.PI / 2;
+      const a = angleOf(i);
       ctx.beginPath();
       ctx.moveTo(cx, cy);
       ctx.lineTo(cx + radius * Math.cos(a), cy + radius * Math.sin(a));
-      ctx.setStrokeStyle('#e4e4e4');
+      ctx.setStrokeStyle(COLORS.grid);
       ctx.setLineWidth(1);
       ctx.stroke();
     }
 
     // — 标签(始终显示) —
     ctx.setFontSize(11);
-    ctx.setFillStyle('#5c5c5c');
+    ctx.setFillStyle(COLORS.label);
     ctx.setTextAlign('center');
     for (let i = 0; i < count; i++) {
-      const a = (Math.PI * 2 * i) / count - Math.PI / 2;
+      const a = angleOf(i);
       ctx.fillText(indicators[i].name, cx + (radius + 20) * Math.cos(a), cy + (radius + 20) * Math.sin(a));
     }
 
@@ -309,22 +351,22 @@ Page({
 
     // 阶段 1: 黄框(基准)走马灯
     if (p < 7) {
-      tracePoly(benchVerts, p, 'rgba(201,138,75,0.12)', '#c98a4b', 2, true);
+      tracePoly(benchVerts, p, COLORS.benchFill, COLORS.bench, 2, true);
     } else {
       // 黄框完成 → 填充
-      fillPoly(benchVerts, 'rgba(201,138,75,0.12)', '#c98a4b', 2, true);
+      fillPoly(benchVerts, COLORS.benchFill, COLORS.bench, 2, true);
 
       // 阶段 2: 绿框(用户)走马灯
       const greenSeg = p - 7;
       if (greenSeg < 7) {
-        tracePoly(userVerts, greenSeg, 'rgba(46,93,80,0.22)', '#2e5d50', 2, false);
+        tracePoly(userVerts, greenSeg, COLORS.userFill, COLORS.user, 2, false);
       } else {
         // 绿框完成 → 填充 + 顶点圆点
-        fillPoly(userVerts, 'rgba(46,93,80,0.22)', '#2e5d50', 2, false);
+        fillPoly(userVerts, COLORS.userFill, COLORS.user, 2, false);
         for (let i = 0; i < count; i++) {
           ctx.beginPath();
           ctx.arc(userVerts[i].x, userVerts[i].y, 3, 0, Math.PI * 2);
-          ctx.setFillStyle('#2e5d50');
+          ctx.setFillStyle(COLORS.user);
           ctx.fill();
         }
       }

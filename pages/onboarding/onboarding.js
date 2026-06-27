@@ -44,7 +44,7 @@ Page({
   onStart() {
     wx.setStorageSync('hasOnboarded', true)
     app.globalData.hasOnboarded = true
-    wx.navigateTo({ url: '/pages/profile-init/profile-init' })
+    wx.navigateTo({ url: '/pages/profile/init/init' })
   },
 
   onSkip() {

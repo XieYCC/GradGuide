@@ -2,8 +2,8 @@ const assert = require('assert')
 const fs = require('fs')
 const path = require('path')
 
-const wxml = fs.readFileSync(path.resolve('D:/Users/XieYC/claude-workspace/GradGuide/miniprogram/pages/profile-step5/profile-step5.wxml'), 'utf8')
-const js = fs.readFileSync(path.resolve('D:/Users/XieYC/claude-workspace/GradGuide/miniprogram/pages/profile-step5/profile-step5.js'), 'utf8')
+const wxml = fs.readFileSync(path.resolve('D:/Users/XieYC/claude-workspace/GradGuide/miniprogram/pages/profile/step5-targets/step5-targets.wxml'), 'utf8')
+const js = fs.readFileSync(path.resolve('D:/Users/XieYC/claude-workspace/GradGuide/miniprogram/pages/profile/step5-targets/step5-targets.js'), 'utf8')
 
 // Check bindtap exists
 assert(wxml.includes('bindtap="toggleItem"'), 'toggleItem should be bound in wxml')

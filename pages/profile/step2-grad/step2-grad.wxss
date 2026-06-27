@@ -1,4 +1,4 @@
-@import "../../styles/profile-step.wxss";
+@import "/styles/profile-step.wxss";
 
 /* step2: 单选选项卡 (结构同 step1) */
 .profile-step-header { margin-bottom: var(--sp-8); }

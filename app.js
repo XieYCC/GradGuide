@@ -1,7 +1,8 @@
 // app.js
 App({
   globalData: {
-    userProfile: null,
+    userProfile: null,      // 纯档案字段(gpa/toefl/research...),不含微信资料
+    wxProfile: null,        // 微信资料(avatarUrl/nickName),与档案分离
     simState: null,
     isLoggedIn: false,
     hasOnboarded: false,
@@ -61,13 +62,13 @@ App({
       const userRes = await wx.cloud.callFunction({ name: 'getUser' })
       const user = userRes.result
 
-      // 合并而非覆盖:避免 getUser 返回的旧数据(因 saveProfile 尚未落库的竞态)
-      // 冲掉本地刚编辑但未保存的字段。云端字段优先,本地独有字段保留。
+      // 档案与微信资料分离存放,避免职责耦合
+      // userProfile 合并而非覆盖:防止 getUser 旧数据冲掉本地刚编辑的字段
       this.globalData.userProfile = {
         ...(this.globalData.userProfile || {}),
-        ...(user.profile || {}),
-        wxProfile: user.wxProfile || this.globalData.userProfile?.wxProfile || {}
+        ...(user.profile || {})
       }
+      this.globalData.wxProfile = user.wxProfile || this.globalData.wxProfile || {}
       this.globalData.isLoggedIn = true
       console.log('[getUser] profile loaded')
 

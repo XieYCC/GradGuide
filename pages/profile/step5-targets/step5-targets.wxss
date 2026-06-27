@@ -1,4 +1,4 @@
-@import "../../styles/profile-step.wxss";
+@import "/styles/profile-step.wxss";
 
 /* step5: 目标地区/专业 (chip 多选) + 优先级 picker。
    表单原语已在共享文件，本页仅定义 chip 与宽 picker。 */

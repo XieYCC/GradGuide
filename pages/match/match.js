@@ -29,6 +29,9 @@ Page({
   },
 
   onShow() {
+    // 已有匹配数据则不重算(避免切 tab 反复触发 matchPrograms 计算)
+    const has = this.data.reach.length || this.data.match.length || this.data.safety.length;
+    if (has && !this.data.loadError) return;
     this.loadData();
   },
 
@@ -177,6 +180,6 @@ Page({
   },
 
   goToProfile() {
-    wx.navigateTo({ url: '/pages/profile-step1/profile-step1' });
+    wx.navigateTo({ url: '/pages/profile/step1-school/step1-school' });
   }
 });

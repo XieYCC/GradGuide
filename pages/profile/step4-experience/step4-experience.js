@@ -48,10 +48,10 @@ Page({
     } catch (err) {
       console.error('[saveProfile]', err)
     }
-    wx.navigateTo({ url: '/pages/profile-step5/profile-step5' })
+    wx.navigateTo({ url: '/pages/profile/step5-targets/step5-targets' })
   },
 
   onSkip() {
-    wx.navigateTo({ url: '/pages/profile-step5/profile-step5' })
+    wx.navigateTo({ url: '/pages/profile/step5-targets/step5-targets' })
   }
 })

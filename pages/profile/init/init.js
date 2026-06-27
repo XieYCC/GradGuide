@@ -8,7 +8,7 @@ Page({
   },
 
   onLoad() {
-    const wxProfile = (app.globalData.userProfile && app.globalData.userProfile.wxProfile) || {}
+    const wxProfile = app.globalData.wxProfile || {}
     this.setData({
       avatarUrl: wxProfile.avatarUrl || '',
       nickName: wxProfile.nickName || '',
@@ -50,10 +50,7 @@ Page({
         throw new Error(res.result.message || '保存失败')
       }
 
-      app.globalData.userProfile = {
-        ...(app.globalData.userProfile || {}),
-        wxProfile
-      }
+      app.globalData.wxProfile = wxProfile
       app.globalData.isLoggedIn = true
 
       wx.showToast({ title: '保存成功', icon: 'success' })

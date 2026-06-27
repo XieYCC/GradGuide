@@ -2,10 +2,6 @@
 const { calcScore, calcTier, fmtDelta } = require('../../utils/util');
 const app = getApp();
 
-const baseline = { gpa: 3.0, toefl: 80, gre: 0, paper: false, research: false, intern: false, award: false };
-const baseScore = 53;
-const baseTier = { reach: 3, match: 8, safe: 4 };
-
 Page({
   data: {
     baseline: null,
@@ -41,8 +37,13 @@ Page({
   },
 
   onShow() {
-    this.loadTodos();
-    this.loadHistory();
+    // 节流:5s 内不重复拉取,避免 onLoad+onShow 连发与频繁切 tab 的浪费
+    const now = Date.now();
+    if (!this._lastLoadTs || now - this._lastLoadTs > 5000) {
+      this._lastLoadTs = now;
+      this.loadTodos();
+      this.loadHistory();
+    }
   },
 
   async loadBaseline() {
