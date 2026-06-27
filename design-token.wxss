@@ -127,28 +127,31 @@ page {
 
   /* 语义别名 */
   --radius-card:   var(--radius-xl);
-  --radius-btn:    var(--radius-md);
+  --radius-btn:    var(--radius-lg);
   --radius-tag:    var(--radius-full);
   --radius-input:  0;       /* 下划线输入风格，无圆角 */
 
   /* —— 卡片分层 (hero / main / list) ——
-     保留层级差异:主推大卡圆角更大、列表卡更小。每档内统一。 */
-  --radius-card-hero:  var(--radius-3xl);  /* 16px 概览/头图大卡 */
-  --radius-card-main:  var(--radius-xl);   /* 12px 主卡片(默认) */
-  --radius-card-list:  var(--radius-lg);   /* 10px 列表卡/小块 */
+     根据 DESIGN.md 优化:主推大卡圆角更大、更柔和现代感。
+     hero: 20px → 主卡: 16px → 列表卡: 14px */
+  --radius-card-hero:  40rpx;   /* 20px 概览/头图大卡 */
+  --radius-card-main:  32rpx;   /* 16px 主卡片(默认) */
+  --radius-card-list:  28rpx;   /* 14px 列表卡/小块 */
 
   /* —— 卡片内边距分层 —— */
   --pad-card-hero: var(--sp-6);   /* 24px 大卡 */
   --pad-card-main: var(--sp-5);   /* 20px 主卡 */
   --pad-card-list: var(--sp-4);   /* 16px 列表卡 */
 
-  /* —— 卡片阴影分层 —— */
-  --shadow-card:     0 2rpx 4rpx rgba(28, 28, 28, 0.06);   /* 列表卡:轻 */
-  --shadow-card-up:  0 4rpx 12rpx rgba(28, 28, 28, 0.08);  /* 主卡:中 */
-  --shadow-modal:    0 16rpx 48rpx rgba(28, 28, 28, 0.16); /* 弹窗:重 */
+  /* —— 卡片阴影分层 (DESIGN.md 柔和阴影系统) ——
+     克制的阴影：更小偏移，更大模糊，更低透明度，营造层次而非厚重感 */
+  --shadow-card:     0 2rpx 8rpx rgba(28, 28, 28, 0.04);   /* 列表卡: 极淡 */
+  --shadow-card-up:  0 4rpx 16rpx rgba(28, 28, 28, 0.06);  /* 主卡: 柔和 */
+  --shadow-card-hero: 0 6rpx 24rpx rgba(28, 28, 28, 0.08);  /* 大卡: 稍深 */
+  --shadow-modal:    0 16rpx 48rpx rgba(28, 28, 28, 0.12); /* 弹窗: 稍重 */
 
   /* —— 表单输入统一刻度 —— */
-  --radius-field:  var(--radius-md);   /* 8px 输入框/选择器圆角 */
+  --radius-field:  var(--radius-lg);   /* 10px → 增大输入框圆角 */
   --pad-field:     20rpx;              /* 10px 输入内边距 */
   --height-field:  88rpx;              /* 44px 输入高度 */
 

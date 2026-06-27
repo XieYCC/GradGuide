@@ -65,10 +65,10 @@
   line-height: 96rpx;
   padding: 0 var(--sp-3);
   box-sizing: border-box;
-  border: var(--border-1) solid var(--c-line-faint);
-  border-radius: var(--radius-lg);
+  border: none;                                 /* 移除边框 */
+  border-radius: var(--radius-btn);           /* 增大圆角 */
   font-size: var(--fs-subtitle);
-  background: var(--c-card);
+  background: var(--c-surface);                /* 用底色替代边框 */
 }
 .actions {
   display: flex;

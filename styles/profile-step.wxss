@@ -86,14 +86,16 @@
 }
 .profile-input {
   padding: var(--pad-field);
-  border: var(--border-1) solid var(--c-line);
-  border-radius: var(--radius-field);
+  border: none;                                 /* 移除边框 */
+  border-radius: var(--radius-btn);           /* 增大圆角 */
+  background: var(--c-surface);                /* 用底色替代边框 */
   font-size: var(--fs-body-md);
 }
 .profile-picker {
   padding: var(--pad-field);
-  border: var(--border-1) solid var(--c-line);
-  border-radius: var(--radius-field);
+  border: none;                                 /* 移除边框 */
+  border-radius: var(--radius-btn);           /* 增大圆角 */
+  background: var(--c-surface);                /* 用底色替代边框 */
   font-size: var(--fs-body);
   color: var(--c-ink-2);
   display: block;

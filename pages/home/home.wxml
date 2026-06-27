@@ -1,12 +1,18 @@
 <view class="home-page">
+  <!-- Hero 品牌标识 -->
   <view class="home-hero">
-    <text class="home-title">30s 急速预测</text>
-    <text class="home-desc">选方向和 GPA，立刻知道你能申什么档位</text>
+    <text class="home-hero-title">GradGuide</text>
+    <text class="home-hero-sub">留学选校 · 智能诊断 · AI 文书</text>
+    <text class="home-hero-desc">基于你的背景精准匹配海外研究生项目，一站式搞定选校、诊断、提升、文书</text>
   </view>
 
+  <!-- 30s 急速预测 -->
   <view class="predict-card">
+    <text class="predict-card-title">30s 急速预测</text>
+    <text class="predict-card-desc">填 GPA 和专业方向，立刻知道你能申什么档位</text>
+
     <text class="field-label">你的 GPA</text>
-    <input class="gpa-input" type="text" value="{{gpa}}" bindinput="onGpaInput" placeholder="3.4" />
+    <input class="gpa-input" type="digit" value="{{gpa}}" bindinput="onGpaInput" placeholder="例: 3.4" />
 
     <text class="field-label field-label-gap">专业方向</text>
     <view class="major-row">
@@ -17,6 +23,7 @@
     <button class="predict-btn" bindtap="onPredict">预测</button>
   </view>
 
+  <!-- 预测结果 -->
   <view class="result-card fade-in" wx:if="{{showResult}}">
     <text class="result-title">预测结果</text>
     <text class="result-score">综合评分 {{score}}</text>
@@ -35,11 +42,5 @@
       </view>
     </view>
     <button class="match-btn" bindtap="goToMatch">查看完整选校</button>
-  </view>
-
-  <view class="guide-card">
-    <text class="guide-title">想要更精准的选校推荐？</text>
-    <text class="guide-desc">完成五步深度诊断，获取个性化选校、雷达图和提升方案</text>
-    <button class="guide-btn" bindtap="goToProfile">{{hasProfile ? '重新评估' : '完成五步深度诊断 →'}}</button>
   </view>
 </view>

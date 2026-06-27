@@ -1,40 +1,46 @@
 // app.js
+const CacheManager = require('./utils/cache-manager.js')
+
 App({
   globalData: {
-    userProfile: null,      // 纯档案字段(gpa/toefl/research...),不含微信资料
-    wxProfile: null,        // 微信资料(avatarUrl/nickName),与档案分离
+    userProfile: null,
+    wxProfile: null,
     simState: null,
     isLoggedIn: false,
     hasOnboarded: false,
-    // 胶囊安全区信息：未来切换 navigationStyle: custom 时各页顶部避让用
-    //   customTop = statusBarHeight + 胶囊占位高度(约 menuButton.height + (menuButton.top-statusBarHeight)*2)
     statusBarHeight: 0,
     menuButton: null,
-    // 减弱动效偏好(用户在「我的」设置中开关，持久化于 storage)。
-    // 小程序无法读取系统 prefers-reduced-motion，故由用户显式控制。
-    // 各页面根节点据此绑定 class="reduced-motion" 触发 app.wxss 兜底样式。
-    reducedMotion: false
+    reducedMotion: false,
+    // 预加载数据缓存：登录后静默拉取，切页秒开
+    _cache: {
+      matchResult: null,
+      benchmarks: null,
+      favorites: null,
+      profile: null,
+      wxProfile: null,
+      _timestamps: {}
+    }
   },
 
-  // 读取减弱动效偏好(供页面根节点 class 绑定用)
+  // 登录就绪回调队列：页面加载时如果 isLoggedIn=false，注册回调等待通知
+  _loginCallbacks: [],
+
   refreshReducedMotion() {
     this.globalData.reducedMotion = !!wx.getStorageSync('reducedMotion')
     return this.globalData.reducedMotion
   },
 
-  // 设置减弱动效偏好(「我的」页开关调用)
   setReducedMotion(on) {
     this.globalData.reducedMotion = !!on
     wx.setStorageSync('reducedMotion', !!on)
   },
 
   onLaunch() {
-    // 初始化云开发
-    wx.cloud.init({
-      env: 'cloud1-d7guh4c7wcad0635c'
-    })
+    wx.cloud.init({ env: 'cloud1-d7guh4c7wcad0635c' })
 
-    // 预置胶囊/状态栏安全区信息（当前用默认导航栏，预留 custom 切换）
+    // 初始化缓存管理器
+    this.cacheManager = new CacheManager(this)
+
     try {
       const sys = wx.getWindowInfo()
       this.globalData.statusBarHeight = sys.statusBarHeight || 0
@@ -43,18 +49,41 @@ App({
       console.warn('[safe-area] init failed', e)
     }
 
-    // 读取减弱动效偏好
     this.refreshReducedMotion()
-    // 检查是否已完成引导
+
     const hasOnboarded = wx.getStorageSync('hasOnboarded')
     this.globalData.hasOnboarded = !!hasOnboarded
-    // 如果已引导过，登录加载数据
     if (hasOnboarded) {
       this.loginAndLoad()
     }
   },
 
   async loginAndLoad() {
+    // 先尝试 getUserBundle（合并接口），3 秒超时快速 fallback
+    try {
+      const result = await Promise.race([
+        wx.cloud.callFunction({ name: 'getUserBundle' }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000))
+      ])
+      const bundle = result.result
+      if (bundle && bundle.success) {
+        this.cacheManager.setBundle(bundle)
+        this.globalData.userProfile = bundle.profile
+        this.globalData.wxProfile = bundle.wxProfile
+        this.globalData.isLoggedIn = true
+        this._notifyPagesReady()
+        console.log('[bundle] loaded from cloud')
+        return
+      }
+    } catch (e) {
+      console.warn('[loginAndLoad] getUserBundle failed/timeout, fallback to legacy:', e.message)
+    }
+
+    // fallback：走 legacy 登录（login + getUser，已部署，必成功）
+    await this._legacyLogin()
+  },
+
+  async _legacyLogin() {
     try {
       const loginRes = await wx.cloud.callFunction({ name: 'login' })
       console.log('[login]', loginRes.result)
@@ -62,8 +91,6 @@ App({
       const userRes = await wx.cloud.callFunction({ name: 'getUser' })
       const user = userRes.result
 
-      // 档案与微信资料分离存放,避免职责耦合
-      // userProfile 合并而非覆盖:防止 getUser 旧数据冲掉本地刚编辑的字段
       this.globalData.userProfile = {
         ...(this.globalData.userProfile || {}),
         ...(user.profile || {})
@@ -72,18 +99,99 @@ App({
       this.globalData.isLoggedIn = true
       console.log('[getUser] profile loaded')
 
-      // 通知各页面数据已就绪
-      const pages = getCurrentPages()
-      pages.forEach(page => {
-        if (typeof page.onProfileReady === 'function') {
-          page.onProfileReady()
-        }
-      })
+      // 等待关键预加载完成，再通知页面（确保回调触发时缓存已就绪）
+      await Promise.all([
+        this._preloadMatchResult(user),
+        this._preloadBenchmarks()
+      ])
+      this._preloadFavorites()  // 收藏不重要，后台静默
+
+      // 通知页面：此时缓存一定有数据
+      this._notifyPagesReady()
     } catch (err) {
-      console.error('[loginAndLoad]', err)
-      // 降级：用空 profile 继续使用，不阻塞用户
+      console.error('[legacyLogin]', err)
       this.globalData.userProfile = {}
       this.globalData.isLoggedIn = false
+    }
+  },
+
+  async _preloadMatchResult(user) {
+    try {
+      if (user && user.matchResult && user.matchResult.reach) {
+        this.cacheManager.set('matchResult', user.matchResult)
+        console.log('[preload] matchResult from user record')
+        return
+      }
+      const res = await wx.cloud.callFunction({ name: 'matchPrograms' })
+      this.cacheManager.set('matchResult', res.result)
+      console.log('[preload] matchResult calculated')
+    } catch (err) {
+      console.warn('[preload] matchResult failed', err)
+    }
+  },
+
+  async _preloadBenchmarks() {
+    try {
+      const res = await wx.cloud.callFunction({ name: 'getBenchmarks' })
+      this.cacheManager.set('benchmarks', res.result.benchmarks || {})
+      console.log('[preload] benchmarks loaded')
+    } catch (err) {
+      console.warn('[preload] benchmarks failed', err)
+    }
+  },
+
+  async _preloadFavorites() {
+    try {
+      const res = await wx.cloud.callFunction({ name: 'getFavorites' })
+      this.cacheManager.set('favorites', res.result.list || [])
+      console.log('[preload] favorites loaded')
+    } catch (err) {
+      console.warn('[preload] favorites failed', err)
+    }
+  },
+
+  // 通知当前页面 profile 已就绪（login 完成后）
+  _notifyPagesReady() {
+    // 通知已加载的页面
+    const pages = getCurrentPages()
+    pages.forEach(page => {
+      if (typeof page.onProfileReady === 'function') {
+        page.onProfileReady()
+      }
+    })
+    // 通知等待队列中的回调（页面 onLoad 时注册的）
+    const cbs = this._loginCallbacks
+    this._loginCallbacks = []
+    cbs.forEach(cb => cb())
+  },
+
+  /**
+   * 页面调用：如果登录已完成立即返回 true，否则注册回调等待
+   * @param {Function} cb - 登录完成后的回调
+   * @returns {boolean} 是否已登录
+   */
+  waitForLogin(cb) {
+    if (this.globalData.isLoggedIn) {
+      return true
+    }
+    this._loginCallbacks.push(cb)
+    return false
+  },
+
+  // === 对外缓存接口 ===
+  getCachedMatchResult() { return this.cacheManager.get('matchResult') },
+  getCachedBenchmarks() { return this.cacheManager.get('benchmarks') },
+  getCachedFavorites() { return this.cacheManager.get('favorites') },
+
+  // 档案更新后刷新匹配缓存
+  async refreshMatchCache() {
+    try {
+      const res = await wx.cloud.callFunction({ name: 'matchPrograms' })
+      this.cacheManager.set('matchResult', res.result)
+      return res.result
+    } catch (err) {
+      console.warn('[refreshMatchCache] failed', err)
+      return null
     }
   }
 })

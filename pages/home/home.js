@@ -15,6 +15,10 @@ Page({
     this.initFromCache()
   },
 
+  onShow() {
+    this.initFromCache()
+  },
+
   onProfileReady() {
     this.initFromCache()
   },
@@ -23,7 +27,8 @@ Page({
     const profile = app.globalData.userProfile || {}
     this.setData({
       hasProfile: !!(profile.school || profile.gpa),
-      selectedMajor: profile.targetMajors && profile.targetMajors[0] ? profile.targetMajors[0] : 'CS'
+      selectedMajor: profile.targetMajors && profile.targetMajors[0] ? profile.targetMajors[0] : 'CS',
+      gpa: profile.gpa ? String(profile.gpa) : ''
     })
   },
 
@@ -37,6 +42,9 @@ Page({
 
   onPredict() {
     const gpa = parseFloat(this.data.gpa) || 0
+    const major = this.data.selectedMajor
+
+    // 先做本地快速预测
     const state = {
       gpa,
       toefl: 98,
@@ -51,6 +59,15 @@ Page({
     const baseTier = { reach: 5, match: 10, safe: 6 }
     const tier = calcTier(score, baseScore, baseTier)
     this.setData({ score, tier, showResult: true })
+
+    // 预填 GPA 和 major 到 globalData，profile 页面会自动读取
+    if (gpa > 0) {
+      app.globalData.userProfile = {
+        ...app.globalData.userProfile,
+        gpa,
+        targetMajors: app.globalData.userProfile.targetMajors || [major]
+      }
+    }
   },
 
   goToMatch() {
@@ -58,6 +75,15 @@ Page({
   },
 
   goToProfile() {
+    // 把 home 页填的 GPA 和 major 带过去
+    const gpa = parseFloat(this.data.gpa) || 0
+    if (gpa > 0) {
+      app.globalData.userProfile = {
+        ...app.globalData.userProfile,
+        gpa,
+        targetMajors: app.globalData.userProfile.targetMajors || [this.data.selectedMajor]
+      }
+    }
     wx.navigateTo({ url: '/pages/profile/step1-school/step1-school' })
   }
 })

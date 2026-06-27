@@ -20,13 +20,16 @@ Page({
       wx.showToast({ title: '请选择学校层次', icon: 'none' })
       return
     }
-    const school = this.data.selected.replace(/ ·.*$/, '')
-    app.globalData.userProfile = { ...app.globalData.userProfile, schoolLevel: this.data.selected, school }
+    const schoolLevel = this.data.selected
+    // school 字段存储简短名：如 "985"、"211"、"双非一本"
+    const school = schoolLevel.replace(/ ·.*$/, '')
+    // 只有当 school 与 schoolLevel 不同时才存 school，避免模板重复显示
+    app.globalData.userProfile = { ...app.globalData.userProfile, schoolLevel, school }
     // 同步持久化 schoolLevel 与 school，避免本地有 school 而云端缺失
     try {
       await wx.cloud.callFunction({
         name: 'saveProfile',
-        data: { profile: { schoolLevel: this.data.selected, school } }
+        data: { profile: { schoolLevel, school } }
       })
     } catch (err) {
       console.error('[saveProfile]', err)

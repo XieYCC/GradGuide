@@ -1,81 +1,87 @@
 <!-- 短板诊断 -->
 <view class="page-diagnosis">
 
-  <view class="diag-header">
-    <view>
-      <text class="h-lg">你的短板诊断</text>
-      <text class="diag-sub">和目标项目录取者的平均水准对比，看看差距在哪里</text>
-    </view>
+  <!-- 中央 Loading Spinner -->
+  <view class="page-loading" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
   </view>
 
-  <!-- 雷达图 + 右侧诊断 -->
-  <view class="diag-grid">
-    <view class="card diag-radar-card">
-      <text class="h-md diag-radar-title">六维能力雷达</text>
-      <canvas canvas-id="radarCanvas" class="radar-canvas"></canvas>
-      <view class="radar-legend">
-        <view class="radar-legend-item">
-          <view class="radar-legend-dot" style="background:#2e5d50"></view>
-          <text>你的当前能力</text>
+  <block wx:if="{{!loading}}">
+    <view class="diag-header">
+      <view>
+        <text class="h-lg">你的短板诊断</text>
+        <text class="diag-sub">和目标项目录取者的平均水准对比，看看差距在哪里</text>
+      </view>
+    </view>
+
+    <!-- 雷达图 + 右侧诊断 -->
+    <view class="diag-grid">
+      <view class="card diag-radar-card">
+        <text class="h-md diag-radar-title">六维能力雷达</text>
+        <canvas canvas-id="radarCanvas" class="radar-canvas"></canvas>
+        <view class="radar-legend">
+          <view class="radar-legend-item">
+            <view class="radar-legend-dot" style="background:#2e5d50"></view>
+            <text>你的当前能力</text>
+          </view>
+          <view class="radar-legend-item">
+            <view class="radar-legend-dot" style="background:#c98a4b"></view>
+            <text>目标档位平均</text>
+          </view>
         </view>
-        <view class="radar-legend-item">
-          <view class="radar-legend-dot" style="background:#c98a4b"></view>
-          <text>目标档位平均</text>
+      </view>
+
+      <view class="diag-right">
+        <view class="diag-score-card">
+          <text class="diag-score-label">综合评分</text>
+          <view class="diag-score-row">
+            <text class="diag-score-num">{{compositeScore || 0}}</text>
+            <text class="diag-score-total">/100</text>
+          </view>
+          <text class="diag-score-desc" wx:if="{{compositeDesc}}">
+            <text>{{compositeDesc}}</text>
+          </text>
+          <view class="diag-score-bar">
+            <view class="diag-score-fill" style="width:{{compositeScore || 0}}%"></view>
+          </view>
+        </view>
+
+        <view class="card diag-strength-card">
+          <text class="h-md diag-strength-title">档案快照</text>
+          <view class="diag-strength-tags" wx:if="{{profileTags.length > 0}}">
+            <text class="tag tag-accent" wx:for="{{profileTags}}" wx:key="*this">{{item}}</text>
+          </view>
+          <text class="diag-detail-note" wx:else>填写档案后这里会展示你的背景特征</text>
         </view>
       </view>
     </view>
 
-    <view class="diag-right">
-      <!-- 总评 -->
-      <view class="diag-score-card">
-        <text class="diag-score-label">综合评分</text>
-        <view class="diag-score-row">
-          <text class="diag-score-num">{{compositeScore || 0}}</text>
-          <text class="diag-score-total">/100</text>
-        </view>
-        <text class="diag-score-desc" wx:if="{{compositeDesc}}">
-          <text>{{compositeDesc}}</text>
-        </text>
-        <view class="diag-score-bar">
-          <view class="diag-score-fill" style="width:{{compositeScore || 0}}%"></view>
-        </view>
-      </view>
-
-      <!-- 优势标签 -->
-      <view class="card diag-strength-card">
-        <text class="h-md diag-strength-title">档案快照</text>
-        <view class="diag-strength-tags" wx:if="{{profileTags.length > 0}}">
-          <text class="tag tag-accent" wx:for="{{profileTags}}" wx:key="*this">{{item}}</text>
-        </view>
-        <text class="diag-detail-note" wx:else>填写档案后这里会展示你的背景特征</text>
-      </view>
-    </view>
-  </view>
-
-  <!-- 详细维度对比 -->
-  <view class="card diag-detail-card">
-    <text class="h-md diag-detail-title">详细维度对比（对标匹配档）</text>
-    <view class="diag-detail-list">
-      <view class="diag-detail-item stagger-in" style="--i:{{index}}" wx:for="{{dimensions}}" wx:key="name">
-        <view class="diag-detail-head">
-          <text class="diag-detail-name">{{item.name}} <text class="diag-detail-diff" style="color:{{item.color}}">{{item.diff}}</text></text>
-          <text class="diag-detail-val">你: {{item.userVal}} / 平均: {{item.benchVal}}</text>
-        </view>
-        <view class="diag-detail-bar">
-          <view class="diag-detail-fill" style="width:{{item.userPercent}}%"></view>
-          <view class="diag-detail-bench" style="left:{{item.benchPercent}}%"></view>
+    <!-- 详细维度对比 -->
+    <view class="card diag-detail-card">
+      <text class="h-md diag-detail-title">详细维度对比（对标匹配档）</text>
+      <view class="diag-detail-list">
+        <view class="diag-detail-item stagger-in" style="--i:{{index}}" wx:for="{{dimensions}}" wx:key="name">
+          <view class="diag-detail-head">
+            <text class="diag-detail-name">{{item.name}} <text class="diag-detail-diff" style="color:{{item.color}}">{{item.diff}}</text></text>
+            <text class="diag-detail-val">你: {{item.userVal}} / 平均: {{item.benchVal}}</text>
+          </view>
+          <view class="diag-detail-bar">
+            <view class="diag-detail-fill" style="width:{{item.userPercent}}%"></view>
+            <view class="diag-detail-bench" style="left:{{item.benchPercent}}%"></view>
+          </view>
         </view>
       </view>
+      <text class="diag-detail-note">绿色 = 你的当前水平 ｜ 棕色竖线 = 目标档位录取者均值</text>
     </view>
-    <text class="diag-detail-note">绿色 = 你的当前水平 ｜ 棕色竖线 = 目标档位录取者均值</text>
-  </view>
 
-  <!-- 引导 -->
-  <view class="diag-cta">
-    <view class="diag-cta-text">
-      <text class="diag-cta-title">想知道把短板补到什么程度，可以解锁多少新学校？</text>
-      <text class="diag-cta-desc">下一步：打开提升模拟器，拖动滑块实时看变化</text>
+    <!-- 引导 -->
+    <view class="diag-cta">
+      <view class="diag-cta-text">
+        <text class="diag-cta-title">想知道把短板补到什么程度，可以解锁多少新学校？</text>
+        <text class="diag-cta-desc">下一步：打开提升模拟器，拖动滑块实时看变化</text>
+      </view>
+      <button class="btn btn-light" bindtap="goToSimulator">前往提升模拟器</button>
     </view>
-    <button class="btn btn-light" bindtap="goToSimulator">前往提升模拟器</button>
-  </view>
+  </block>
 </view>

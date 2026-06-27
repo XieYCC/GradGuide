@@ -128,7 +128,7 @@
   color: var(--c-primary);
   font-size: var(--fs-h-md);
   font-weight: var(--fw-bold);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);            /* 增大圆角 */
   margin-bottom: var(--sp-2);
 }
 
@@ -199,8 +199,9 @@
   flex: 1;
   padding: 20rpx;
   text-align: center;
-  border-radius: var(--radius-md);
-  border: var(--border-1) solid var(--c-line);
+  border-radius: var(--radius-lg);            /* 增大圆角 */
+  border: none;                                /* 移除边框 */
+  background: var(--c-surface);               /* 用底色替代边框 */
   font-size: var(--fs-body-sm);
   color: var(--c-ink-2);
 }
@@ -232,7 +233,7 @@
 .essay-form-preview {
   padding: var(--sp-4);
   background: var(--c-surface);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-card-list);     /* 增大圆角 */
   margin-bottom: var(--sp-5);
 }
 

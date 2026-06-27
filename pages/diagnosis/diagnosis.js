@@ -1,8 +1,7 @@
 // pages/diagnosis/diagnosis.js
-const { classifyProgram } = require('../../utils/util');
 const app = getApp();
 
-// Canvas 颜色集中管理(令牌系统对 Canvas 无效,故抽常量方便协作者改色)
+// Canvas 颜色集中管理
 const COLORS = {
   grid: '#e4e4e4',
   label: '#5c5c5c',
@@ -37,7 +36,6 @@ function calcUserDimensions(profile) {
   const research = profile.research || [];
   const dimResearch = Math.min(100, research.length * 25);
 
-  const is985orC9 = profile.schoolLevel && profile.schoolLevel.includes('985');
   const hasPaper = research.some(r => r.type && r.type.includes('论文'));
   const dimPaper = hasPaper ? 75 : research.length > 0 ? 30 : 0;
 
@@ -46,6 +44,7 @@ function calcUserDimensions(profile) {
 
 Page({
   data: {
+    loading: true,
     benchTier: 'match',
     userData: [60, 60, 0, 0, 0, 0, 0],
     benchByTier: {
@@ -64,12 +63,23 @@ Page({
   },
 
   onLoad() {
-    this.loadBenchmarks();
+    // 如果登录已完成，直接加载；否则注册回调等待登录完成
+    if (!app.waitForLogin(() => this._load())) {
+      console.log('[diagnosis] waiting for login...')
+    } else {
+      this._load()
+    }
   },
 
   onShow() {
-    this.calcDimensionsFromProfile();
-    this.drawRadarAnimated();
+    // 每次切回此页，重新读缓存并渲染雷达（带入场动画）
+    if (app.globalData.isLoggedIn) {
+      this._load();
+    }
+  },
+
+  onProfileReady() {
+    this._load();
   },
 
   onHide() {
@@ -80,7 +90,6 @@ Page({
     this._cleanupRadar();
   },
 
-  // 清理雷达动画定时器,避免页面销毁后回调报错 + _radarAnimating 死锁
   _cleanupRadar() {
     if (this._radarTimer) {
       clearTimeout(this._radarTimer);
@@ -89,18 +98,23 @@ Page({
     this._radarAnimating = false;
   },
 
-  async onPullDownRefresh() {
-    this.calcDimensionsFromProfile();
-    await this.loadBenchmarks();
-    wx.stopPullDownRefresh();
-  },
+  // === 核心：统一加载入口 ===
+  _load() {
+    // 1. 优先读缓存
+    const cached = app.getCachedBenchmarks();
+    if (cached && Object.keys(cached).length > 0) {
+      console.log('[diagnosis] render from cache');
+      this.setData({ benchByTier: cached, loading: false });
+      this.calcDimensionsFromProfile();
+      this.drawRadarAnimated();
+      return;
+    }
 
-  // app.js 登录完成后回调——loadBenchmarks 已在 onLoad 触发，
-  // 若 onProfileReady 晚于 loadBenchmarks 回调，用 _radarAnimating 防重播
-  onProfileReady() {
-    if (this._radarAnimating) return;
-    this.calcDimensionsFromProfile();
-    this.drawRadarAnimated();
+    // 2. 缓存 miss → 调云函数
+    if (app.globalData.isLoggedIn) {
+      this.loadBenchmarks();
+    }
+    // 否则保持 loading=true，等 onProfileReady 回调
   },
 
   calcDimensionsFromProfile() {
@@ -116,7 +130,6 @@ Page({
     this.setData({ profileTags: this._buildProfileTags(profile) });
   },
 
-  // 构建评分入参(供 calcScore)
   _buildScoreState(profile) {
     return {
       gpa: profile.gpa || 0,
@@ -129,7 +142,6 @@ Page({
     };
   },
 
-  // 拼接综合评分描述文案(产品文案与算分分离)
   _buildScoreDesc(profile) {
     const pieces = [];
     if (profile.gpa && profile.gpa >= 3.5) pieces.push(`GPA ${profile.gpa} 具有竞争力`);
@@ -140,7 +152,6 @@ Page({
     return pieces.length > 0 ? pieces.join('；') : '填写更多档案信息获取精准诊断';
   },
 
-  // 构建档案标签(最多 6 个)
   _buildProfileTags(profile) {
     const tags = [];
     if (profile.schoolLevel) tags.push(profile.schoolLevel);
@@ -183,7 +194,6 @@ Page({
   },
 
   _countUp(key, target, duration) {
-    // 已达终值则跳过,避免 onShow/onProfileReady 重复触发时数字从 0 重数
     if (this.data[key] === target) return;
     if (this._countUpTimers && this._countUpTimers[key]) {
       clearInterval(this._countUpTimers[key]);
@@ -212,9 +222,6 @@ Page({
 
   /* =========================================================
      雷达图:走马灯逐边绘制
-     先沿基准(黄)七边形边缘逐边画线，画完填充；
-     再沿用户(绿)七边形边缘逐边画线，画完填充。
-     14 边 × 4 帧/边 = 56 帧 × 16ms ≈ 900ms
      ========================================================= */
 
   drawRadarAnimated() {
@@ -225,13 +232,13 @@ Page({
     const TOTAL = 56;
     let frame = 0;
     const animate = () => {
-      const progress = (frame / TOTAL) * 14;  // 0~14
+      const progress = (frame / TOTAL) * 14;
       this.drawRadar(this.data.benchTier, progress);
       frame++;
       if (frame <= TOTAL) {
         this._radarTimer = setTimeout(animate, 16);
       } else {
-        this.drawRadar(this.data.benchTier, 14);  // 终态完整
+        this.drawRadar(this.data.benchTier, 14);
         this._radarAnimating = false;
         this._radarTimer = null;
       }
@@ -239,16 +246,11 @@ Page({
     animate();
   },
 
-  /* 雷达图绘制
-     progress — 0~7 黄框走马灯, 7~14 绿框走马灯, 14=完整
-     非动画调用传 14
-  */
   drawRadar(tier, progress) {
     const p = progress != null ? progress : 14;
     const { userData, benchByTier, indicators } = this.data;
     const benchData = benchByTier[tier];
     const count = indicators.length;
-    // 角度公式抽函数(原本重复 4 次)
     const angleOf = (i) => (Math.PI * 2 * i) / count - Math.PI / 2;
 
     const ctx = wx.createCanvasContext('radarCanvas');
@@ -258,14 +260,13 @@ Page({
 
     ctx.clearRect(0, 0, width, height);
 
-    // 顶点终位坐标
     const vertsOf = (dataArr) => dataArr.map((val, i) => {
       const a = angleOf(i);
       const r = (val / 100) * radius;
       return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
     });
 
-    // — 网格 —
+    // 网格
     for (let l = 1; l <= 4; l++) {
       const r = (radius / 4) * l;
       ctx.beginPath();
@@ -280,7 +281,7 @@ Page({
       ctx.stroke();
     }
 
-    // — 辐线 —
+    // 辐线
     for (let i = 0; i < count; i++) {
       const a = angleOf(i);
       ctx.beginPath();
@@ -291,7 +292,7 @@ Page({
       ctx.stroke();
     }
 
-    // — 标签(始终显示) —
+    // 标签
     ctx.setFontSize(11);
     ctx.setFillStyle(COLORS.label);
     ctx.setTextAlign('center');
@@ -300,7 +301,6 @@ Page({
       ctx.fillText(indicators[i].name, cx + (radius + 20) * Math.cos(a), cy + (radius + 20) * Math.sin(a));
     }
 
-    // 走马灯:沿多边形边缘逐边画线 + 实时填充(已画部分闭合回起点再 fill)
     const tracePoly = (verts, seg, fillColor, strokeColor, lineWidth, isDash) => {
       const done = Math.min(Math.floor(seg), count);
       const frac = seg - Math.floor(seg);
@@ -310,18 +310,12 @@ Page({
       for (let i = 0; i < done; i++) {
         ctx.lineTo(verts[(i + 1) % count].x, verts[(i + 1) % count].y);
       }
-      let endX, endY;
       if (done < count && frac > 0) {
         const from = verts[done];
         const to = verts[(done + 1) % count];
-        endX = from.x + (to.x - from.x) * frac;
-        endY = from.y + (to.y - from.y) * frac;
-        ctx.lineTo(endX, endY);
-      } else {
-        endX = verts[done % count].x;
-        endY = verts[done % count].y;
+        ctx.lineTo(from.x + (to.x - from.x) * frac, from.y + (to.y - from.y) * frac);
       }
-      ctx.closePath();  // 闭合回起点 → 形成可填充区域
+      ctx.closePath();
       ctx.setFillStyle(fillColor);
       ctx.fill();
       ctx.setStrokeStyle(strokeColor);
@@ -331,7 +325,6 @@ Page({
       if (isDash) ctx.setLineDash([]);
     };
 
-    // 完整多边形(边 + 填充)
     const fillPoly = (verts, fillColor, strokeColor, lineWidth, isDash) => {
       ctx.beginPath();
       ctx.moveTo(verts[0].x, verts[0].y);
@@ -349,19 +342,15 @@ Page({
     const benchVerts = vertsOf(benchData);
     const userVerts = vertsOf(userData);
 
-    // 阶段 1: 黄框(基准)走马灯
     if (p < 7) {
       tracePoly(benchVerts, p, COLORS.benchFill, COLORS.bench, 2, true);
     } else {
-      // 黄框完成 → 填充
       fillPoly(benchVerts, COLORS.benchFill, COLORS.bench, 2, true);
 
-      // 阶段 2: 绿框(用户)走马灯
       const greenSeg = p - 7;
       if (greenSeg < 7) {
         tracePoly(userVerts, greenSeg, COLORS.userFill, COLORS.user, 2, false);
       } else {
-        // 绿框完成 → 填充 + 顶点圆点
         fillPoly(userVerts, COLORS.userFill, COLORS.user, 2, false);
         for (let i = 0; i < count; i++) {
           ctx.beginPath();
@@ -375,18 +364,33 @@ Page({
     ctx.draw();
   },
 
+  async onPullDownRefresh() {
+    this.calcDimensionsFromProfile();
+    await this.loadBenchmarks();
+    wx.stopPullDownRefresh();
+  },
+
   async loadBenchmarks() {
+    // 防重复
+    if (this._benchmarksLoading) return;
+    this._benchmarksLoading = true;
+    this.setData({ loading: true });
+
     try {
       const res = await wx.cloud.callFunction({ name: 'getBenchmarks' });
       const benchMap = res.result.benchmarks || {};
       if (Object.keys(benchMap).length > 0) {
+        app.cacheManager.set('benchmarks', benchMap);
         this.setData({ benchByTier: benchMap });
       }
     } catch (err) {
-      console.error('[loadBenchmarks] 云端加载失败，使用本地硬编码数据', err);
+      console.error('[loadBenchmarks] failed', err);
     }
+
     this.calcDimensionsFromProfile();
     this.drawRadarAnimated();
+    this.setData({ loading: false });
+    this._benchmarksLoading = false;
   },
 
   goToSimulator() {

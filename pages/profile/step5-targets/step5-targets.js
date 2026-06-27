@@ -63,6 +63,8 @@ Page({
     app.globalData.userProfile = { ...app.globalData.userProfile, ...profile }
     try {
       await wx.cloud.callFunction({ name: 'saveProfile', data: { profile } })
+      // 档案更新后，刷新匹配缓存（不 await，不阻塞）
+      app.refreshMatchCache()
     } catch (err) {
       console.error('[saveProfile]', err)
     }

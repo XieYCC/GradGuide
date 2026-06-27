@@ -18,7 +18,7 @@ exports.main = async (event, context) => {
   const profile = userRes.data[0].profile || {}
 
   // Get all enabled programs
-  const programsRes = await db.collection('programs').where({ enabled: true }).get()
+  const programsRes = await db.collection('programs').where({ enabled: true }).limit(1000).get()
   const programs = programsRes.data
 
   if (!programs.length) {

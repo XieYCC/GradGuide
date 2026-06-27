@@ -1,39 +1,59 @@
-/* 试点迁移: 全量使用 design-token.wxss 令牌，单位统一 rpx。
-   颜色 → 语义令牌；圆角/字号/字重 → 令牌；间距在刻度上用令牌，
-   不在 4 倍数刻度上的 (6/10/14/18px) 暂保留字面 rpx 以零视觉差异。 */
+/* 首页 */
 
 .home-page {
-  padding: var(--sp-5) var(--sp-4);            /* 20px 16px */
+  padding: var(--sp-5) var(--sp-4);
 }
 
+/* —— Hero 品牌标识 —— */
 .home-hero {
   text-align: center;
-  padding: var(--sp-6) 0 36rpx;                /* 24px 0 18px */
+  padding: var(--sp-8) 0 var(--sp-6);
 }
-
-.home-title {
+.home-hero-title {
   display: block;
-  font-size: var(--fs-display);                /* 28px */
+  font-size: var(--fs-display-2xl);              /* 36px */
   font-weight: var(--fw-bold);
-  color: var(--c-title);                       /* #1f2d2a */
+  color: var(--c-title);
+  letter-spacing: -.02em;
+}
+.home-hero-sub {
+  display: block;
+  font-size: var(--fs-subtitle);                 /* 16px */
+  color: var(--c-primary);
+  margin-top: var(--sp-2);
+}
+.home-hero-desc {
+  display: block;
+  font-size: var(--fs-body-md);                  /* 14px */
+  color: var(--c-ink-3);
+  margin-top: var(--sp-3);
+  line-height: 1.6;
 }
 
-.home-desc {
+/* —— 快速预测卡片 —— */
+.predict-card-title {
   display: block;
-  margin-top: 12rpx;                           /* 6px */
-  font-size: var(--fs-body-sm);                /* 12px */
-  color: var(--c-sub);                         /* #7a8581 */
+  font-size: var(--fs-h-md);                     /* 22px */
+  font-weight: var(--fw-semibold);
+  color: var(--c-ink);
+}
+.predict-card-desc {
+  display: block;
+  font-size: var(--fs-body-sm);                  /* 12px */
+  color: var(--c-ink-3);
+  margin-top: var(--sp-1);
+  margin-bottom: var(--sp-5);
 }
 
 .predict-card,
 .result-card,
 .guide-card {
   background: var(--c-card);                   /* #fff */
-  border-radius: var(--radius-card-main);      /* 主卡层 */
+  border-radius: var(--radius-card-main);      /* 主卡层 16px */
   padding: var(--pad-card-main);               /* 20px */
-  border: var(--border-1) solid var(--c-line-soft);
-  box-shadow: var(--shadow-card-up);           /* 补阴影,与 .card 一致 */
-  margin-bottom: 28rpx;                        /* 14px */
+  border: none;                                 /* DESIGN.md: 无边框设计 */
+  box-shadow: var(--shadow-card-up);           /* 柔和阴影 */
+  margin-bottom: 32rpx;                        /* 16px 增加卡片间距 */
 }
 
 .field-label {
@@ -89,11 +109,11 @@
 .guide-btn {
   margin-top: var(--sp-5);                     /* 20px */
   width: 100%;
-  height: 88rpx;                               /* 44px */
-  line-height: 88rpx;
+  height: 96rpx;                               /* 48px 增大按钮高度 */
+  line-height: 96rpx;
   background: var(--c-primary);
   color: var(--gg-white);                      /* #fff */
-  border-radius: var(--radius-lg);             /* 10px */
+  border-radius: var(--radius-btn);            /* 10px 增大圆角 */
   font-size: var(--fs-body-lg);                /* 15px */
   font-weight: var(--fw-semibold);
   padding: 0;
@@ -150,16 +170,16 @@
 
 .result-grid {
   display: flex;
-  gap: 20rpx;                                  /* 10px */
-  margin-top: 28rpx;                           /* 14px */
+  gap: 24rpx;                                  /* 12px 增大间距 */
+  margin-top: 32rpx;                           /* 16px 增大间距 */
 }
 
 .result-item {
   flex: 1;
   text-align: center;
-  padding: var(--sp-3) 0;                      /* 12px 0 */
+  padding: var(--sp-4) 0;                      /* 16px 增大内边距 */
   background: var(--c-panel);                  /* #f5f7f6 */
-  border-radius: var(--radius-lg);             /* 10px */
+  border-radius: var(--radius-card-list);      /* 14px 增大圆角 */
 }
 
 .result-num {

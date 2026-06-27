@@ -34,7 +34,7 @@ exports.main = async (event, context) => {
   if (event.award) simProfile.award = true
 
   // Get programs
-  const progRes = await db.collection('programs').where({ enabled: true }).get()
+  const progRes = await db.collection('programs').where({ enabled: true }).limit(1000).get()
   const programs = progRes.data || []
   programs.forEach(p => { if (!p.selectivityBand) p.selectivityBand = getSelectivityBand(p) })
 

@@ -20,7 +20,7 @@ exports.main = async (event, context) => {
 
   const res = await db.collection('programs')
     .where(query)
-    .orderBy('school', 'asc')
+    .limit(1000)  // Increased from default 20 to handle 900+ records
     .get()
 
   return { list: res.data, total: res.data.length }

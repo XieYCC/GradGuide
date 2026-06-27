@@ -1,5 +1,35 @@
 /* 选校匹配样式 */
 
+/* 防止横向滚动 */
+.page-match {
+  overflow-x: hidden;
+}
+
+/* —— 中央 Loading Spinner —— */
+.page-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  gap: 32rpx;
+}
+.loading-spinner {
+  width: 64rpx;
+  height: 64rpx;
+  border: 4rpx solid var(--c-line);
+  border-top-color: var(--c-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.loading-text {
+  font-size: var(--fs-body-sm);
+  color: var(--c-ink-3);
+}
+
 /* 概览卡 (hero 层) */
 .overview-card {
   background: var(--c-primary);
@@ -7,7 +37,7 @@
   padding: var(--pad-card-hero);
   margin: var(--sp-4);
   color: var(--gg-white);
-  box-shadow: var(--shadow-card-up);
+  box-shadow: var(--shadow-card-hero);
 }
 
 .overview-top {
@@ -101,18 +131,31 @@
 .filter-label {
   font-size: var(--fs-body-sm);
   color: var(--c-ink-3);
+  width: 64rpx;
+  flex-shrink: 0;
 }
 
 .filter-btns {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--sp-1);
+}
+
+.filter-scroll {
+  flex: 1;
+  white-space: nowrap;
+}
+
+.filter-scroll .filter-btn {
+  display: inline-block;
 }
 
 .filter-btn {
   padding: var(--sp-1) 20rpx;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   font-size: var(--fs-body-sm);
-  border: var(--border-1) solid var(--c-line);
+  border: none;
+  background: var(--c-surface);
   color: var(--c-ink-2);
 }
 
@@ -134,7 +177,7 @@
 }
 
 .tier-section {
-  margin-bottom: var(--sp-6);
+  margin-bottom: 40rpx;
 }
 
 .tier-header {
@@ -173,7 +216,7 @@
 }
 
 .program-info {
-  min-width: 0;                 /* 允许收缩，配合 school 截断 */
+  min-width: 0;
   flex: 1;
 }
 
@@ -184,7 +227,7 @@
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;          /* 长校名(如 Carnegie Mellon University)单行省略 */
+  white-space: nowrap;
 }
 
 .program-rank {
@@ -233,9 +276,9 @@
   font-size: var(--fs-caption-xs);
   color: var(--c-ink-3);
   text-align: center;
-  padding: var(--sp-1) 0;
+  padding: var(--sp-2) 0;
   background: var(--c-surface);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   box-sizing: border-box;
 }
 
@@ -250,7 +293,6 @@
   overflow: hidden;
 }
 
-/* 备注标签:加分(绿)/风险(橙) */
 .program-reasons,
 .program-risks {
   display: flex;
@@ -318,7 +360,6 @@
   100% { transform: scale(1); }
 }
 
-/* 详情按钮:居中、可点击的胶囊小按钮 */
 .program-action-detail {
   font-size: var(--fs-caption-xs);
   font-weight: var(--fw-semibold);
@@ -353,7 +394,7 @@
 .cta-icon {
   width: 96rpx;
   height: 96rpx;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-card-list);
   background: var(--c-accent-l);
   display: flex;
   align-items: center;

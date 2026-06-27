@@ -12,8 +12,9 @@
 }
 .profile-option {
   padding: var(--sp-4);
-  border-radius: var(--radius-xl);
-  border: var(--border-1) solid var(--c-line);
+  border-radius: var(--radius-card-main);      /* 16px 增大圆角 */
+  border: none;                                 /* 移除边框 */
+  background: var(--c-surface);                /* 用底色替代边框 */
   font-size: var(--fs-body-lg);
   color: var(--c-ink);
   text-align: center;

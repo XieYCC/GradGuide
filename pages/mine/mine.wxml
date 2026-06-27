@@ -1,7 +1,7 @@
 <!-- pages/mine/mine.wxml -->
 <view class="page-mine">
   <!-- 用户卡片 -->
-  <view class="mine-user card">
+  <view class="mine-user card" bindtap="onAvatarTap">
     <view class="mine-avatar-wrap">
       <image class="mine-avatar-img" src="{{wxProfile.avatarUrl}}" mode="aspectFill" wx:if="{{wxProfile.avatarUrl}}" />
       <view class="mine-avatar-default" wx:else>
@@ -13,6 +13,19 @@
       <text class="mine-user-status">微信用户</text>
     </view>
     <text class="mine-edit-btn" bindtap="goToProfileInit">编辑资料</text>
+  </view>
+
+  <!-- 开发者工具（点击头像 5 次解锁） -->
+  <view class="dev-tools card" wx:if="{{showDevTools}}">
+    <text class="dev-tools-title">🛠️ 开发者工具</text>
+    <view class="dev-tools-btn" bindtap="simulateNewUser">
+      <text>模拟新用户首次体验</text>
+      <text class="dev-tools-desc">清除本地缓存，从头测试引导 + 预加载</text>
+    </view>
+    <view class="dev-tools-btn" bindtap="clearCacheOnly">
+      <text>仅清除缓存</text>
+      <text class="dev-tools-desc">清除预加载数据，测试骨架屏显示</text>
+    </view>
   </view>
 
   <!-- 功能入口 -->
@@ -63,7 +76,7 @@
     <view class="mine-card-body">
       <view class="mine-info-row" wx:if="{{profile.school}}">
         <text class="mine-info-label">学校</text>
-        <text class="mine-info-value">{{profile.school}} · {{profile.schoolLevel}}</text>
+        <text class="mine-info-value">{{profile.schoolLevel || profile.school}}</text>
       </view>
       <view class="mine-info-row" wx:if="{{profile.gpa}}">
         <text class="mine-info-label">GPA</text>
