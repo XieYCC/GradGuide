@@ -85,7 +85,7 @@
       <view class="essay-form-preview">
         <text class="essay-form-label">系统将自动使用你的档案数据：</text>
         <view class="essay-form-tags">
-          <text class="tag tag-primary">{{profile.school || '武汉大学'}} · {{profile.schoolLevel || '985'}}</text>
+          <text class="tag tag-primary">{{profile.schoolLevel || profile.school || '985'}}</text>
           <text class="tag tag-primary">GPA {{profile.gpa || 3.65}}</text>
           <text class="tag tag-primary">TOEFL {{profile.toefl || 98}}</text>
           <text class="tag tag-primary">{{researchCount}}段科研</text>

@@ -1,11 +1,21 @@
-// 一次性数据迁移脚本
-// 在云开发控制台 → 云函数 → migrateData → 上传并部署 → 测试调用
-const cloud = require('wx-server-sdk')
-cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
-const db = cloud.database()
+// 总计生成 939 条记录
+
+// === 统计 ===
+// US: 356 条, 专业分布: {"CS":75,"DS":75,"EE":53,"BA":67,"MKT":24,"Finance":62}
+// UK: 146 条, 专业分布: {"CS":26,"DS":26,"EE":25,"MKT":17,"BA":26,"Finance":26}
+// HK: 28 条, 专业分布: {"CS":5,"DS":5,"EE":5,"MKT":4,"BA":5,"Finance":4}
+// SG: 12 条, 专业分布: {"CS":2,"DS":2,"EE":2,"MKT":2,"BA":2,"Finance":2}
+// CA: 62 条, 专业分布: {"CS":13,"DS":13,"EE":8,"MKT":3,"BA":13,"Finance":12}
+// AU: 77 条, 专业分布: {"CS":15,"DS":15,"EE":15,"MKT":7,"BA":13,"Finance":12}
+// DE: 58 条, 专业分布: {"CS":13,"DS":13,"EE":12,"BA":9,"MKT":3,"Finance":8}
+// CH: 38 条, 专业分布: {"CS":7,"DS":7,"EE":7,"BA":7,"MKT":3,"Finance":7}
+// NL: 43 条, 专业分布: {"CS":9,"DS":9,"EE":8,"MKT":2,"BA":9,"Finance":6}
+// FR: 29 条, 专业分布: {"CS":5,"DS":5,"EE":5,"MKT":4,"BA":5,"Finance":5}
+// JP: 51 条, 专业分布: {"CS":10,"DS":10,"EE":8,"MKT":4,"BA":10,"Finance":9}
+// KR: 39 条, 专业分布: {"CS":7,"DS":7,"EE":7,"MKT":5,"BA":7,"Finance":6}
 
 const PROGRAMS = [
-{"id":100,"school":"Massachusetts Institute of Technology (MIT)","shortName":"MIT","country":"US","region":"美国","major":"CS","rank":"QS #1","minGpa":3.7,"avgGpa":3.85,"toefl":105,"gre":"325+","tier":"reach","deadline":"12月15日","tuition":"$70,000/年","duration":"1.5-2年","highlight":"MIT CS 全球顶尖，研究导向","selectivityBand":"elite","enabled":true},
+  {"id":100,"school":"Massachusetts Institute of Technology (MIT)","shortName":"MIT","country":"US","region":"美国","major":"CS","rank":"QS #1","minGpa":3.7,"avgGpa":3.85,"toefl":105,"gre":"325+","tier":"reach","deadline":"12月15日","tuition":"$70,000/年","duration":"1.5-2年","highlight":"MIT CS 全球顶尖，研究导向","selectivityBand":"elite","enabled":true},
   {"id":101,"school":"Massachusetts Institute of Technology (MIT)","shortName":"MIT","country":"US","region":"美国","major":"DS","rank":"QS #1","minGpa":3.7,"avgGpa":3.85,"toefl":105,"gre":"325+","tier":"reach","deadline":"12月15日","tuition":"$70,000/年","duration":"1.5-2年","highlight":"MIT 数据科学旗舰项目，产学研结合","selectivityBand":"elite","enabled":true},
   {"id":102,"school":"Massachusetts Institute of Technology (MIT)","shortName":"MIT","country":"US","region":"美国","major":"EE","rank":"QS #1","minGpa":3.7,"avgGpa":3.85,"toefl":105,"gre":"325+","tier":"reach","deadline":"12月15日","tuition":"$70,000/年","duration":"1.5-2年","highlight":"MIT 电子工程世界领先","selectivityBand":"elite","enabled":true},
   {"id":103,"school":"Massachusetts Institute of Technology (MIT)","shortName":"MIT","country":"US","region":"美国","major":"BA","rank":"QS #1","minGpa":3.7,"avgGpa":3.85,"toefl":105,"gre":"GMAT 720+","tier":"reach","deadline":"12月15日","tuition":"$70,000/年","duration":"1-1.5年","highlight":"MIT 商业分析旗舰项目","selectivityBand":"elite","enabled":true},
@@ -945,86 +955,3 @@ const PROGRAMS = [
   {"id":1037,"school":"Hanyang University","shortName":"Hanyang","country":"KR","region":"韩国","major":"BA","rank":"QS #156","minGpa":2.8,"avgGpa":3.3,"toefl":80,"gre":"不需要","tier":"safety","deadline":"5月31日","tuition":"₩8,000,000/年","duration":"2年","highlight":"Hanyang BA 录取友好，适合转专业","selectivityBand":"friendly","enabled":true},
   {"id":1038,"school":"Hanyang University","shortName":"Hanyang","country":"KR","region":"韩国","major":"Finance","rank":"QS #156","minGpa":2.8,"avgGpa":3.3,"toefl":80,"gre":"不需要","tier":"safety","deadline":"5月31日","tuition":"₩8,000,000/年","duration":"2年","highlight":"Hanyang 金融录取友好，性价比之选","selectivityBand":"friendly","enabled":true}
 ];
-
-const BENCHMARKS = [
-  { tier: 'reach',  labels: ['院校背景','GPA','语言','标化','实习','科研','推荐信'], dimensions: [88, 82, 80, 80, 75, 85, 75] },
-  { tier: 'match',  labels: ['院校背景','GPA','语言','标化','实习','科研','推荐信'], dimensions: [80, 75, 75, 75, 70, 80, 68] },
-  { tier: 'safety', labels: ['院校背景','GPA','语言','标化','实习','科研','推荐信'], dimensions: [70, 65, 60, 55, 60, 60, 55] },
-]
-
-async function ensureCollection(name) {
-  try {
-    // 先尝试查一条，如果集合不存在会抛错
-    await db.collection(name).limit(1).get()
-  } catch (e) {
-    // 集合不存在，尝试创建（通过插入一条空数据再删除）
-    try {
-      const res = await db.collection(name).add({ data: { _init_: true } })
-      if (res._id) {
-        await db.collection(name).doc(res._id).remove()
-      }
-    } catch (e2) {
-      return { created: false, error: e2 }
-    }
-  }
-  return { created: true }
-}
-
-async function clearCollection(name) {
-  let deleted = 0
-  try {
-    let hasMore = true
-    while (hasMore) {
-      const res = await db.collection(name).limit(100).get()
-      if (res.data.length === 0) {
-        hasMore = false
-        break
-      }
-      const tasks = res.data.map(item => db.collection(name).doc(item._id).remove())
-      await Promise.all(tasks)
-      deleted += res.data.length
-    }
-  } catch (e) {
-    // 集合不存在等
-    return 0
-  }
-  return deleted
-}
-
-exports.main = async (event, context) => {
-  try {
-    // 1. 确保集合存在
-    const collections = ['programs', 'benchmarks']
-    for (const name of collections) {
-      const result = await ensureCollection(name)
-      if (!result.created) {
-        return { code: -1, message: `集合 ${name} 创建失败`, error: result.error }
-      }
-    }
-
-    // 2. 清空旧数据
-    const deletedPrograms = await clearCollection('programs')
-    const deletedBenchmarks = await clearCollection('benchmarks')
-
-    // 3. 批量导入 programs
-    const programTasks = PROGRAMS.map(p => db.collection('programs').add({ data: p }))
-    const programResults = await Promise.all(programTasks)
-
-    // 4. 批量导入 benchmarks
-    const benchTasks = BENCHMARKS.map(b => db.collection('benchmarks').add({ data: b }))
-    const benchResults = await Promise.all(benchTasks)
-
-    return {
-      code: 0,
-      message: '数据迁移完成',
-      details: {
-        programsImported: programResults.length,
-        benchmarksImported: benchResults.length,
-        programsCleared: deletedPrograms,
-        benchmarksCleared: deletedBenchmarks
-      }
-    }
-  } catch (err) {
-    return { code: -1, message: '迁移失败', error: err.message, stack: err.stack }
-  }
-}

@@ -76,7 +76,7 @@
     <view class="mine-card-body">
       <view class="mine-info-row" wx:if="{{profile.school}}">
         <text class="mine-info-label">学校</text>
-        <text class="mine-info-value">{{profile.school}} · {{profile.schoolLevel}}</text>
+        <text class="mine-info-value">{{profile.schoolLevel || profile.school}}</text>
       </view>
       <view class="mine-info-row" wx:if="{{profile.gpa}}">
         <text class="mine-info-label">GPA</text>

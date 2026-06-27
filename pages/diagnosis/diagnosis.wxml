@@ -1,142 +1,87 @@
 <!-- 短板诊断 -->
 <view class="page-diagnosis">
 
-  <!-- 加载骨架屏 -->
-  <view class="skeleton-diag" wx:if="{{loading}}">
-    <!-- 标题区 -->
-    <view class="skeleton-diag-header">
-      <view class="skeleton-line skeleton-line-lg skeleton-stagger-1" style="width: 280rpx"></view>
-      <view class="skeleton-line skeleton-line-sm skeleton-stagger-2" style="width: 520rpx; margin-top: 12rpx"></view>
+  <!-- 中央 Loading Spinner -->
+  <view class="page-loading" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <block wx:if="{{!loading}}">
+    <view class="diag-header">
+      <view>
+        <text class="h-lg">你的短板诊断</text>
+        <text class="diag-sub">和目标项目录取者的平均水准对比，看看差距在哪里</text>
+      </view>
     </view>
 
-    <view class="skeleton-diag-grid">
-      <!-- 雷达图骨架 -->
-      <view class="skeleton-card skeleton-diag-radar">
-        <view class="skeleton-line skeleton-line-lg skeleton-stagger-2" style="width: 240rpx; margin-bottom: 32rpx"></view>
-        <view class="skeleton-circle skeleton-diag-radar-circle skeleton-stagger-3"></view>
-        <view class="skeleton-diag-radar-legend">
-          <view class="skeleton-diag-legend-item skeleton-stagger-4">
-            <view class="skeleton-circle" style="width:24rpx;height:24rpx"></view>
-            <view class="skeleton-line skeleton-line-sm" style="width: 160rpx"></view>
+    <!-- 雷达图 + 右侧诊断 -->
+    <view class="diag-grid">
+      <view class="card diag-radar-card">
+        <text class="h-md diag-radar-title">六维能力雷达</text>
+        <canvas canvas-id="radarCanvas" class="radar-canvas"></canvas>
+        <view class="radar-legend">
+          <view class="radar-legend-item">
+            <view class="radar-legend-dot" style="background:#2e5d50"></view>
+            <text>你的当前能力</text>
           </view>
-          <view class="skeleton-diag-legend-item skeleton-stagger-5">
-            <view class="skeleton-circle" style="width:24rpx;height:24rpx"></view>
-            <view class="skeleton-line skeleton-line-sm" style="width: 160rpx"></view>
-          </view>
-        </view>
-      </view>
-
-      <!-- 右侧分数 + 档案快照 -->
-      <view class="skeleton-diag-right">
-        <view class="skeleton-card skeleton-diag-score skeleton-stagger-3">
-          <view class="skeleton-line skeleton-line-sm" style="width: 120rpx; --skeleton-color:rgba(255,255,255,0.15)"></view>
-          <view class="skeleton-diag-score-num">
-            <view class="skeleton-line skeleton-line-xl" style="width: 120rpx; --skeleton-color:rgba(255,255,255,0.15)"></view>
-            <view class="skeleton-line skeleton-line-sm" style="width: 80rpx; --skeleton-color:rgba(255,255,255,0.15); margin-left: 8rpx"></view>
-          </view>
-          <view class="skeleton-line skeleton-line-sm" style="width: 320rpx; margin-top: 20rpx; --skeleton-color:rgba(255,255,255,0.15)"></view>
-        </view>
-        <view class="skeleton-card skeleton-diag-strength skeleton-stagger-4">
-          <view class="skeleton-line skeleton-line-lg" style="width: 200rpx; margin-bottom: 24rpx"></view>
-          <view class="skeleton-diag-tags">
-            <view class="skeleton-rect" style="width: 120rpx; height: 48rpx"></view>
-            <view class="skeleton-rect" style="width: 100rpx; height: 48rpx"></view>
-            <view class="skeleton-rect" style="width: 140rpx; height: 48rpx"></view>
+          <view class="radar-legend-item">
+            <view class="radar-legend-dot" style="background:#c98a4b"></view>
+            <text>目标档位平均</text>
           </view>
         </view>
       </view>
-    </view>
 
-    <!-- 维度列表骨架 -->
-    <view class="skeleton-card skeleton-diag-detail skeleton-stagger-4">
-      <view class="skeleton-line skeleton-line-lg" style="width: 400rpx; margin-bottom: 40rpx"></view>
-      <view class="skeleton-diag-detail-list">
-        <view class="skeleton-diag-detail-item" wx:for="{{[1,2,3,4,5,6,7]}}" wx:key="*this">
-          <view class="skeleton-diag-detail-head">
-            <view class="skeleton-line" style="width: 200rpx"></view>
-            <view class="skeleton-line skeleton-line-sm" style="width: 160rpx"></view>
+      <view class="diag-right">
+        <view class="diag-score-card">
+          <text class="diag-score-label">综合评分</text>
+          <view class="diag-score-row">
+            <text class="diag-score-num">{{compositeScore || 0}}</text>
+            <text class="diag-score-total">/100</text>
           </view>
-          <view class="skeleton-rect skeleton-diag-detail-bar"></view>
+          <text class="diag-score-desc" wx:if="{{compositeDesc}}">
+            <text>{{compositeDesc}}</text>
+          </text>
+          <view class="diag-score-bar">
+            <view class="diag-score-fill" style="width:{{compositeScore || 0}}%"></view>
+          </view>
         </view>
-      </view>
-    </view>
-  </view>
 
-  <view class="diag-header" wx:if="{{!loading}}">
-    <view>
-      <text class="h-lg">你的短板诊断</text>
-      <text class="diag-sub">和目标项目录取者的平均水准对比，看看差距在哪里</text>
-    </view>
-  </view>
-
-  <!-- 雷达图 + 右侧诊断 -->
-  <view class="diag-grid" wx:if="{{!loading}}">
-    <view class="card diag-radar-card">
-      <text class="h-md diag-radar-title">六维能力雷达</text>
-      <canvas canvas-id="radarCanvas" class="radar-canvas"></canvas>
-      <view class="radar-legend">
-        <view class="radar-legend-item">
-          <view class="radar-legend-dot" style="background:#2e5d50"></view>
-          <text>你的当前能力</text>
-        </view>
-        <view class="radar-legend-item">
-          <view class="radar-legend-dot" style="background:#c98a4b"></view>
-          <text>目标档位平均</text>
+        <view class="card diag-strength-card">
+          <text class="h-md diag-strength-title">档案快照</text>
+          <view class="diag-strength-tags" wx:if="{{profileTags.length > 0}}">
+            <text class="tag tag-accent" wx:for="{{profileTags}}" wx:key="*this">{{item}}</text>
+          </view>
+          <text class="diag-detail-note" wx:else>填写档案后这里会展示你的背景特征</text>
         </view>
       </view>
     </view>
 
-    <view class="diag-right">
-      <!-- 总评 -->
-      <view class="diag-score-card">
-        <text class="diag-score-label">综合评分</text>
-        <view class="diag-score-row">
-          <text class="diag-score-num">{{compositeScore || 0}}</text>
-          <text class="diag-score-total">/100</text>
-        </view>
-        <text class="diag-score-desc" wx:if="{{compositeDesc}}">
-          <text>{{compositeDesc}}</text>
-        </text>
-        <view class="diag-score-bar">
-          <view class="diag-score-fill" style="width:{{compositeScore || 0}}%"></view>
-        </view>
-      </view>
-
-      <!-- 优势标签 -->
-      <view class="card diag-strength-card">
-        <text class="h-md diag-strength-title">档案快照</text>
-        <view class="diag-strength-tags" wx:if="{{profileTags.length > 0}}">
-          <text class="tag tag-accent" wx:for="{{profileTags}}" wx:key="*this">{{item}}</text>
-        </view>
-        <text class="diag-detail-note" wx:else>填写档案后这里会展示你的背景特征</text>
-      </view>
-    </view>
-  </view>
-
-  <!-- 详细维度对比:加载完成后显示 -->
-  <view class="card diag-detail-card" wx:if="{{!loading}}">
-    <text class="h-md diag-detail-title">详细维度对比（对标匹配档）</text>
-    <view class="diag-detail-list">
-      <view class="diag-detail-item stagger-in" style="--i:{{index}}" wx:for="{{dimensions}}" wx:key="name">
-        <view class="diag-detail-head">
-          <text class="diag-detail-name">{{item.name}} <text class="diag-detail-diff" style="color:{{item.color}}">{{item.diff}}</text></text>
-          <text class="diag-detail-val">你: {{item.userVal}} / 平均: {{item.benchVal}}</text>
-        </view>
-        <view class="diag-detail-bar">
-          <view class="diag-detail-fill" style="width:{{item.userPercent}}%"></view>
-          <view class="diag-detail-bench" style="left:{{item.benchPercent}}%"></view>
+    <!-- 详细维度对比 -->
+    <view class="card diag-detail-card">
+      <text class="h-md diag-detail-title">详细维度对比（对标匹配档）</text>
+      <view class="diag-detail-list">
+        <view class="diag-detail-item stagger-in" style="--i:{{index}}" wx:for="{{dimensions}}" wx:key="name">
+          <view class="diag-detail-head">
+            <text class="diag-detail-name">{{item.name}} <text class="diag-detail-diff" style="color:{{item.color}}">{{item.diff}}</text></text>
+            <text class="diag-detail-val">你: {{item.userVal}} / 平均: {{item.benchVal}}</text>
+          </view>
+          <view class="diag-detail-bar">
+            <view class="diag-detail-fill" style="width:{{item.userPercent}}%"></view>
+            <view class="diag-detail-bench" style="left:{{item.benchPercent}}%"></view>
+          </view>
         </view>
       </view>
+      <text class="diag-detail-note">绿色 = 你的当前水平 ｜ 棕色竖线 = 目标档位录取者均值</text>
     </view>
-    <text class="diag-detail-note">绿色 = 你的当前水平 ｜ 棕色竖线 = 目标档位录取者均值</text>
-  </view>
 
-  <!-- 引导:加载完成后显示 -->
-  <view class="diag-cta" wx:if="{{!loading}}">
-    <view class="diag-cta-text">
-      <text class="diag-cta-title">想知道把短板补到什么程度，可以解锁多少新学校？</text>
-      <text class="diag-cta-desc">下一步：打开提升模拟器，拖动滑块实时看变化</text>
+    <!-- 引导 -->
+    <view class="diag-cta">
+      <view class="diag-cta-text">
+        <text class="diag-cta-title">想知道把短板补到什么程度，可以解锁多少新学校？</text>
+        <text class="diag-cta-desc">下一步：打开提升模拟器，拖动滑块实时看变化</text>
+      </view>
+      <button class="btn btn-light" bindtap="goToSimulator">前往提升模拟器</button>
     </view>
-    <button class="btn btn-light" bindtap="goToSimulator">前往提升模拟器</button>
-  </view>
+  </block>
 </view>

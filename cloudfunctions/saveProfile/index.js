@@ -9,7 +9,7 @@ const { runMatch, getSelectivityBand } = require('./match-logic')
 
 async function triggerMatch(OPENID, profile) {
   try {
-    const progRes = await db.collection('programs').where({ enabled: true }).get()
+    const progRes = await db.collection('programs').where({ enabled: true }).limit(1000).get()
     const programs = progRes.data || []
     programs.forEach(p => { if (!p.selectivityBand) p.selectivityBand = getSelectivityBand(p) })
     const matchResult = runMatch(programs, profile)

@@ -1,0 +1,8 @@
+{
+  "name": "getUserBundle",
+  "version": "1.0.0",
+  "description": "合并获取用户所有核心数据，避免多次云函数冷启动",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

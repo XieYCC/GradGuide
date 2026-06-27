@@ -1,80 +1,43 @@
 /* 选校匹配样式 */
 
-/* —— 骨架屏 Skeleton —— */
-.skeleton-match-overview {
-  margin: var(--sp-4);
-  padding: var(--pad-card-hero);
-  background: var(--c-primary);
-}
-.skeleton-match-overview .skeleton-line,
-.skeleton-match-overview .skeleton-rect {
-  --skeleton-color: rgba(255,255,255,0.15);
-  --skeleton-highlight: rgba(255,255,255,0.25);
-}
-.skeleton-match-overview-top {
-  margin-bottom: var(--sp-4);
-}
-.skeleton-match-overview-stats {
-  display: flex;
-  gap: var(--sp-6);
-  margin-bottom: var(--sp-5);
-}
-.skeleton-match-stat {
-  text-align: center;
-}
-.skeleton-match-overview-actions {
-  display: flex;
-  gap: var(--sp-2);
+/* 防止横向滚动 */
+.page-match {
+  overflow-x: hidden;
 }
 
-.skeleton-match-filter {
-  margin: 0 var(--sp-4) var(--sp-4);
-  padding: var(--sp-3);
-}
-.skeleton-match-filter-row {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-}
-.skeleton-match-filter-btns {
-  flex: 1;
-  display: flex;
-  gap: var(--sp-2);
-}
-
-.skeleton-match-programs {
-  padding: 0 var(--sp-4);
+/* —— 中央 Loading Spinner —— */
+.page-loading {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-3);
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  gap: 32rpx;
 }
-.skeleton-match-program {
-  padding: var(--sp-5);
+.loading-spinner {
+  width: 64rpx;
+  height: 64rpx;
+  border: 4rpx solid var(--c-line);
+  border-top-color: var(--c-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
-.skeleton-match-program-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--sp-3);
-  margin-bottom: var(--sp-4);
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
-.skeleton-match-program-info {
-  flex: 1;
-}
-.skeleton-match-program-details {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-2);
+.loading-text {
+  font-size: var(--fs-body-sm);
+  color: var(--c-ink-3);
 }
 
 /* 概览卡 (hero 层) */
 .overview-card {
   background: var(--c-primary);
-  border-radius: var(--radius-card-hero);        /* 20px 大圆角 */
+  border-radius: var(--radius-card-hero);
   padding: var(--pad-card-hero);
   margin: var(--sp-4);
   color: var(--gg-white);
-  box-shadow: var(--shadow-card-hero);         /* 增强阴影 */
+  box-shadow: var(--shadow-card-hero);
 }
 
 .overview-top {
@@ -175,12 +138,21 @@
   gap: var(--sp-1);
 }
 
+.filter-scroll {
+  flex: 1;
+  white-space: nowrap;
+}
+
+.filter-scroll .filter-btn {
+  display: inline-block;
+}
+
 .filter-btn {
   padding: var(--sp-1) 20rpx;
-  border-radius: var(--radius-md);              /* 8px 增大圆角 */
+  border-radius: var(--radius-md);
   font-size: var(--fs-body-sm);
-  border: none;                                  /* DESIGN.md: 移除边框 */
-  background: var(--c-surface);                 /* 用底色替代边框 */
+  border: none;
+  background: var(--c-surface);
   color: var(--c-ink-2);
 }
 
@@ -202,7 +174,7 @@
 }
 
 .tier-section {
-  margin-bottom: 40rpx;                       /* 20px 增大区块间距 */
+  margin-bottom: 40rpx;
 }
 
 .tier-header {
@@ -241,7 +213,7 @@
 }
 
 .program-info {
-  min-width: 0;                 /* 允许收缩，配合 school 截断 */
+  min-width: 0;
   flex: 1;
 }
 
@@ -252,7 +224,7 @@
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;          /* 长校名(如 Carnegie Mellon University)单行省略 */
+  white-space: nowrap;
 }
 
 .program-rank {
@@ -301,9 +273,9 @@
   font-size: var(--fs-caption-xs);
   color: var(--c-ink-3);
   text-align: center;
-  padding: var(--sp-2) 0;                     /* 增大内边距 */
+  padding: var(--sp-2) 0;
   background: var(--c-surface);
-  border-radius: var(--radius-md);            /* 8px 增大圆角 */
+  border-radius: var(--radius-md);
   box-sizing: border-box;
 }
 
@@ -318,7 +290,6 @@
   overflow: hidden;
 }
 
-/* 备注标签:加分(绿)/风险(橙) */
 .program-reasons,
 .program-risks {
   display: flex;
@@ -386,7 +357,6 @@
   100% { transform: scale(1); }
 }
 
-/* 详情按钮:居中、可点击的胶囊小按钮 */
 .program-action-detail {
   font-size: var(--fs-caption-xs);
   font-weight: var(--fw-semibold);
@@ -421,7 +391,7 @@
 .cta-icon {
   width: 96rpx;
   height: 96rpx;
-  border-radius: var(--radius-card-list);     /* 14px 增大圆角 */
+  border-radius: var(--radius-card-list);
   background: var(--c-accent-l);
   display: flex;
   align-items: center;

@@ -1,93 +1,28 @@
 /* 短板诊断样式 */
 
-/* —— 骨架屏 Skeleton —— */
-.skeleton-diag-header {
-  padding: var(--sp-6) var(--sp-4) var(--sp-4);
-}
-.skeleton-diag-grid {
-  padding: 0 var(--sp-4);
+/* —— 中央 Loading Spinner —— */
+.page-loading {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-3);
-}
-.skeleton-diag-radar {
-  padding: var(--sp-5);
-}
-.skeleton-diag-radar-circle {
-  width: 300rpx;
-  height: 300rpx;
-  margin: 0 auto;
-  border: 2rpx dashed var(--c-line);
-  border-radius: 50%;
-}
-.skeleton-diag-radar-legend {
-  display: flex;
+  align-items: center;
   justify-content: center;
-  gap: var(--sp-5);
-  margin-top: var(--sp-3);
+  height: 60vh;
+  gap: 32rpx;
 }
-.skeleton-diag-legend-item {
-  display: flex;
-  align-items: center;
-  gap: 12rpx;
+.loading-spinner {
+  width: 64rpx;
+  height: 64rpx;
+  border: 4rpx solid var(--c-line);
+  border-top-color: var(--c-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
-
-.skeleton-diag-right {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-3);
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
-.skeleton-diag-score {
-  background: var(--c-primary);
-  padding: var(--sp-5);
-}
-.skeleton-diag-score .skeleton-line,
-.skeleton-diag-score .skeleton-rect {
-  --skeleton-color: rgba(255,255,255,0.15);
-}
-.skeleton-diag-score-num {
-  display: flex;
-  align-items: baseline;
-  margin-top: var(--sp-2);
-}
-.skeleton-diag-strength {
-  padding: var(--sp-5);
-}
-.skeleton-diag-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-2);
-}
-
-.skeleton-diag-detail {
-  margin: var(--sp-3) var(--sp-4) 0;
-  padding: var(--sp-5);
-}
-.skeleton-diag-detail-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-4);
-}
-.skeleton-diag-detail-item {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-2);
-}
-.skeleton-diag-detail-item:nth-child(1) { animation-delay: 0ms; }
-.skeleton-diag-detail-item:nth-child(2) { animation-delay: 80ms; }
-.skeleton-diag-detail-item:nth-child(3) { animation-delay: 160ms; }
-.skeleton-diag-detail-item:nth-child(4) { animation-delay: 240ms; }
-.skeleton-diag-detail-item:nth-child(5) { animation-delay: 320ms; }
-.skeleton-diag-detail-item:nth-child(6) { animation-delay: 400ms; }
-.skeleton-diag-detail-item:nth-child(7) { animation-delay: 480ms; }
-.skeleton-diag-detail-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.skeleton-diag-detail-bar {
-  height: 32rpx;
-  width: 100%;
+.loading-text {
+  font-size: var(--fs-body-sm);
+  color: var(--c-ink-3);
 }
 
 .diag-header {
