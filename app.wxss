@@ -1,0 +1,261 @@
+@import "design-token.wxss";
+
+/* ============================================================
+   GradGuide 设计系统 (Design Tokens)
+   令牌定义统一在 design-token.wxss (唯一真相源)。
+   本文件只保留: page 基础样式 + 全局工具类/组件类。
+   约束: 无渐变 / 无 emoji 图标 / 无玻璃态 / 无通用居中
+   ============================================================ */
+
+/* —— 页面基础 —— */
+page {
+  font-family: var(--font-sans);
+  font-size: var(--fs-body-md);
+  line-height: var(--lh-base);
+  color: var(--c-ink);
+  background: var(--c-surface);
+  box-sizing: border-box;
+  /* iPhone home indicator 安全区:所有页面底部留出。
+     tab 页内容区在 tabBar 之上,此值让滚动内容不贴 tabBar;
+     非 tab 页(navigateTo)底部不贴 home indicator。
+     有 fixed 底栏的 profile 步骤已自带更大 padding-bottom,不受影响。 */
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* —— 容器 —— */
+.container {
+  padding: 0 var(--sp-4);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* —— 标题 —— */
+.h-xl { font-size: var(--fs-display-lg); font-weight: var(--fw-semibold); letter-spacing: -.01em; color: var(--c-ink); }
+.h-lg { font-size: var(--fs-h-md); font-weight: var(--fw-semibold); color: var(--c-ink); }
+.h-md { font-size: var(--fs-subtitle); font-weight: var(--fw-semibold); color: var(--c-ink); }
+.t-sm { font-size: var(--fs-body-sm); }
+.t-xs { font-size: var(--fs-caption-xs); }
+
+/* —— 按钮 —— */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 12rpx;
+  font-size: var(--fs-body-sm); font-weight: var(--fw-semibold);
+  padding: 20rpx 36rpx; border-radius: var(--radius-btn);
+  border: var(--border-1) solid transparent;
+  transition: transform var(--dur-fast) var(--ease-out),
+              background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out);
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--c-primary); color: var(--gg-white); }
+.btn-primary:active { background: var(--c-primary-d); }
+.btn-accent { background: var(--c-accent); color: var(--gg-white); }
+.btn-accent:active { background: var(--c-accent-d); }
+.btn-ghost { background: var(--c-card); color: var(--c-primary); border-color: var(--c-line); }
+.btn-ghost:active { border-color: var(--c-primary); }
+.btn-light { background: var(--c-card); color: var(--c-primary); }
+.btn-block { width: 100%; }
+
+/* —— 卡片 (主卡层) —— */
+.card {
+  background: var(--c-card);
+  border-radius: var(--radius-card-main);
+  border: var(--border-1) solid var(--c-line-soft);
+  box-shadow: var(--shadow-card-up);
+}
+
+/* —— 输入框：下划线风格 —— */
+.input-line {
+  width: 100%; background: transparent;
+  border: none; border-bottom: var(--border-input) solid var(--c-line);
+  padding: 16rpx 4rpx; font-size: var(--fs-body-sm); color: var(--c-ink);
+  outline: none;
+}
+.input-line:focus { border-bottom-color: var(--c-primary); }
+.input-line-placeholder { color: var(--c-ink-3); }
+
+.select-line {
+  width: 100%; background: transparent;
+  border: none; border-bottom: var(--border-input) solid var(--c-line);
+  padding: 16rpx 4rpx; font-size: var(--fs-body-sm); color: var(--c-ink);
+  outline: none;
+}
+
+/* —— 标签/徽章 —— */
+.tag {
+  display: inline-flex; align-items: center; gap: 8rpx;
+  font-size: var(--fs-caption-xs); font-weight: var(--fw-semibold);
+  padding: 6rpx 18rpx; border-radius: var(--radius-tag);
+}
+.tag-primary { background: var(--c-primary-l); color: var(--c-primary); }
+.tag-accent  { background: var(--c-accent-l);  color: var(--c-tier-match-fg); }
+.tag-mute    { background: var(--c-surface);   color: var(--c-ink-2); }
+
+/* —— 进度条 —— */
+.bar-fill { transition: width .6s var(--ease-out); }
+
+/* —— 入场动画 —— */
+.fade-in { animation: fade .45s var(--ease-out) both; }
+@keyframes fade { from { opacity:0; transform: translateY(20rpx); } to { opacity:1; transform: none; } }
+
+/* 列表 stagger 入场:给 wx:for 项加 class="stagger-in" + style="--i:{{index}}"
+   总时长封顶 6 项(每项 50ms),超出不再延后。product register:仅列表用,非全屏。 */
+.stagger-in {
+  animation: stagger-fade .5s var(--ease-out) both;
+  animation-delay: calc(min(var(--i, 0), 5) * 100ms);
+}
+@keyframes stagger-fade {
+  from { opacity: 0; transform: translateY(16rpx); }
+  to { opacity: 1; transform: none; }
+}
+
+/* —— 焦点可见 (WCAG 2.4.7) ——
+   小程序对键盘焦点支持有限，主要服务无障碍调试/外接键盘场景。
+   可交互元素聚焦时显示主色外环，不依赖颜色变化。 */
+input:focus, .filter-btn:focus, .program-action:focus,
+.profile-option:focus, .profile-chip:focus, .major-btn:focus {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* —— 减弱动效 (PRODUCT.md 无障碍承诺) ——
+   注意: 小程序 WXSS 的 @media 仅支持尺寸查询，不支持 prefers-reduced-motion，
+   也不支持通配符选择符 *。故改由 JS 在 page 根节点加 .reduced-motion 类，
+   此处显式列出动画/过渡类做兜底。 */
+.reduced-motion .fade-in { animation: none; }
+.reduced-motion .bar-fill { transition: none; }
+.reduced-motion .btn { transition: none; }
+.reduced-motion .btn:active { transform: none; }
+.reduced-motion .tap-feedback { transform: none; transition: none; }
+.reduced-motion .tap-scale { transform: none; transition: none; }
+/* 弹窗入场与心形 pop:减弱动效时直接显示终态 */
+.reduced-motion .sim-save-modal-mask,
+.reduced-motion .sim-save-modal-body,
+.reduced-motion .action-faved { animation: none; }
+
+/* —— 付费墙模糊 —— */
+.paywall-blur { filter: blur(12rpx); user-select: none; pointer-events: none; }
+
+/* —— 分隔线 —— */
+.divider { height: 2rpx; background: var(--c-line); margin: var(--sp-4) 0; }
+
+/* —— 间距工具 —— */
+.mt-1 { margin-top: var(--sp-1); }
+.mt-2 { margin-top: var(--sp-2); }
+.mt-3 { margin-top: var(--sp-3); }
+.mt-4 { margin-top: var(--sp-4); }
+.mt-5 { margin-top: var(--sp-5); }
+.mt-6 { margin-top: var(--sp-6); }
+.mt-8 { margin-top: var(--sp-8); }
+.mt-10 { margin-top: var(--sp-10); }
+.mb-1 { margin-bottom: var(--sp-1); }
+.mb-2 { margin-bottom: var(--sp-2); }
+.mb-3 { margin-bottom: var(--sp-3); }
+.mb-4 { margin-bottom: var(--sp-4); }
+.mb-5 { margin-bottom: var(--sp-5); }
+.mb-6 { margin-bottom: var(--sp-6); }
+.ml-1 { margin-left: var(--sp-1); }
+.ml-2 { margin-left: var(--sp-2); }
+.mr-1 { margin-right: var(--sp-1); }
+.mr-2 { margin-right: var(--sp-2); }
+.p-3 { padding: var(--sp-3); }
+.p-4 { padding: var(--sp-4); }
+.p-5 { padding: var(--sp-5); }
+.p-6 { padding: var(--sp-6); }
+.p-8 { padding: var(--sp-8); }
+.py-1 { padding-top: var(--sp-1); padding-bottom: var(--sp-1); }
+.py-2 { padding-top: var(--sp-2); padding-bottom: var(--sp-2); }
+.py-3 { padding-top: var(--sp-3); padding-bottom: var(--sp-3); }
+.py-4 { padding-top: var(--sp-4); padding-bottom: var(--sp-4); }
+.py-6 { padding-top: var(--sp-6); padding-bottom: var(--sp-6); }
+.py-8 { padding-top: var(--sp-8); padding-bottom: var(--sp-8); }
+.py-10 { padding-top: var(--sp-10); padding-bottom: var(--sp-10); }
+.px-2 { padding-left: var(--sp-2); padding-right: var(--sp-2); }
+.px-3 { padding-left: var(--sp-3); padding-right: var(--sp-3); }
+.px-4 { padding-left: var(--sp-4); padding-right: var(--sp-4); }
+.px-6 { padding-left: var(--sp-6); padding-right: var(--sp-6); }
+
+/* 弹性布局 */
+.flex { display: flex; }
+.flex-1 { flex: 1; }
+.flex-wrap { flex-wrap: wrap; }
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.justify-end { justify-content: flex-end; }
+.gap-1 { gap: var(--sp-1); }
+.gap-2 { gap: var(--sp-2); }
+.gap-3 { gap: var(--sp-3); }
+.gap-4 { gap: var(--sp-4); }
+.gap-5 { gap: var(--sp-5); }
+.gap-6 { gap: var(--sp-6); }
+.gap-8 { gap: var(--sp-8); }
+
+/* 网格 */
+.grid { display: flex; flex-wrap: wrap; }
+.grid-2 { width: 50%; }
+.grid-3 { width: 33.333%; }
+.grid-4 { width: 25%; }
+
+/* 其他 */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.hidden { display: none; }
+.relative { position: relative; }
+.absolute { position: absolute; }
+.overflow-hidden { overflow: hidden; }
+.w-full { width: 100%; }
+.rounded-lg { border-radius: var(--radius-xl); }
+.rounded-xl { border-radius: var(--radius-2xl); }
+.rounded-full { border-radius: var(--radius-full); }
+.border { border: var(--border-1) solid var(--c-line); }
+.border-t { border-top: var(--border-1) solid var(--c-line); }
+.border-b { border-bottom: var(--border-1) solid var(--c-line); }
+.whitespace-nowrap { white-space: nowrap; }
+.font-semibold { font-weight: var(--fw-semibold); }
+.leading-tight { line-height: var(--lh-tight); }
+.leading-relaxed { line-height: var(--lh-relaxed); }
+
+/* —— 点击反馈 (animate) ——
+   WeChat 用 hover-class 给 view 提供按压反馈(等同 :active)。
+   可点卡片/列表项/标签加 hover-class="tap-feedback"。
+   transform 缩放 + 轻微底色,120ms 内回弹,product register 克制档。 */
+.tap-feedback {
+  transform: scale(0.98);
+  background-color: var(--c-surface);
+  transition: transform var(--dur-fast) var(--ease-out),
+              background-color var(--dur-fast) var(--ease-out);
+}
+/* 仅缩放、不改底色:给有选中态的标签/chip 用,避免与 active 底色冲突 */
+.tap-scale {
+  transform: scale(0.96);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+/* —— 原生组件穿透修复 (adapt) ——
+   小程序原生组件(slider/canvas/picker/textarea/video)渲染在独立原生层，
+   无视 CSS z-index，弹窗蒙层会被它们穿透(滑块/画布浮在弹窗之上)。
+   visibility:hidden 可让原生组件真正隐藏。弹窗打开时给含原生组件的容器加此类。 */
+.native-hidden slider,
+.native-hidden canvas,
+.native-hidden picker,
+.native-hidden textarea,
+.native-hidden video,
+.native-hidden input {
+  visibility: hidden;
+}
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+/* flex 子项防溢出:允许收缩到内容尺寸以下 */
+.min-w-0 { min-width: 0; }

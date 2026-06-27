@@ -8,14 +8,14 @@
     <view class="profile-section-block">
       <text class="profile-sub-label">目标地区（可多选）</text>
       <view class="profile-chip-group">
-        <view class="profile-chip {{item.active ? 'chip-active' : ''}}" wx:for="{{regionOptions}}" wx:key="name" data-type="region" data-index="{{item.index}}" bindtap="toggleItem">{{item.name}}</view>
+        <view class="profile-chip {{item.active ? 'chip-active' : ''}}" hover-class="tap-scale" wx:for="{{regionOptions}}" wx:key="name" data-type="region" data-index="{{item.index}}" bindtap="toggleItem">{{item.name}}</view>
       </view>
     </view>
 
     <view class="profile-section-block">
       <text class="profile-sub-label">目标专业（可多选）</text>
       <view class="profile-chip-group">
-        <view class="profile-chip {{item.active ? 'chip-active' : ''}}" wx:for="{{majorOptions}}" wx:key="name" data-type="major" data-index="{{item.index}}" bindtap="toggleItem">{{item.name}}</view>
+        <view class="profile-chip {{item.active ? 'chip-active' : ''}}" hover-class="tap-scale" wx:for="{{majorOptions}}" wx:key="name" data-type="major" data-index="{{item.index}}" bindtap="toggleItem">{{item.name}}</view>
       </view>
     </view>
 

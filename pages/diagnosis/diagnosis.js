@@ -2,7 +2,6 @@
 const { classifyProgram } = require('../../utils/util');
 const app = getApp();
 
-// 硬编码用户维度计算（基于 profile 字段映射到 7 维 0-100 分）
 function calcUserDimensions(profile) {
   if (!profile) return [60, 60, 0, 0, 0, 0, 0];
 
@@ -59,7 +58,22 @@ Page({
   },
 
   onShow() {
-    setTimeout(() => this.drawRadar(this.data.benchTier), 100);
+    this.calcDimensionsFromProfile();
+    this.drawRadarAnimated();
+  },
+
+  async onPullDownRefresh() {
+    this.calcDimensionsFromProfile();
+    await this.loadBenchmarks();
+    wx.stopPullDownRefresh();
+  },
+
+  // app.js 登录完成后回调——loadBenchmarks 已在 onLoad 触发，
+  // 若 onProfileReady 晚于 loadBenchmarks 回调，用 _radarAnimating 防重播
+  onProfileReady() {
+    if (this._radarAnimating) return;
+    this.calcDimensionsFromProfile();
+    this.drawRadarAnimated();
   },
 
   calcDimensionsFromProfile() {
@@ -68,7 +82,6 @@ Page({
     this.setData({ userData });
     this.renderDimensions();
 
-    // 计算综合评分（使用 calcScore 从 util）
     const { calcScore } = require('../../utils/util');
     const scoreState = {
       gpa: profile.gpa || 0,
@@ -87,11 +100,10 @@ Page({
     if (profile.internships && profile.internships.length >= 2) descPieces.push(`${profile.internships.length}段实习不错`);
     if (profile.research && profile.research.length > 0) descPieces.push(`${profile.research.length}段科研经历`);
     this.setData({
-      compositeScore,
       compositeDesc: descPieces.length > 0 ? descPieces.join('；') : '填写更多档案信息获取精准诊断'
     });
+    this._countUp('compositeScore', compositeScore, 600);
 
-    // 档案标签
     const tags = [];
     if (profile.schoolLevel) tags.push(profile.schoolLevel);
     if (profile.gpa) tags.push(`GPA ${profile.gpa}`);
@@ -132,10 +144,193 @@ Page({
     this.setData({ dimensions });
   },
 
-  // app.js 登录完成后回调
-  onProfileReady() {
-    this.calcDimensionsFromProfile();
-    this.drawRadar(this.data.benchTier);
+  _countUp(key, target, duration) {
+    if (this._countUpTimers && this._countUpTimers[key]) {
+      clearInterval(this._countUpTimers[key]);
+    }
+    const reduced = getApp().globalData.reducedMotion;
+    if (reduced || !target) {
+      this.setData({ [key]: target });
+      return;
+    }
+    this._countUpTimers = this._countUpTimers || {};
+    const steps = Math.max(1, Math.floor(duration / 30));
+    const stepVal = target / steps;
+    let cur = 0;
+    let i = 0;
+    this.setData({ [key]: 0 });
+    this._countUpTimers[key] = setInterval(() => {
+      i++;
+      cur = i >= steps ? target : Math.round(stepVal * i);
+      this.setData({ [key]: cur });
+      if (i >= steps) {
+        clearInterval(this._countUpTimers[key]);
+        delete this._countUpTimers[key];
+      }
+    }, 30);
+  },
+
+  /* =========================================================
+     雷达图:走马灯逐边绘制
+     先沿基准(黄)七边形边缘逐边画线，画完填充；
+     再沿用户(绿)七边形边缘逐边画线，画完填充。
+     14 边 × 4 帧/边 = 56 帧 × 16ms ≈ 900ms
+     ========================================================= */
+
+  drawRadarAnimated() {
+    if (this._radarAnimating) return;
+    if (this._radarTimer) clearTimeout(this._radarTimer);
+    this._radarAnimating = true;
+
+    const TOTAL = 56;
+    let frame = 0;
+    const animate = () => {
+      const progress = (frame / TOTAL) * 14;  // 0~14
+      this.drawRadar(this.data.benchTier, progress);
+      frame++;
+      if (frame <= TOTAL) {
+        this._radarTimer = setTimeout(animate, 16);
+      } else {
+        this.drawRadar(this.data.benchTier, 14);  // 终态完整
+        this._radarAnimating = false;
+        this._radarTimer = null;
+      }
+    };
+    animate();
+  },
+
+  /* 雷达图绘制
+     progress — 0~7 黄框走马灯, 7~14 绿框走马灯, 14=完整
+     非动画调用传 14
+  */
+  drawRadar(tier, progress) {
+    const p = progress != null ? progress : 14;
+    const { userData, benchByTier, indicators } = this.data;
+    const benchData = benchByTier[tier];
+    const count = indicators.length;
+
+    const ctx = wx.createCanvasContext('radarCanvas');
+    const width = 300, height = 300;
+    const cx = width / 2, cy = height / 2;
+    const radius = 100;
+
+    ctx.clearRect(0, 0, width, height);
+
+    // 顶点终位坐标
+    const vertsOf = (dataArr) => dataArr.map((val, i) => {
+      const a = (Math.PI * 2 * i) / count - Math.PI / 2;
+      const r = (val / 100) * radius;
+      return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
+    });
+
+    // — 网格 —
+    for (let l = 1; l <= 4; l++) {
+      const r = (radius / 4) * l;
+      ctx.beginPath();
+      for (let i = 0; i < count; i++) {
+        const a = (Math.PI * 2 * i) / count - Math.PI / 2;
+        const x = cx + r * Math.cos(a), y = cy + r * Math.sin(a);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.setStrokeStyle('#e4e4e4');
+      ctx.setLineWidth(1);
+      ctx.stroke();
+    }
+
+    // — 辐线 —
+    for (let i = 0; i < count; i++) {
+      const a = (Math.PI * 2 * i) / count - Math.PI / 2;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + radius * Math.cos(a), cy + radius * Math.sin(a));
+      ctx.setStrokeStyle('#e4e4e4');
+      ctx.setLineWidth(1);
+      ctx.stroke();
+    }
+
+    // — 标签(始终显示) —
+    ctx.setFontSize(11);
+    ctx.setFillStyle('#5c5c5c');
+    ctx.setTextAlign('center');
+    for (let i = 0; i < count; i++) {
+      const a = (Math.PI * 2 * i) / count - Math.PI / 2;
+      ctx.fillText(indicators[i].name, cx + (radius + 20) * Math.cos(a), cy + (radius + 20) * Math.sin(a));
+    }
+
+    // 走马灯:沿多边形边缘逐边画线 + 实时填充(已画部分闭合回起点再 fill)
+    const tracePoly = (verts, seg, fillColor, strokeColor, lineWidth, isDash) => {
+      const done = Math.min(Math.floor(seg), count);
+      const frac = seg - Math.floor(seg);
+      if (done === 0 && frac === 0) return;
+      ctx.beginPath();
+      ctx.moveTo(verts[0].x, verts[0].y);
+      for (let i = 0; i < done; i++) {
+        ctx.lineTo(verts[(i + 1) % count].x, verts[(i + 1) % count].y);
+      }
+      let endX, endY;
+      if (done < count && frac > 0) {
+        const from = verts[done];
+        const to = verts[(done + 1) % count];
+        endX = from.x + (to.x - from.x) * frac;
+        endY = from.y + (to.y - from.y) * frac;
+        ctx.lineTo(endX, endY);
+      } else {
+        endX = verts[done % count].x;
+        endY = verts[done % count].y;
+      }
+      ctx.closePath();  // 闭合回起点 → 形成可填充区域
+      ctx.setFillStyle(fillColor);
+      ctx.fill();
+      ctx.setStrokeStyle(strokeColor);
+      ctx.setLineWidth(lineWidth);
+      if (isDash) ctx.setLineDash([4, 4]);
+      ctx.stroke();
+      if (isDash) ctx.setLineDash([]);
+    };
+
+    // 完整多边形(边 + 填充)
+    const fillPoly = (verts, fillColor, strokeColor, lineWidth, isDash) => {
+      ctx.beginPath();
+      ctx.moveTo(verts[0].x, verts[0].y);
+      for (let i = 1; i < count; i++) ctx.lineTo(verts[i].x, verts[i].y);
+      ctx.closePath();
+      ctx.setFillStyle(fillColor);
+      ctx.fill();
+      ctx.setStrokeStyle(strokeColor);
+      ctx.setLineWidth(lineWidth);
+      if (isDash) ctx.setLineDash([4, 4]);
+      ctx.stroke();
+      if (isDash) ctx.setLineDash([]);
+    };
+
+    const benchVerts = vertsOf(benchData);
+    const userVerts = vertsOf(userData);
+
+    // 阶段 1: 黄框(基准)走马灯
+    if (p < 7) {
+      tracePoly(benchVerts, p, 'rgba(201,138,75,0.12)', '#c98a4b', 2, true);
+    } else {
+      // 黄框完成 → 填充
+      fillPoly(benchVerts, 'rgba(201,138,75,0.12)', '#c98a4b', 2, true);
+
+      // 阶段 2: 绿框(用户)走马灯
+      const greenSeg = p - 7;
+      if (greenSeg < 7) {
+        tracePoly(userVerts, greenSeg, 'rgba(46,93,80,0.22)', '#2e5d50', 2, false);
+      } else {
+        // 绿框完成 → 填充 + 顶点圆点
+        fillPoly(userVerts, 'rgba(46,93,80,0.22)', '#2e5d50', 2, false);
+        for (let i = 0; i < count; i++) {
+          ctx.beginPath();
+          ctx.arc(userVerts[i].x, userVerts[i].y, 3, 0, Math.PI * 2);
+          ctx.setFillStyle('#2e5d50');
+          ctx.fill();
+        }
+      }
+    }
+
+    ctx.draw();
   },
 
   async loadBenchmarks() {
@@ -149,108 +344,7 @@ Page({
       console.error('[loadBenchmarks] 云端加载失败，使用本地硬编码数据', err);
     }
     this.calcDimensionsFromProfile();
-    this.drawRadar(this.data.benchTier);
-  },
-
-  onBenchChange(e) {
-    const tier = e.detail.value;
-    this.setData({ benchTier: tier });
-    this.renderDimensions();
-    this.drawRadar(tier);
-  },
-
-  drawRadar(tier) {
-    const { userData, benchByTier, indicators } = this.data;
-    const benchData = benchByTier[tier];
-
-    // 小程序中无法直接使用 ECharts，用 canvas 绘制简化版雷达图
-    const ctx = wx.createCanvasContext('radarCanvas');
-    const width = 300;
-    const height = 300;
-    const cx = width / 2;
-    const cy = height / 2;
-    const radius = 100;
-
-    ctx.clearRect(0, 0, width, height);
-
-    // 绘制网格
-    const levels = 4;
-    for (let l = 1; l <= levels; l++) {
-      const r = (radius / levels) * l;
-      ctx.beginPath();
-      for (let i = 0; i < indicators.length; i++) {
-        const angle = (Math.PI * 2 * i) / indicators.length - Math.PI / 2;
-        const x = cx + r * Math.cos(angle);
-        const y = cy + r * Math.sin(angle);
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      }
-      ctx.closePath();
-      ctx.setStrokeStyle('#e4e4e4');
-      ctx.setLineWidth(1);
-      ctx.stroke();
-    }
-
-    // 绘制连线
-    for (let i = 0; i < indicators.length; i++) {
-      const angle = (Math.PI * 2 * i) / indicators.length - Math.PI / 2;
-      const x = cx + radius * Math.cos(angle);
-      const y = cy + radius * Math.sin(angle);
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(x, y);
-      ctx.setStrokeStyle('#e4e4e4');
-      ctx.setLineWidth(1);
-      ctx.stroke();
-    }
-
-    // 绘制数据（用户）
-    ctx.beginPath();
-    for (let i = 0; i < indicators.length; i++) {
-      const angle = (Math.PI * 2 * i) / indicators.length - Math.PI / 2;
-      const r = (userData[i] / 100) * radius;
-      const x = cx + r * Math.cos(angle);
-      const y = cy + r * Math.sin(angle);
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-    ctx.closePath();
-    ctx.setFillStyle('rgba(46,93,80,0.22)');
-    ctx.setStrokeStyle('#2e5d50');
-    ctx.setLineWidth(2);
-    ctx.fill();
-    ctx.stroke();
-
-    // 绘制数据（基准）
-    ctx.beginPath();
-    for (let i = 0; i < indicators.length; i++) {
-      const angle = (Math.PI * 2 * i) / indicators.length - Math.PI / 2;
-      const r = (benchData[i] / 100) * radius;
-      const x = cx + r * Math.cos(angle);
-      const y = cy + r * Math.sin(angle);
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-    ctx.closePath();
-    ctx.setFillStyle('rgba(201,138,75,0.12)');
-    ctx.setStrokeStyle('#c98a4b');
-    ctx.setLineWidth(2);
-    ctx.setLineDash([4, 4]);
-    ctx.fill();
-    ctx.stroke();
-
-    // 绘制标签
-    ctx.setFontSize(11);
-    ctx.setFillStyle('#5c5c5c');
-    ctx.setTextAlign('center');
-    for (let i = 0; i < indicators.length; i++) {
-      const angle = (Math.PI * 2 * i) / indicators.length - Math.PI / 2;
-      const x = cx + (radius + 20) * Math.cos(angle);
-      const y = cy + (radius + 20) * Math.sin(angle);
-      ctx.fillText(indicators[i].name, x, y);
-    }
-
-    ctx.draw();
+    this.drawRadarAnimated();
   },
 
   goToSimulator() {

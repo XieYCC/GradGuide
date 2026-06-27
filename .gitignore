@@ -1,0 +1,20 @@
+# 依赖
+node_modules/
+**/node_modules/
+
+# 云函数依赖备份
+cloudfunctions/getUser_node_modules_bak/
+
+# Claude Code 会话目录
+.claude/
+
+# 微信开发者工具本地配置(含个人 appid/路径)
+project.private.config.json
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 日志
+*.log
+npm-debug.log*

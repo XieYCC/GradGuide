@@ -4,7 +4,7 @@
     <text class="profile-step-title">你的学校层次是？</text>
   </view>
   <view class="profile-step-options">
-    <view class="profile-option {{selected === item ? 'option-active' : ''}}" wx:for="{{schoolLevels}}" wx:key="*this" data-value="{{item}}" bindtap="onSelect">
+    <view class="profile-option {{selected === item ? 'option-active' : ''}} stagger-in" hover-class="tap-scale" style="--i:{{index}}" wx:for="{{schoolLevels}}" wx:key="*this" data-value="{{item}}" bindtap="onSelect">
       <text>{{item}}</text>
     </view>
   </view>

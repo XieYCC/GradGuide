@@ -1,0 +1,109 @@
+/* ============================================================
+   profile 五步向导公共外壳样式
+   各 profile-stepN.wxss 顶部 @import 此文件，仅保留页面特有样式。
+   默认值: header margin --sp-6, footer gap --sp-2 (step3/5)。
+   step1/2/4 的差异由各自页面覆写。
+   ============================================================ */
+
+.page-profile-step {
+  padding: var(--sp-6) var(--sp-4) 192rpx;
+  min-height: 100vh;
+  background: var(--c-card);
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-step-header {
+  margin-bottom: var(--sp-6);
+}
+
+.profile-step-num {
+  font-size: var(--fs-body-sm);
+  color: var(--c-primary);
+  font-weight: var(--fw-semibold);
+  display: block;
+  margin-bottom: var(--sp-2);
+}
+
+.profile-step-title {
+  font-size: var(--fs-h-md);
+  font-weight: var(--fw-bold);
+  color: var(--c-ink);
+  display: block;
+}
+
+.profile-step-footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-4) calc(var(--sp-3) + env(safe-area-inset-bottom));
+  background: var(--c-card);
+  border-top: var(--border-1) solid var(--c-line);
+  box-sizing: border-box;
+}
+
+.profile-step-footer .btn {
+  flex: 1;
+}
+
+/* —— 表单原语 (step3/4/5 共用) —— */
+.profile-step-desc {
+  font-size: var(--fs-body-sm);
+  color: var(--c-ink-3);
+  margin-top: var(--sp-1);
+  display: block;
+}
+
+.profile-step-form {
+  flex: 1;
+}
+
+.profile-section-block {
+  margin-bottom: var(--sp-6);
+}
+
+.profile-sub-label {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-semibold);
+  color: var(--c-ink);
+  display: block;
+  margin-bottom: var(--sp-2);
+}
+
+/* 输入行 (step3/4) */
+.profile-item {
+  display: flex;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-2);
+  align-items: center;
+}
+.profile-item .profile-input {
+  flex: 1;
+}
+.profile-input {
+  padding: var(--pad-field);
+  border: var(--border-1) solid var(--c-line);
+  border-radius: var(--radius-field);
+  font-size: var(--fs-body-md);
+}
+.profile-picker {
+  padding: var(--pad-field);
+  border: var(--border-1) solid var(--c-line);
+  border-radius: var(--radius-field);
+  font-size: var(--fs-body);
+  color: var(--c-ink-2);
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.profile-add {
+  font-size: var(--fs-body-sm);
+  color: var(--c-primary);
+  padding: var(--sp-1) 0;
+  display: inline-block;
+}

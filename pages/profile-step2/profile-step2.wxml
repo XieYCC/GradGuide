@@ -4,7 +4,7 @@
     <text class="profile-step-title">你什么时候毕业？</text>
   </view>
   <view class="profile-step-options">
-    <view class="profile-option {{selected === item ? 'option-active' : ''}}" wx:for="{{gradYears}}" wx:key="*this" data-value="{{item}}" bindtap="onSelect">
+    <view class="profile-option {{selected === item ? 'option-active' : ''}} stagger-in" hover-class="tap-scale" style="--i:{{index}}" wx:for="{{gradYears}}" wx:key="*this" data-value="{{item}}" bindtap="onSelect">
       <text>{{item}}</text>
     </view>
   </view>

@@ -1,0 +1,89 @@
+<!-- pages/mine/mine.wxml -->
+<view class="page-mine">
+  <!-- 用户卡片 -->
+  <view class="mine-user card">
+    <view class="mine-avatar-wrap">
+      <image class="mine-avatar-img" src="{{wxProfile.avatarUrl}}" mode="aspectFill" wx:if="{{wxProfile.avatarUrl}}" />
+      <view class="mine-avatar-default" wx:else>
+        <text class="mine-avatar-text">{{avatarText}}</text>
+      </view>
+    </view>
+    <view class="mine-user-info">
+      <text class="mine-user-name">{{wxProfile.nickName || '留学申请者'}}</text>
+      <text class="mine-user-status">微信用户</text>
+    </view>
+    <text class="mine-edit-btn" bindtap="goToProfileInit">编辑资料</text>
+  </view>
+
+  <!-- 功能入口 -->
+  <view class="mine-section">
+    <text class="mine-section-title">功能</text>
+    <view class="mine-menu">
+      <view class="mine-menu-item stagger-in" hover-class="tap-feedback" style="--i:0" bindtap="goToProfile">
+        <view class="mine-menu-icon"><text>档</text></view>
+        <view class="mine-menu-text">
+          <text>{{hasProfile ? '编辑个人信息' : '填写个人信息'}}</text>
+          <text class="mine-menu-desc">5 步完成你的留学档案</text>
+        </view>
+        <text class="mine-menu-arrow">›</text>
+      </view>
+      <view class="mine-menu-item stagger-in" hover-class="tap-feedback" style="--i:1" bindtap="goToSimulator">
+        <view class="mine-menu-icon"><text>模</text></view>
+        <view class="mine-menu-text">
+          <text>提升模拟器</text>
+          <text class="mine-menu-desc">拖拽参数，看学校池变化</text>
+        </view>
+        <text class="mine-menu-arrow">›</text>
+      </view>
+      <view class="mine-menu-item stagger-in" hover-class="tap-feedback" style="--i:2" bindtap="goToEssay">
+        <view class="mine-menu-icon"><text>文</text></view>
+        <view class="mine-menu-text">
+          <text>AI 文书生成</text>
+          <text class="mine-menu-desc">SoP / PS / 推荐信 / CV</text>
+        </view>
+        <text class="mine-menu-arrow">›</text>
+      </view>
+      <view class="mine-menu-item stagger-in" hover-class="tap-feedback" style="--i:3" bindtap="goToOnboarding">
+        <view class="mine-menu-icon"><text>引</text></view>
+        <view class="mine-menu-text">
+          <text>功能介绍</text>
+          <text class="mine-menu-desc">重新查看引导介绍</text>
+        </view>
+        <text class="mine-menu-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 档案预览 -->
+  <view class="mine-card card" wx:if="{{hasProfile}}">
+    <view class="mine-card-header">
+      <text class="mine-card-title">档案信息</text>
+      <text class="mine-card-edit" bindtap="goToProfile">编辑</text>
+    </view>
+    <view class="mine-card-body">
+      <view class="mine-info-row" wx:if="{{profile.school}}">
+        <text class="mine-info-label">学校</text>
+        <text class="mine-info-value">{{profile.school}} · {{profile.schoolLevel}}</text>
+      </view>
+      <view class="mine-info-row" wx:if="{{profile.gpa}}">
+        <text class="mine-info-label">GPA</text>
+        <text class="mine-info-value">{{profile.gpa}}{{profile.gpaScale}}</text>
+      </view>
+      <view class="mine-info-row" wx:if="{{profile.toefl}}">
+        <text class="mine-info-label">TOEFL</text>
+        <text class="mine-info-value">{{profile.toefl}}</text>
+      </view>
+      <view class="mine-info-row" wx:if="{{profile.targetRegions}}">
+        <text class="mine-info-label">目标地区</text>
+        <text class="mine-info-value">{{profile.targetRegions.join('、')}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空白状态 -->
+  <view class="mine-empty card" wx:else>
+    <text class="mine-empty-title">还没有填写档案</text>
+    <text class="mine-empty-desc">填写后可以查看个性化的选校推荐和诊断分析</text>
+    <button class="btn btn-primary" bindtap="goToProfile">立即填写</button>
+  </view>
+</view>

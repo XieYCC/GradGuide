@@ -54,16 +54,18 @@ Page({
 
   onPrev() { wx.navigateBack() },
 
-  onFinish() {
+  async onFinish() {
     const profile = {
       targetRegions: this.data.selectedRegions,
       targetMajors: this.data.selectedMajors,
       priority: this.data.priority
     }
     app.globalData.userProfile = { ...app.globalData.userProfile, ...profile }
-    wx.cloud.callFunction({ name: 'saveProfile', data: { profile } }).catch(err => {
+    try {
+      await wx.cloud.callFunction({ name: 'saveProfile', data: { profile } })
+    } catch (err) {
       console.error('[saveProfile]', err)
-    })
+    }
     wx.showToast({ title: '档案保存成功', icon: 'success' })
     setTimeout(() => {
       wx.switchTab({ url: '/pages/home/home' })

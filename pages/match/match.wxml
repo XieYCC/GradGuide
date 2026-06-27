@@ -41,8 +41,16 @@
 
   <!-- 无匹配数据时展示的概览卡 -->
   <view class="overview-card overview-empty" wx:else>
-    <text>请先完成个人信息填写，获取精准选校推荐</text>
-    <button class="btn btn-primary" bindtap="goToProfile">填写信息</button>
+    <!-- 加载失败:网络/云端异常，给重试而非误导去填信息 -->
+    <block wx:if="{{loadError}}">
+      <text>加载失败，请检查网络后重试</text>
+      <button class="btn btn-primary" bindtap="loadMatchResult">重新加载</button>
+    </block>
+    <!-- 未填写信息:引导去 profile -->
+    <block wx:else>
+      <text>请先完成个人信息填写，获取精准选校推荐</text>
+      <button class="btn btn-primary" bindtap="goToProfile">填写信息</button>
+    </block>
   </view>
 
   <!-- 筛选 -->
@@ -50,19 +58,19 @@
     <view class="filter-group">
       <text class="filter-label">地区:</text>
       <view class="filter-btns">
-        <view class="filter-btn {{curRegion === 'all' ? 'filter-btn-active' : ''}}" data-filter="all" bindtap="filterRegion">全部</view>
-        <view class="filter-btn {{curRegion === 'US' ? 'filter-btn-active' : ''}}" data-filter="US" bindtap="filterRegion">美国</view>
-        <view class="filter-btn {{curRegion === 'HK' ? 'filter-btn-active' : ''}}" data-filter="HK" bindtap="filterRegion">香港</view>
-        <view class="filter-btn {{curRegion === 'UK' ? 'filter-btn-active' : ''}}" data-filter="UK" bindtap="filterRegion">英国</view>
+        <view class="filter-btn {{curRegion === 'all' ? 'filter-btn-active' : ''}}" hover-class="tap-scale" data-filter="all" bindtap="filterRegion">全部</view>
+        <view class="filter-btn {{curRegion === 'US' ? 'filter-btn-active' : ''}}" hover-class="tap-scale" data-filter="US" bindtap="filterRegion">美国</view>
+        <view class="filter-btn {{curRegion === 'HK' ? 'filter-btn-active' : ''}}" hover-class="tap-scale" data-filter="HK" bindtap="filterRegion">香港</view>
+        <view class="filter-btn {{curRegion === 'UK' ? 'filter-btn-active' : ''}}" hover-class="tap-scale" data-filter="UK" bindtap="filterRegion">英国</view>
       </view>
     </view>
     <view class="filter-divider"></view>
     <view class="filter-group">
       <text class="filter-label">专业:</text>
       <view class="filter-btns">
-        <view class="filter-btn {{curMajor === 'all' ? 'filter-btn-active' : ''}}" data-major="all" bindtap="filterMajor">全部</view>
-        <view class="filter-btn {{curMajor === 'CS' ? 'filter-btn-active' : ''}}" data-major="CS" bindtap="filterMajor">CS / DS</view>
-        <view class="filter-btn {{curMajor === 'MKT' ? 'filter-btn-active' : ''}}" data-major="MKT" bindtap="filterMajor">MKT / BA</view>
+        <view class="filter-btn {{curMajor === 'all' ? 'filter-btn-active' : ''}}" hover-class="tap-scale" data-major="all" bindtap="filterMajor">全部</view>
+        <view class="filter-btn {{curMajor === 'CS' ? 'filter-btn-active' : ''}}" hover-class="tap-scale" data-major="CS" bindtap="filterMajor">CS / DS</view>
+        <view class="filter-btn {{curMajor === 'MKT' ? 'filter-btn-active' : ''}}" hover-class="tap-scale" data-major="MKT" bindtap="filterMajor">MKT / BA</view>
       </view>
     </view>
   </view>
@@ -78,7 +86,7 @@
         <text class="tier-desc">录取概率 10%-30% · 建议重点冲刺</text>
       </view>
       <view class="tier-grid">
-        <view class="program-card card" wx:for="{{reach}}" wx:key="_id">
+        <view class="program-card card stagger-in" style="--i:{{index}}" wx:for="{{reach}}" wx:key="_id">
           <view class="program-top">
             <view class="program-info">
               <text class="program-school">{{item.school}}</text>
@@ -139,7 +147,7 @@
         <text class="tier-desc">录取概率 30%-70% · 各维度基本对齐</text>
       </view>
       <view class="tier-grid">
-        <view class="program-card card" wx:for="{{match}}" wx:key="_id">
+        <view class="program-card card stagger-in" style="--i:{{index}}" wx:for="{{match}}" wx:key="_id">
           <view class="program-top">
             <view class="program-info">
               <text class="program-school">{{item.school}}</text>
@@ -200,7 +208,7 @@
         <text class="tier-desc">录取概率 >70% · 优势明显，建议保底</text>
       </view>
       <view class="tier-grid">
-        <view class="program-card card" wx:for="{{safety}}" wx:key="_id">
+        <view class="program-card card stagger-in" style="--i:{{index}}" wx:for="{{safety}}" wx:key="_id">
           <view class="program-top">
             <view class="program-info">
               <text class="program-school">{{item.school}}</text>

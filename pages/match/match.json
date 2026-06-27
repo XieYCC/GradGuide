@@ -1,0 +1,6 @@
+{
+  "usingComponents": {},
+  "navigationBarTitleText": "选校匹配",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
+}

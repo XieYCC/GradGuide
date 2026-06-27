@@ -1,0 +1,213 @@
+.page-onboarding {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--c-card);
+}
+.onboarding-swiper {
+  flex: 1;
+}
+.onboarding-slide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--sp-8);
+  height: 100%;
+}
+
+/* 第1屏 · Hero */
+.slide-hero {
+  text-align: center;
+}
+.slide-title {
+  font-size: var(--fs-display-2xl);
+  font-weight: var(--fw-bold);
+  color: var(--c-ink);
+  display: block;
+  margin-bottom: var(--sp-3);
+}
+.slide-subtitle {
+  font-size: var(--fs-subtitle);
+  color: var(--c-primary);
+  display: block;
+  margin-bottom: var(--sp-4);
+}
+.slide-desc {
+  font-size: var(--fs-body-md);
+  color: var(--c-ink-3);
+  line-height: 1.7;
+  display: block;
+}
+
+/* 第2屏 · 功能卡片 */
+.slide-section {
+  width: 100%;
+}
+.slide-section-title {
+  font-size: var(--fs-h-lg);
+  font-weight: var(--fw-bold);
+  color: var(--c-ink);
+  display: block;
+  text-align: center;
+  margin-bottom: 56rpx;
+}
+.slide-features {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+.slide-feature {
+  text-align: center;
+  padding: var(--sp-5);
+  background: var(--c-surface);
+  border-radius: var(--radius-xl);
+}
+.feature-icon {
+  font-size: var(--fs-display-xl);
+  display: block;
+  margin-bottom: var(--sp-2);
+}
+.feature-title {
+  font-size: var(--fs-subtitle);
+  font-weight: var(--fw-semibold);
+  color: var(--c-ink);
+  display: block;
+  margin-bottom: var(--sp-1);
+}
+.feature-desc {
+  font-size: var(--fs-body-sm);
+  color: var(--c-ink-3);
+  display: block;
+}
+
+/* 第3屏 · 5步 */
+.slide-steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+.slide-step {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: 28rpx var(--sp-4);
+  border-radius: var(--radius-xl);
+  background: var(--c-surface);
+}
+.step-num {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: var(--radius-3xl);
+  background: var(--c-primary);
+  color: var(--gg-white);
+  font-size: var(--fs-subtitle);
+  font-weight: var(--fw-semibold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.step-text {
+  font-size: var(--fs-body-lg);
+  color: var(--c-ink);
+}
+
+/* 第4屏 · 预测 */
+.slide-predict {
+  background: var(--c-card);
+  border: var(--border-1) solid var(--c-line);
+  border-radius: var(--radius-xl);
+  padding: var(--sp-6);
+  width: 100%;
+  box-sizing: border-box;
+}
+.predict-row {
+  margin-bottom: var(--sp-5);
+}
+.predict-label {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-semibold);
+  color: var(--c-ink-2);
+  display: block;
+  margin-bottom: var(--sp-2);
+}
+.predict-btns {
+  display: flex;
+  gap: var(--sp-3);
+}
+.predict-btn {
+  flex: 1;
+  padding: var(--sp-3);
+  text-align: center;
+  border-radius: var(--radius-md);
+  border: var(--border-1) solid var(--c-line);
+  font-size: var(--fs-body-md);
+  color: var(--c-ink-2);
+}
+.predict-btn-active {
+  background: var(--c-primary-l);
+  color: var(--c-primary);
+  border-color: var(--c-primary);
+  font-weight: var(--fw-semibold);
+}
+.predict-input {
+  width: 100%;
+  padding: 28rpx;
+  border: var(--border-1) solid var(--c-line);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-subtitle);
+  box-sizing: border-box;
+}
+
+/* 底部 */
+.onboarding-footer {
+  padding: var(--sp-6) var(--sp-6) var(--sp-12);
+  text-align: center;
+}
+.onboarding-dots {
+  display: flex;
+  justify-content: center;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-6);
+}
+.onboarding-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: var(--radius-xs);
+  background: var(--c-line);
+  transition: width var(--dur-base) var(--ease-out),
+              background-color var(--dur-base) var(--ease-out);
+}
+.dot-active {
+  width: 48rpx;
+  background: var(--c-primary);
+}
+.onboarding-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3);
+}
+.onboarding-btn-start {
+  width: 400rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  background: var(--c-primary);
+  color: var(--gg-white);
+  border-radius: 44rpx;
+  font-size: var(--fs-subtitle);
+  font-weight: var(--fw-semibold);
+  border: 0;
+  padding: 0;
+  text-align: center;
+  display: inline-block;
+}
+.onboarding-btn-start::after {
+  border: none;
+}
+.onboarding-btn-skip {
+  font-size: var(--fs-body);
+  color: var(--c-ink-3);
+  padding: var(--sp-2);
+}

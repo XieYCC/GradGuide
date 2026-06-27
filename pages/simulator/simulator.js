@@ -57,21 +57,31 @@ Page({
     }
     // Load user real profile as initial state
     const profile = app.globalData.userProfile || {}
-    this.setData({
-      state: {
-        gpa: profile.gpa || 3.0,
-        toefl: profile.toefl || 80,
-        gre: profile.gre || 270,
-        paper: false,
-        research: false,
-        intern: false,
-        award: false,
-        baseResearchCount: (profile.research || []).length,
-        baseInternCount: (profile.internships || []).length,
-        basePaperCount: (profile.research || []).filter(r => r.type && r.type.includes('论文')).length,
-        baseAwardCount: 0
-      }
+    const state = {
+      gpa: profile.gpa || 3.0,
+      toefl: profile.toefl || 80,
+      gre: profile.gre || 270,
+      paper: false,
+      research: false,
+      intern: false,
+      award: false,
+      baseResearchCount: (profile.research || []).length,
+      baseInternCount: (profile.internships || []).length,
+      basePaperCount: (profile.research || []).filter(r => r.type && r.type.includes('论文')).length,
+      baseAwardCount: 0
+    }
+    // 以"进入时(不加 boost)的真实评分"作为基线，变化量相对它计算。
+    // 否则用户一进来就显示相对硬编码 53 的差值(+22)，而非 0。
+    const entryScore = calcScore({
+      gpa: state.gpa || 0,
+      toefl: state.toefl || 0,
+      gre: state.gre || 0,
+      paperCount: state.basePaperCount,
+      researchCount: state.baseResearchCount,
+      internCount: state.baseInternCount,
+      awardCount: state.baseAwardCount
     })
+    this.setData({ state, baseScore: entryScore, score: entryScore })
     this.update()
   },
 

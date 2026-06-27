@@ -1,0 +1,97 @@
+<view class="page-onboarding">
+  <swiper class="onboarding-swiper" current="{{curSlide}}" bindchange="onSlideChange" duration="300" disable-touch="{{inputFocus}}">
+    <!-- 第1屏：品牌介绍 + Hero -->
+    <swiper-item>
+      <view class="onboarding-slide">
+        <view class="slide-hero">
+          <text class="slide-title">GradGuide</text>
+          <text class="slide-subtitle">留学选校 · 智能诊断 · AI 文书</text>
+          <text class="slide-desc">基于你的背景精准匹配海外研究生项目，一站式搞定选校、诊断、提升、文书</text>
+        </view>
+      </view>
+    </swiper-item>
+
+    <!-- 第2屏：三大功能卡片 -->
+    <swiper-item>
+      <view class="onboarding-slide">
+        <view class="slide-section">
+          <text class="slide-section-title">不只是告诉你能去哪</text>
+          <view class="slide-features">
+            <view class="slide-feature">
+              <text class="feature-icon">🎯</text>
+              <text class="feature-title">精准匹配</text>
+              <text class="feature-desc">基于你的背景计算三档选校</text>
+            </view>
+            <view class="slide-feature">
+              <text class="feature-icon">📊</text>
+              <text class="feature-title">雷达诊断</text>
+              <text class="feature-desc">7 维对比，一眼看穿短板</text>
+            </view>
+            <view class="slide-feature">
+              <text class="feature-icon">🎮</text>
+              <text class="feature-title">提升模拟</text>
+              <text class="feature-desc">拖拽参数，实时模拟变化</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </swiper-item>
+
+    <!-- 第3屏：5步完整诊断链路 -->
+    <swiper-item>
+      <view class="onboarding-slide">
+        <view class="slide-section">
+          <text class="slide-section-title">5步走完整诊断链路</text>
+          <view class="slide-steps">
+            <view class="slide-step">
+              <text class="step-num">1</text>
+              <text class="step-text">填写你的背景档案</text>
+            </view>
+            <view class="slide-step">
+              <text class="step-num">2</text>
+              <text class="step-text">获取精准选校匹配</text>
+            </view>
+            <view class="slide-step">
+              <text class="step-num">3</text>
+              <text class="step-text">雷达诊断分析差距</text>
+            </view>
+            <view class="slide-step">
+              <text class="step-num">4</text>
+              <text class="step-text">模拟提升方案</text>
+            </view>
+            <view class="slide-step">
+              <text class="step-num">5</text>
+              <text class="step-text">AI 辅助文书生成</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </swiper-item>
+
+    <!-- 第4屏：开始使用 -->
+    <swiper-item>
+      <view class="onboarding-slide">
+        <view class="slide-section" style="text-align:center">
+          <text class="slide-section-title">准备好了吗？</text>
+          <text class="slide-desc" style="margin-top:12px;display:block">填写档案即可获取个性化的选校推荐、雷达诊断和提升方案</text>
+          <view style="margin-top:40px">
+            <button class="onboarding-btn-start" bindtap="onStart">开始使用</button>
+          </view>
+        </view>
+      </view>
+    </swiper-item>
+  </swiper>
+
+  <view class="onboarding-footer">
+    <view class="onboarding-dots">
+      <view class="onboarding-dot {{curSlide === index ? 'dot-active' : ''}}" wx:for="{{slides}}" wx:key="index"></view>
+    </view>
+    <view class="onboarding-actions" wx:if="{{curSlide < 3}}">
+      <text class="onboarding-btn-skip" bindtap="onSkip">跳过引导</text>
+    </view>
+    <view class="onboarding-actions" wx:else>
+      <button class="onboarding-btn-start" bindtap="onStart">开始使用</button>
+      <text class="onboarding-btn-skip" bindtap="onSkip">跳过</text>
+    </view>
+  </view>
+</view>

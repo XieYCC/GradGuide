@@ -17,6 +17,7 @@ Page({
     tierCounts: { reach: 0, match: 0, safety: 0 },
     loading: true,
     noMatchData: true,
+    loadError: false,
     favoriteIds: [],
     togglingIds: {},
     showTargetInfo: false,
@@ -29,6 +30,11 @@ Page({
 
   onShow() {
     this.loadData();
+  },
+
+  async onPullDownRefresh() {
+    await this.loadMatchResult();
+    wx.stopPullDownRefresh();
   },
 
   loadData() {
@@ -46,7 +52,7 @@ Page({
   },
 
   async loadMatchResult() {
-    this.setData({ loading: true });
+    this.setData({ loading: true, loadError: false });
     try {
       const matchRes = await wx.cloud.callFunction({ name: 'getUser' });
       const match = matchRes.result?.matchResult;
@@ -58,7 +64,8 @@ Page({
           safety: match.safety || [],
           extremeReachCount: match.extremeReachCount || 0,
           loading: false,
-          noMatchData: false
+          noMatchData: false,
+          loadError: false
         });
         this.loadFavorites();
         return;
@@ -73,7 +80,8 @@ Page({
         safety: calcRes.result.safety || [],
         extremeReachCount: calcRes.result.extremeReachCount || 0,
         loading: false,
-        noMatchData: false
+        noMatchData: false,
+        loadError: false
       });
       wx.hideLoading();
       this.loadFavorites();
@@ -102,11 +110,12 @@ Page({
       const match = programs.filter(p => p.tier === 'match');
       const safety = programs.filter(p => p.tier === 'safety');
       const tierCounts = { reach: reach.length, match: match.length, safety: safety.length };
-      this.setData({ reach, match, safety, tierCounts, loading: false, noMatchData: false });
+      this.setData({ reach, match, safety, tierCounts, loading: false, noMatchData: false, loadError: false });
       this.loadFavorites();
     } catch (err) {
       console.error('[match] fallback failed', err);
-      this.setData({ loading: false });
+      // 彻底失败:显示重试空态，而非误导用户去填信息
+      this.setData({ loading: false, loadError: true });
     }
   },
 

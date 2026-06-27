@@ -1,0 +1,406 @@
+/* 模拟文书样式 */
+
+.essay-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: var(--sp-6) var(--sp-4) var(--sp-2);
+}
+
+.essay-sub {
+  font-size: var(--fs-body-sm);
+  color: var(--c-ink-3);
+  display: block;
+  margin-top: var(--sp-1);
+}
+
+.essay-badge {
+  flex-shrink: 0;
+}
+
+/* 步骤引导 */
+.essay-steps {
+  display: flex;
+  align-items: center;
+  padding: var(--sp-4);
+  gap: 0;
+}
+
+.essay-step {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.essay-step-num {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-semibold);
+}
+
+.essay-step-active .essay-step-num {
+  background: var(--c-primary);
+  color: var(--gg-white);
+}
+
+.essay-step-done .essay-step-num {
+  background: var(--c-accent);
+  color: var(--gg-white);
+}
+
+.essay-step:not(.essay-step-active):not(.essay-step-done) .essay-step-num {
+  background: var(--c-surface);
+  color: var(--c-ink-3);
+}
+
+.essay-step-label {
+  font-size: var(--fs-body-sm);
+  color: var(--c-ink-2);
+}
+
+.essay-step-line {
+  flex: 1;
+  height: 2rpx;
+  background: var(--c-line);
+  margin: 0 var(--sp-2);
+}
+
+/* 区域 */
+.essay-section {
+  padding: 0 var(--sp-4);
+  margin-bottom: var(--sp-4);
+}
+
+.essay-section-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--sp-4);
+}
+
+.essay-section-title {
+  font-size: var(--fs-subtitle);
+  font-weight: var(--fw-semibold);
+  color: var(--c-ink);
+  display: block;
+}
+
+.essay-section-back {
+  font-size: var(--fs-body-sm);
+  color: var(--c-primary);
+}
+
+.essay-section-actions {
+  display: flex;
+  gap: var(--sp-3);
+}
+
+.essay-section-copy {
+  font-size: var(--fs-body-sm);
+  color: var(--c-primary);
+  font-weight: var(--fw-semibold);
+}
+
+/* 类型选择 */
+.essay-type-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+}
+
+.essay-type-card {
+  width: calc(50% - 12rpx);
+  padding: var(--sp-4);
+}
+
+.essay-type-icon {
+  width: 88rpx;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--c-primary-l);
+  color: var(--c-primary);
+  font-size: var(--fs-h-md);
+  font-weight: var(--fw-bold);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--sp-2);
+}
+
+.essay-type-name {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-semibold);
+  color: var(--c-ink);
+  display: block;
+  margin-bottom: var(--sp-1);
+}
+
+.essay-type-desc {
+  font-size: var(--fs-caption-xs);
+  color: var(--c-ink-3);
+  display: block;
+  margin-bottom: var(--sp-3);
+  line-height: 1.4;
+}
+
+.essay-type-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.essay-type-price {
+  font-size: var(--fs-body-md);
+  font-weight: var(--fw-bold);
+  color: var(--c-primary);
+}
+
+.essay-type-action {
+  font-size: var(--fs-caption-xs);
+  color: var(--c-primary);
+  font-weight: var(--fw-semibold);
+  padding: 4rpx var(--sp-2);
+  border: var(--border-1) solid var(--c-primary);
+  border-radius: var(--radius-xs);
+}
+
+/* 信息填写 */
+.essay-form-card {
+  padding: var(--sp-6);
+}
+
+.essay-type-badge {
+  display: inline-block;
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--c-primary);
+  background: var(--c-primary-l);
+  padding: var(--sp-1) 20rpx;
+  border-radius: var(--radius-full);
+  margin-bottom: var(--sp-4);
+}
+
+.essay-templates {
+  margin-bottom: var(--sp-5);
+}
+
+.essay-template-grid {
+  display: flex;
+  gap: var(--sp-2);
+  margin-top: var(--sp-2);
+}
+
+.essay-template {
+  flex: 1;
+  padding: 20rpx;
+  text-align: center;
+  border-radius: var(--radius-md);
+  border: var(--border-1) solid var(--c-line);
+  font-size: var(--fs-body-sm);
+  color: var(--c-ink-2);
+}
+
+.essay-template-active {
+  background: var(--c-primary-l);
+  color: var(--c-primary);
+  border-color: var(--c-primary);
+  font-weight: var(--fw-semibold);
+}
+
+.essay-form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-5);
+}
+
+.essay-form-field {
+}
+
+.essay-form-label {
+  font-size: var(--fs-body-sm);
+  color: var(--c-ink-2);
+  display: block;
+  margin-bottom: var(--sp-1);
+}
+
+.essay-form-preview {
+  padding: var(--sp-4);
+  background: var(--c-surface);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--sp-5);
+}
+
+.essay-form-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: var(--sp-2);
+}
+
+.essay-generate-btn {
+  margin-top: var(--sp-2);
+}
+
+/* 预览 */
+.essay-preview-card {
+  padding: var(--sp-6);
+  position: relative;
+  overflow: hidden;
+}
+
+.essay-preview-badge {
+  margin-bottom: var(--sp-3);
+}
+
+.essay-preview-content {
+  font-size: var(--fs-body-sm);
+  color: var(--c-ink);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  max-height: 600rpx;
+  overflow: hidden;
+  margin-bottom: var(--sp-4);
+}
+
+/* 付费墙 */
+.essay-paywall {
+  position: relative;
+}
+
+.essay-paywall-blur {
+  position: absolute;
+  top: -400rpx;
+  left: -48rpx;
+  right: -48rpx;
+  bottom: 0;
+  background: linear-gradient(to bottom, transparent 0%, var(--gg-white) 100%);
+  pointer-events: none;
+}
+
+.essay-paywall-content {
+  position: relative;
+  z-index: 1;
+  padding-top: var(--sp-5);
+  border-top: var(--border-1) solid var(--c-line);
+}
+
+.essay-paywall-title {
+  font-size: var(--fs-subtitle);
+  font-weight: var(--fw-semibold);
+  color: var(--c-ink);
+  display: block;
+  margin-bottom: var(--sp-2);
+}
+
+.essay-paywall-desc {
+  font-size: var(--fs-body-sm);
+  color: var(--c-ink-3);
+  display: block;
+  line-height: 1.5;
+  margin-bottom: var(--sp-4);
+}
+
+.essay-paywall-price {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-1);
+  margin-bottom: var(--sp-4);
+}
+
+.essay-paywall-price-num {
+  font-size: var(--fs-display);
+  font-weight: var(--fw-bold);
+  color: var(--c-primary);
+}
+
+.essay-paywall-price-note {
+  font-size: var(--fs-body-sm);
+  color: var(--c-ink-3);
+}
+
+.essay-paywall-meta {
+  display: flex;
+  gap: var(--sp-2);
+  justify-content: center;
+  font-size: var(--fs-caption-xs);
+  color: var(--c-ink-3);
+  margin-top: var(--sp-3);
+}
+
+/* 完整文书 */
+.essay-full-card {
+  padding: var(--sp-6);
+}
+
+.essay-full-badge {
+  margin-bottom: var(--sp-3);
+}
+
+.essay-full-content {
+  font-size: var(--fs-body-sm);
+  color: var(--c-ink);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  margin-bottom: var(--sp-5);
+}
+
+.essay-full-actions {
+  display: flex;
+  gap: var(--sp-3);
+}
+
+/* 付费说明 */
+.essay-info {
+  margin: 0 var(--sp-4) var(--sp-6);
+  padding: var(--sp-5);
+}
+
+.essay-info-item {
+  display: flex;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
+}
+
+.essay-info-item:last-child {
+  margin-bottom: 0;
+}
+
+.essay-info-icon {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background: var(--c-accent-l);
+  color: var(--c-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-semibold);
+  flex-shrink: 0;
+  animation: check-pop var(--dur-base) var(--ease-out) both;
+}
+@keyframes check-pop {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+.essay-info-title {
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--c-ink);
+  display: block;
+}
+
+.essay-info-desc {
+  font-size: var(--fs-caption-xs);
+  color: var(--c-ink-3);
+  display: block;
+  margin-top: 4rpx;
+}

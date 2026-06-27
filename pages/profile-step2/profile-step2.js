@@ -19,15 +19,17 @@ Page({
     wx.navigateBack()
   },
 
-  onNext() {
+  async onNext() {
     if (!this.data.selected) {
       wx.showToast({ title: '请选择毕业年份', icon: 'none' })
       return
     }
     app.globalData.userProfile = { ...app.globalData.userProfile, gradYear: this.data.selected }
-    wx.cloud.callFunction({ name: 'saveProfile', data: { profile: { gradYear: this.data.selected } } }).catch(err => {
+    try {
+      await wx.cloud.callFunction({ name: 'saveProfile', data: { profile: { gradYear: this.data.selected } } })
+    } catch (err) {
       console.error('[saveProfile]', err)
-    })
+    }
     wx.navigateTo({ url: '/pages/profile-step3/profile-step3' })
   }
 })

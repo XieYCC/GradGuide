@@ -1,37 +1,20 @@
-.page-profile-step {
-  padding: 24px 16px 96px;
-  min-height: 100vh;
-  background: #fff;
-  display: flex;
-  flex-direction: column;
-}
-.profile-step-header {
-  margin-bottom: 32px;
-}
-.profile-step-num {
-  font-size: 12px;
-  color: var(--c-primary);
-  font-weight: 600;
-  display: block;
-  margin-bottom: 8px;
-}
-.profile-step-title {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--c-ink);
-  display: block;
-}
+@import "../../styles/profile-step.wxss";
+
+/* step1: 单选选项卡 */
+.profile-step-header { margin-bottom: var(--sp-8); }   /* 覆写默认 --sp-6 */
+.profile-step-footer { gap: var(--sp-3); }             /* 覆写默认 --sp-2 */
+
 .profile-step-options {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--sp-3);
   flex: 1;
 }
 .profile-option {
-  padding: 16px;
-  border-radius: 12px;
-  border: 1px solid var(--c-line);
-  font-size: 15px;
+  padding: var(--sp-4);
+  border-radius: var(--radius-xl);
+  border: var(--border-1) solid var(--c-line);
+  font-size: var(--fs-body-lg);
   color: var(--c-ink);
   text-align: center;
 }
@@ -39,21 +22,5 @@
   border-color: var(--c-primary);
   background: var(--c-primary-l);
   color: var(--c-primary);
-  font-weight: 600;
-}
-.profile-step-footer {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 10;
-  display: flex;
-  gap: 12px;
-  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-  background: #fff;
-  border-top: 1px solid var(--c-line);
-  box-sizing: border-box;
-}
-.profile-step-footer .btn {
-  flex: 1;
+  font-weight: var(--fw-semibold);
 }

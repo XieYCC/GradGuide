@@ -39,13 +39,15 @@ Page({
 
   onPrev() { wx.navigateBack() },
 
-  onNext() {
+  async onNext() {
     const research = this.data.research.filter(r => r.name.trim())
     const internships = this.data.internships.filter(r => r.name.trim())
     app.globalData.userProfile = { ...app.globalData.userProfile, research, internships }
-    wx.cloud.callFunction({ name: 'saveProfile', data: { profile: { research, internships } } }).catch(err => {
+    try {
+      await wx.cloud.callFunction({ name: 'saveProfile', data: { profile: { research, internships } } })
+    } catch (err) {
       console.error('[saveProfile]', err)
-    })
+    }
     wx.navigateTo({ url: '/pages/profile-step5/profile-step5' })
   },
 

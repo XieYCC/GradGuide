@@ -52,28 +52,28 @@
 
         <text class="sim-boost-title">额外补强</text>
         <view class="sim-boost-list">
-          <view class="sim-boost-item" data-boost="paper" bindtap="onBoostChange">
+          <view class="sim-boost-item stagger-in" style="--i:0" data-boost="paper" bindtap="onBoostChange">
             <view class="sim-boost-check {{state.paper ? 'sim-boost-check-on' : ''}}">{{state.paper ? '✓' : ''}}</view>
             <view class="sim-boost-content">
               <text class="sim-boost-name">+1 篇顶会论文（在投也算）</text>
               <text class="sim-boost-impact">影响：科研维度 +25</text>
             </view>
           </view>
-          <view class="sim-boost-item" data-boost="research" bindtap="onBoostChange">
+          <view class="sim-boost-item stagger-in" style="--i:1" data-boost="research" bindtap="onBoostChange">
             <view class="sim-boost-check {{state.research ? 'sim-boost-check-on' : ''}}">{{state.research ? '✓' : ''}}</view>
             <view class="sim-boost-content">
               <text class="sim-boost-name">+1 段海外暑研（CMU/UCB等）</text>
               <text class="sim-boost-impact">影响：科研 +15，推荐信 +20</text>
             </view>
           </view>
-          <view class="sim-boost-item" data-boost="intern" bindtap="onBoostChange">
+          <view class="sim-boost-item stagger-in" style="--i:2" data-boost="intern" bindtap="onBoostChange">
             <view class="sim-boost-check {{state.intern ? 'sim-boost-check-on' : ''}}">{{state.intern ? '✓' : ''}}</view>
             <view class="sim-boost-content">
               <text class="sim-boost-name">+1 段顶级大厂实习（Google/Meta）</text>
               <text class="sim-boost-impact">影响：实习 +10</text>
             </view>
           </view>
-          <view class="sim-boost-item" data-boost="award" bindtap="onBoostChange">
+          <view class="sim-boost-item stagger-in" style="--i:3" data-boost="award" bindtap="onBoostChange">
             <view class="sim-boost-check {{state.award ? 'sim-boost-check-on' : ''}}">{{state.award ? '✓' : ''}}</view>
             <view class="sim-boost-content">
               <text class="sim-boost-name">+ ACM 区域赛金奖 / Kaggle 银</text>

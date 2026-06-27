@@ -1,0 +1,343 @@
+/* 短板诊断样式 */
+
+.diag-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: var(--sp-6) var(--sp-4) var(--sp-4);
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+}
+
+.diag-sub {
+  font-size: var(--fs-body-sm);
+  color: var(--c-ink-3);
+  display: block;
+  margin-top: var(--sp-1);
+}
+
+/* 雷达图区域 */
+.diag-grid {
+  padding: 0 var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.diag-radar-card {
+  padding: var(--pad-card-main);
+  background: var(--c-card);
+  border-radius: var(--radius-card-main);
+  border: var(--border-1) solid var(--c-line-soft);
+  box-shadow: var(--shadow-card-up);
+}
+
+.diag-radar-title {
+  margin-bottom: var(--sp-2);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+.radar-canvas {
+  width: 600rpx;
+  height: 600rpx;
+  margin: 0 auto;
+}
+
+.radar-legend {
+  display: flex;
+  justify-content: center;
+  gap: var(--sp-5);
+  margin-top: var(--sp-3);
+}
+
+.radar-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  font-size: var(--fs-body-sm);
+  color: var(--c-ink-2);
+}
+
+.radar-legend-dot {
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 50%;
+}
+
+/* 右侧 */
+.diag-right {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+/* 总评 */
+.diag-score-card {
+  background: var(--c-primary);
+  border-radius: var(--radius-card-hero);
+  padding: var(--pad-card-hero);
+  color: var(--gg-white);
+  box-shadow: var(--shadow-card-up);
+}
+
+.diag-score-label {
+  font-size: var(--fs-body-sm);
+  color: var(--c-white-a70);
+  display: block;
+}
+
+.diag-score-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-1);
+  margin-top: var(--sp-1);
+}
+
+.diag-score-num {
+  font-size: 96rpx;
+  font-weight: var(--fw-semibold);
+}
+
+.diag-score-total {
+  font-size: var(--fs-subtitle);
+  color: var(--c-white-a60);
+}
+
+.diag-score-desc {
+  font-size: var(--fs-body-sm);
+  color: var(--c-white-a80);
+  display: block;
+  margin-top: var(--sp-2);
+}
+
+.diag-score-em {
+  color: var(--gg-green-200);
+  font-weight: var(--fw-semibold);
+}
+
+.diag-score-bar {
+  height: 12rpx;
+  border-radius: var(--radius-full);
+  background: var(--c-white-a20);
+  margin-top: var(--sp-3);
+  overflow: hidden;
+}
+
+.diag-score-fill {
+  height: 100%;
+  background: var(--gg-green-200);
+  border-radius: var(--radius-full);
+  transition: width var(--dur-slow) var(--ease-out);
+}
+
+/* 短板 */
+.diag-short-card {
+  padding: var(--pad-card-main);
+  background: var(--c-card);
+  border-radius: var(--radius-card-main);
+  border: var(--border-1) solid var(--c-line-soft);
+  box-shadow: var(--shadow-card-up);
+}
+
+.diag-short-title {
+  margin-bottom: var(--sp-2);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+.diag-short-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.diag-short-item {
+  display: flex;
+  gap: var(--sp-3);
+}
+
+.diag-short-num {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--fw-bold);
+  flex-shrink: 0;
+  font-size: var(--fs-body-md);
+}
+
+.diag-short-num-1 {
+  background: var(--c-down-bg);
+  color: var(--c-down-fg);
+}
+
+.diag-short-num-2 {
+  background: var(--gg-amber-100);
+  color: var(--c-warn-fg);
+}
+
+.diag-short-content {
+  flex: 1;
+}
+
+.diag-short-head {
+  display: flex;
+  justify-content: space-between;
+}
+
+.diag-short-name {
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--c-ink);
+}
+
+.diag-short-gap {
+  font-size: var(--fs-caption-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--c-down-fg);
+}
+
+.diag-short-desc {
+  font-size: var(--fs-caption-xs);
+  color: var(--c-ink-3);
+  display: block;
+  margin-top: 4rpx;
+}
+
+.diag-short-bar {
+  height: 12rpx;
+  border-radius: var(--radius-full);
+  background: var(--c-surface);
+  margin-top: var(--sp-1);
+  overflow: hidden;
+}
+
+.diag-short-fill {
+  height: 100%;
+  background: var(--c-cta-deco);
+  border-radius: var(--radius-full);
+  transition: width var(--dur-slow) var(--ease-out);
+}
+
+/* 优势 */
+.diag-strength-card {
+  padding: var(--sp-5);
+}
+
+.diag-strength-title {
+  margin-bottom: var(--sp-3);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+.diag-strength-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+/* 详细维度 */
+.diag-detail-card {
+  margin: 0 var(--sp-4);
+  padding: var(--sp-6);
+}
+
+.diag-detail-title {
+  margin-bottom: var(--sp-5);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+.diag-detail-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.diag-detail-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--fs-body-sm);
+  margin-bottom: var(--sp-1);
+}
+
+.diag-detail-name {
+  font-weight: var(--fw-semibold);
+  color: var(--c-ink);
+}
+
+.diag-detail-diff {
+  font-size: var(--fs-caption-xs);
+  font-weight: var(--fw-regular);
+}
+
+.diag-detail-val {
+  color: var(--c-ink-3);
+  font-size: var(--fs-caption-xs);
+}
+
+.diag-detail-bar {
+  position: relative;
+  height: 16rpx;
+  background: var(--c-surface);
+  border-radius: var(--radius-full);
+  overflow: visible;
+}
+
+.diag-detail-fill {
+  height: 100%;
+  background: var(--c-primary);
+  border-radius: var(--radius-full);
+  transition: width var(--dur-base) var(--ease-out);
+}
+
+.diag-detail-bench {
+  position: absolute;
+  width: 6rpx;
+  height: 24rpx;
+  background: var(--gg-orange-500);
+  top: -4rpx;
+}
+
+.diag-detail-note {
+  display: block;
+  text-align: center;
+  font-size: var(--fs-caption-xs);
+  color: var(--c-ink-3);
+  margin-top: var(--sp-2);
+}
+
+/* 引导 */
+.diag-cta {
+  background: var(--c-primary);
+  border-radius: var(--radius-3xl);
+  padding: var(--sp-6);
+  margin: var(--sp-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  color: var(--gg-white);
+}
+
+.diag-cta-title {
+  font-size: var(--fs-subtitle);
+  font-weight: var(--fw-semibold);
+  color: var(--gg-white);
+  display: block;
+}
+
+.diag-cta-desc {
+  font-size: var(--fs-body-sm);
+  color: var(--c-white-a70);
+  display: block;
+  margin-top: var(--sp-1);
+}

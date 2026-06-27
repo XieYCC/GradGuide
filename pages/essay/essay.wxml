@@ -1,0 +1,176 @@
+<!-- 模拟文书 -->
+<view class="page-essay">
+
+  <!-- 头部 -->
+  <view class="essay-header">
+    <view class="essay-header-text">
+      <text class="h-lg">AI 模拟文书生成</text>
+      <text class="essay-sub">基于你的背景档案，自动生成符合申请要求的模拟文书</text>
+    </view>
+    <view class="essay-badge tag tag-primary">付费能力</view>
+  </view>
+
+  <!-- 步骤引导 -->
+  <view class="essay-steps">
+    <view class="essay-step {{selectedType ? 'essay-step-done' : 'essay-step-active'}}">
+      <text class="essay-step-num">1</text>
+      <text class="essay-step-label">选择类型</text>
+    </view>
+    <view class="essay-step-line"></view>
+    <view class="essay-step {{selectedType && previewContent ? 'essay-step-done' : selectedType ? 'essay-step-active' : ''}}">
+      <text class="essay-step-num">2</text>
+      <text class="essay-step-label">填写信息</text>
+    </view>
+    <view class="essay-step-line"></view>
+    <view class="essay-step {{isPaid ? 'essay-step-done' : previewContent ? 'essay-step-active' : ''}}">
+      <text class="essay-step-num">3</text>
+      <text class="essay-step-label">预览 & 付费</text>
+    </view>
+  </view>
+
+  <!-- 第一步：选择文书类型 -->
+  <view class="essay-section" wx:if="{{!selectedType}}">
+    <text class="essay-section-title">选择文书类型</text>
+    <view class="essay-type-grid">
+      <view class="essay-type-card card stagger-in" hover-class="tap-feedback" style="--i:{{index}}" wx:for="{{docTypes}}" wx:key="id" data-id="{{item.id}}" bindtap="selectType">
+        <view class="essay-type-icon">{{item.icon}}</view>
+        <text class="essay-type-name">{{item.name}}</text>
+        <text class="essay-type-desc">{{item.desc}}</text>
+        <view class="essay-type-footer">
+          <text class="essay-type-price">{{item.price}}</text>
+          <text class="essay-type-action">选择</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 第二步：填写信息 -->
+  <view class="essay-section" wx:elif="{{selectedType && !previewContent && !fullContent}}">
+    <view class="essay-section-top">
+      <text class="essay-section-title">完善文书信息</text>
+      <text class="essay-section-back" bindtap="selectType" data-id="">← 重新选择类型</text>
+    </view>
+
+    <view class="card essay-form-card">
+      <text class="essay-type-badge">{{selectedTypeName}}</text>
+
+      <view class="essay-templates">
+        <text class="essay-form-label">选择模板方向</text>
+        <view class="essay-template-grid">
+          <view class="essay-template {{selectedTemplate === 'cs' ? 'essay-template-active' : ''}}" data-id="cs" bindtap="selectTemplate">CS 方向</view>
+          <view class="essay-template {{selectedTemplate === 'mkt' ? 'essay-template-active' : ''}}" data-id="mkt" bindtap="selectTemplate">MKT 方向</view>
+          <view class="essay-template {{selectedTemplate === 'general' ? 'essay-template-active' : ''}}" data-id="general" bindtap="selectTemplate">通用</view>
+        </view>
+      </view>
+
+      <view class="essay-form-fields">
+        <view class="essay-form-field">
+          <text class="essay-form-label">目标院校</text>
+          <input class="input-line" value="{{userInput.targetSchool}}" data-key="targetSchool" bindinput="onInputChange" placeholder="如：Carnegie Mellon University" />
+        </view>
+        <view class="essay-form-field">
+          <text class="essay-form-label">目标项目</text>
+          <input class="input-line" value="{{userInput.targetProgram}}" data-key="targetProgram" bindinput="onInputChange" placeholder="如：M.S. in Computer Science" />
+        </view>
+        <view class="essay-form-field">
+          <text class="essay-form-label">你的核心优势（选填）</text>
+          <input class="input-line" value="{{userInput.highlight}}" data-key="highlight" bindinput="onInputChange" placeholder="如：突出的科研与实习经历" />
+        </view>
+        <view class="essay-form-field">
+          <text class="essay-form-label">申请动机（选填）</text>
+          <input class="input-line" value="{{userInput.reason}}" data-key="reason" bindinput="onInputChange" placeholder="如：对前沿技术的热情与追求" />
+        </view>
+      </view>
+
+      <view class="essay-form-preview">
+        <text class="essay-form-label">系统将自动使用你的档案数据：</text>
+        <view class="essay-form-tags">
+          <text class="tag tag-primary">{{profile.school || '武汉大学'}} · {{profile.schoolLevel || '985'}}</text>
+          <text class="tag tag-primary">GPA {{profile.gpa || 3.65}}</text>
+          <text class="tag tag-primary">TOEFL {{profile.toefl || 98}}</text>
+          <text class="tag tag-primary">{{researchCount}}段科研</text>
+          <text class="tag tag-primary">{{internshipCount}}段实习</text>
+        </view>
+      </view>
+
+      <button class="btn btn-primary btn-block essay-generate-btn" bindtap="generatePreview" loading="{{generating}}">
+        {{generating ? '生成中...' : '免费预览文书'}}
+      </button>
+    </view>
+  </view>
+
+  <!-- 第三步：预览 & 付费 -->
+  <view class="essay-section" wx:elif="{{previewContent || fullContent}}">
+    <view class="essay-section-top">
+      <text class="essay-section-title">{{isPaid ? '你的完整文书' : '文书预览'}}</text>
+      <view class="essay-section-actions">
+        <text class="essay-section-back" bindtap="selectType" data-id="">← 重新选择</text>
+        <text class="essay-section-copy" bindtap="copyContent">复制</text>
+      </view>
+    </view>
+
+    <!-- 免费预览 -->
+    <view class="card essay-preview-card fade-in" wx:if="{{previewContent && !isPaid}}">
+      <view class="essay-preview-badge tag tag-accent">免费预览</view>
+      <view class="essay-preview-content">
+        <text>{{previewContent}}</text>
+      </view>
+
+      <!-- 付费墙 -->
+      <view class="essay-paywall">
+        <view class="essay-paywall-blur"></view>
+        <view class="essay-paywall-content">
+          <text class="essay-paywall-title">解锁完整版模拟文书</text>
+          <text class="essay-paywall-desc">获取 800+ 字完整文书，含学术背景、研究经历、实习经历、择校理由、未来规划等完整段落，可直接用于申请</text>
+          <view class="essay-paywall-price">
+            <text class="essay-paywall-price-num">{{selectedTypePrice || '¥9.99'}}</text>
+            <text class="essay-paywall-price-note">/ 次 · 永久有效</text>
+          </view>
+          <button class="btn btn-primary btn-block" bindtap="onPay">立即解锁完整版</button>
+          <view class="essay-paywall-meta">
+            <text>已有 2,156 位同学解锁</text>
+            <text>·</text>
+            <text>4.9 评分</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 完整文书 -->
+    <view class="card essay-full-card fade-in" wx:if="{{fullContent && isPaid}}">
+      <view class="essay-full-badge tag tag-accent">已解锁</view>
+      <view class="essay-full-content">
+        <text>{{fullContent}}</text>
+      </view>
+      <view class="essay-full-actions">
+        <button class="btn btn-primary" bindtap="copyContent">复制全文</button>
+        <button class="btn btn-ghost" bindtap="selectType" data-id="">生成另一份</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 付费说明 -->
+  <view class="essay-info card">
+    <view class="essay-info-item stagger-in" style="--i:0" >
+      <text class="essay-info-icon">✓</text>
+      <view>
+        <text class="essay-info-title">基于你的真实背景</text>
+        <text class="essay-info-desc">自动读取你的档案数据，生成个性化文书</text>
+      </view>
+    </view>
+    <view class="essay-info-item stagger-in" style="--i:1" >
+      <text class="essay-info-icon">✓</text>
+      <view>
+        <text class="essay-info-title">多种文书类型覆盖</text>
+        <text class="essay-info-desc">SoP / PS / LoR / CV / RP / Diversity 全覆盖</text>
+      </view>
+    </view>
+    <view class="essay-info-item stagger-in" style="--i:2" >
+      <text class="essay-info-icon">✓</text>
+      <view>
+        <text class="essay-info-title">付费解锁 · 永久有效</text>
+        <text class="essay-info-desc">一次付费，永久查看和复制，可反复修改</text>
+      </view>
+    </view>
+  </view>
+</view>

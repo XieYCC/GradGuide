@@ -1,0 +1,272 @@
+/* ============================================================
+   GradGuide 设计令牌 (Design Tokens)
+   单位: rpx (750rpx = 屏幕宽，1px = 2rpx，基于 375 设计稿)
+   定位: product · 声音 温暖·陪伴·鼓励
+   约束: 无渐变 / 无 emoji 图标 / 无玻璃态 / 无通用居中
+
+   本文件是设计系统的唯一令牌来源 (single source of truth)。
+   接入方式: 在 app.wxss 顶部 `@import "design-token.wxss";`，
+   并删除 app.wxss 中 page{} 内重复的 --c-* / 间距 / 字号令牌，
+   改由本文件统一提供。详见文件末尾「接入说明」。
+   ============================================================ */
+
+page {
+  /* =========================================================
+     一、全局色值 (Color)
+     分两层: primitive(原始值，不直接用) → semantic(语义令牌)
+     ========================================================= */
+
+  /* —— 品牌原色 (primitive) —— */
+  --gg-green-900: #244a40;   /* 最深，主色按下态 */
+  --gg-green-700: #2e5d50;   /* 主色 primary */
+  --gg-green-600: #2f7d4d;   /* match 档文字 / accent 深色 */
+  --gg-green-500: #3daa68;   /* accent 强调色 */
+  --gg-green-400: #2f9357;   /* accent 按下态 */
+  --gg-green-200: #9fe3bb;   /* accent 浅 (雷达图/数据图填充) */
+  --gg-green-100: #e8f0ed;   /* primary 浅底 (选中/高亮块) */
+  --gg-green-050: #eef4f1;   /* 更浅的绿调面板 */
+
+  /* —— 中性 (primitive) —— */
+  --gg-ink-900: #1c1c1c;     /* 最深墨色，正文主色 */
+  --gg-ink-800: #1f2d2a;     /* 页面标题墨 (微绿调，比纯黑更柔和) */
+  --gg-ink-600: #5d6965;     /* 次级正文 */
+  --gg-ink-500: #5c5c5c;     /* 中性次级 */
+  --gg-ink-400: #7a8581;     /* 辅助说明文字 (微绿调) */
+  --gg-ink-300: #767676;     /* 占位/最弱文字 (AA: 4.54:1) */
+  --gg-line-200: #e4e4e4;    /* 中性描边 */
+  --gg-line-100: #e4e8e6;    /* 卡片描边 (微绿调) */
+  --gg-line-050: #dfe5e2;    /* 更柔和的描边/分隔 */
+  --gg-surface-100: #f5f5f5; /* 页面底色 */
+  --gg-surface-200: #f5f7f6; /* 内嵌面板底色 (微绿调) */
+  --gg-white:    #ffffff;    /* 纯白 (修正原 app.wxss 中 #ffffff2 笔误) */
+
+  /* —— 半透明色 (深色模式覆写时一并替换) —— */
+  --c-white-a80: rgba(255, 255, 255, 0.8);   /* 概览卡主级白字 */
+  --c-white-a70: rgba(255, 255, 255, 0.7);   /* 概览卡次级白字 */
+  --c-white-a60: rgba(255, 255, 255, 0.6);   /* 概览卡标签 */
+  --c-white-a10: rgba(255, 255, 255, 0.1);   /* ghost 按钮底 */
+  --c-white-a20: rgba(255, 255, 255, 0.2);   /* 概览卡徽标底 */
+  --c-white-a30: rgba(255, 255, 255, 0.3);   /* ghost 按钮边 */
+  --c-mask:      rgba(0, 0, 0, 0.4);         /* 模态蒙层 */
+
+  /* —— 状态/语义色 (primitive) —— */
+  --gg-amber-700: #7a6d28;   /* 警示文字 (AA: 4.92:1) */
+  --gg-amber-050: #fef9e7;   /* 警示浅底 */
+  --gg-amber-100: #f3ead4;   /* 警示浅底 (雷达图档位) */
+  --gg-orange-700: #8a4a25;  /* 差距/下行 delta 文字 (AA: 5.47:1) */
+  --gg-orange-600: #a8651f;  /* CTA 按钮橙底 (白字 AA: 4.62:1) */
+  --gg-orange-500: #c98a4b;  /* 引流/强调橙 (虚线框、装饰，不作白字底) */
+  --gg-orange-050: #f6e3d8;  /* 差距浅底 */
+  --gg-red-500:    #c0392b;  /* 收藏/强提示红 */
+
+  /* —— 语义令牌 (semantic，业务里只引用这些) —— */
+
+  /* 主色 */
+  --c-primary:   var(--gg-green-700);
+  --c-primary-d: var(--gg-green-900);   /* 按下 */
+  --c-primary-l: #e7efec;               /* 选中/高亮浅底 (沿用 app.wxss 原值) */
+
+  /* 强调色 (accent) */
+  --c-accent:   var(--gg-green-500);
+  --c-accent-d: var(--gg-green-400);    /* 按下 */
+  --c-accent-l: #e8f5ee;                /* accent 浅底 (沿用 app.wxss 原值) */
+
+  /* 文字 */
+  --c-ink:   var(--gg-ink-900);         /* 正文主色 */
+  --c-ink-2: var(--gg-ink-500);         /* 次级正文 */
+  --c-ink-3: var(--gg-ink-300);         /* 占位/最弱 */
+  --c-title: var(--gg-ink-800);         /* 页面标题 (微绿调墨) */
+  --c-sub:   var(--gg-ink-600);         /* 辅助说明 (AA 5.72:1，原 #7a8581 仅 3.8:1) */
+  --c-body-2: var(--gg-ink-600);        /* 次级正文 (微绿调) */
+
+  /* 背景 / 表面 */
+  --c-surface: var(--gg-surface-100);   /* 页面底 */
+  --c-panel:   var(--gg-surface-200);   /* 内嵌面板 */
+  --c-card:    var(--gg-white);         /* 卡片底 */
+
+  /* 描边 / 分隔 */
+  --c-line:    var(--gg-line-200);
+  --c-line-soft: var(--gg-line-100);
+  --c-line-faint: var(--gg-line-050);
+
+  /* —— 档位语义 (reach / match / safety) —— */
+  /* reach 用主色、match 用 accent、safety 用中性，与 TIER_CONFIG 对齐 */
+  --c-tier-reach-fg:    var(--gg-green-700);
+  --c-tier-reach-bg:    var(--gg-green-100);
+  --c-tier-match-fg:    var(--gg-green-600);
+  --c-tier-match-bg:    var(--gg-green-100);
+  --c-tier-safety-fg:   var(--gg-ink-500);
+  --c-tier-safety-bg:   var(--gg-surface-100);
+
+  /* —— 状态语义 (success / warning / danger) —— */
+  --c-success-fg: var(--gg-green-600);
+  --c-success-bg: var(--gg-green-100);
+  --c-warn-fg:    var(--gg-amber-700);
+  --c-warn-bg:    var(--gg-amber-050);
+  --c-danger-fg:  var(--gg-red-500);
+  --c-down-fg:    var(--gg-orange-700);   /* delta 下行 */
+  --c-down-bg:    var(--gg-orange-050);
+  --c-up-fg:      var(--gg-green-600);    /* delta 上行 */
+  --c-fav-fg:     var(--gg-red-500);      /* 已收藏 */
+  --c-cta:        var(--gg-orange-600);   /* 引流 CTA 按钮底 (配白字) */
+  --c-cta-deco:   var(--gg-orange-500);   /* CTA 虚线框/装饰 (非白字底) */
+
+  /* =========================================================
+     二、组件圆角 (Radius)
+     全部 rpx。按使用频次收敛为一档档的语义刻度。
+     ========================================================= */
+  --radius-xs:   8rpx;    /* 4px  细节圆角 (小标签内描边) */
+  --radius-sm:  12rpx;    /* 6px  小块、详情项 */
+  --radius-md:  16rpx;    /* 8px  按钮、输入块、小卡片 */
+  --radius-lg:  20rpx;    /* 10px 常规卡片块 */
+  --radius-xl:  24rpx;    /* 12px 主卡片 */
+  --radius-2xl: 28rpx;    /* 14px 强调卡片 */
+  --radius-3xl: 32rpx;    /* 16px 大卡片 / 头图 */
+  --radius-pill: 96rpx;   /* 48px 胶囊 CTA (profile-init) */
+  --radius-full: 9999rpx; /* 全圆 (徽章/进度点) */
+
+  /* 语义别名 */
+  --radius-card:   var(--radius-xl);
+  --radius-btn:    var(--radius-md);
+  --radius-tag:    var(--radius-full);
+  --radius-input:  0;       /* 下划线输入风格，无圆角 */
+
+  /* —— 卡片分层 (hero / main / list) ——
+     保留层级差异:主推大卡圆角更大、列表卡更小。每档内统一。 */
+  --radius-card-hero:  var(--radius-3xl);  /* 16px 概览/头图大卡 */
+  --radius-card-main:  var(--radius-xl);   /* 12px 主卡片(默认) */
+  --radius-card-list:  var(--radius-lg);   /* 10px 列表卡/小块 */
+
+  /* —— 卡片内边距分层 —— */
+  --pad-card-hero: var(--sp-6);   /* 24px 大卡 */
+  --pad-card-main: var(--sp-5);   /* 20px 主卡 */
+  --pad-card-list: var(--sp-4);   /* 16px 列表卡 */
+
+  /* —— 卡片阴影分层 —— */
+  --shadow-card:     0 2rpx 4rpx rgba(28, 28, 28, 0.06);   /* 列表卡:轻 */
+  --shadow-card-up:  0 4rpx 12rpx rgba(28, 28, 28, 0.08);  /* 主卡:中 */
+  --shadow-modal:    0 16rpx 48rpx rgba(28, 28, 28, 0.16); /* 弹窗:重 */
+
+  /* —— 表单输入统一刻度 —— */
+  --radius-field:  var(--radius-md);   /* 8px 输入框/选择器圆角 */
+  --pad-field:     20rpx;              /* 10px 输入内边距 */
+  --height-field:  88rpx;              /* 44px 输入高度 */
+
+  /* —— 弹窗 —— */
+  --radius-modal:  var(--radius-3xl);
+  --width-modal:   600rpx;
+
+  /* =========================================================
+     三、文字阶梯 (Type Scale)
+     固定 rpx 刻度 (product register: 固定刻度，不做流式)。
+     行高与字重随档位给出，避免到处硬编码。
+     ========================================================= */
+  --fs-caption-xs: 20rpx;  /* 10px 最小注脚/标签 */
+  --fs-caption:    22rpx;  /* 11px */
+  --fs-body-sm:    24rpx;  /* 12px 按钮/标签/卡片正文 (高频) */
+  --fs-body:       26rpx;  /* 13px */
+  --fs-body-md:    28rpx;  /* 14px 页面基准正文字号 */
+  --fs-body-lg:    30rpx;  /* 15px */
+  --fs-subtitle:   32rpx;  /* 16px 小标题 / 区块标题 */
+  --fs-title-sm:   36rpx;  /* 18px */
+  --fs-title:      40rpx;  /* 20px */
+  --fs-h-md:       44rpx;  /* 22px 页面标题 */
+  --fs-h-lg:       48rpx;  /* 24px */
+  --fs-h-xl:       52rpx;  /* 26px */
+  --fs-display:    56rpx;  /* 28px 数据大数 */
+  --fs-display-lg: 60rpx;  /* 30px 首页/选校主标题 */
+  --fs-display-xl: 64rpx;  /* 32px */
+  --fs-display-2xl: 72rpx; /* 36px 引导页 hero (上限) */
+
+  /* 字重 */
+  --fw-regular: 400;
+  --fw-medium:  500;
+  --fw-semibold: 600;
+  --fw-bold:    700;
+
+  /* 行高 */
+  --lh-tight:    1.25;
+  --lh-snug:     1.4;
+  --lh-base:     1.5;
+  --lh-relaxed:  1.625;
+
+  /* 字体栈 (product: 单一族多字重) */
+  --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC",
+               "Microsoft YaHei", sans-serif;
+
+  /* 语义字号别名 (配合 app.wxss 的 .h-xl/.h-lg/...) */
+  --fs-hero:    var(--fs-display-lg);  /* 首页主标题 */
+  --fs-page-title: var(--fs-h-md);     /* 各页顶部标题 */
+
+  /* =========================================================
+     四、栅格 / 间距 (Spacing)
+     4 的倍数刻度，rpx。容器内边距与栏间距统一于此。
+     ========================================================= */
+  --sp-1:  8rpx;    /* 4px  */
+  --sp-2:  16rpx;   /* 8px  */
+  --sp-3:  24rpx;   /* 12px */
+  --sp-4:  32rpx;   /* 16px (页面左右内边距基准) */
+  --sp-5:  40rpx;   /* 20px */
+  --sp-6:  48rpx;   /* 24px */
+  --sp-8:  64rpx;   /* 32px */
+  --sp-10: 80rpx;   /* 40px */
+  --sp-12: 96rpx;   /* 48px */
+
+  /* 语义间距别名 */
+  --space-page-x: var(--sp-4);   /* 页面左右内边距 */
+  --space-card-pad: var(--sp-4); /* 卡片内边距 */
+  --space-gap: var(--sp-2);      /* 通用元素间距 */
+  --space-section: var(--sp-6);  /* 区块间垂直间距 */
+
+  /* 栅格 */
+  --grid-gutter: var(--sp-2);    /* 8rpx 列间缝隙 */
+  --grid-col-2: calc(50% - var(--grid-gutter) / 2);
+  --grid-col-3: calc(33.333% - var(--grid-gutter) / 3 * 2);
+  --grid-col-4: calc(25% - var(--grid-gutter) / 4 * 3);
+
+  /* 容器 */
+  --container-max: 750rpx;       /* 小程序单列，不设固定 max-width，留作语义 */
+
+  /* =========================================================
+     五、描边 / 阴影 / 动效 / 层级 (补充)
+     ========================================================= */
+
+  /* 描边宽度 */
+  --border-1: 2rpx;   /* 1px  常规描边 */
+  --border-2: 4rpx;   /* 2px  强调描边/虚线框 */
+  --border-input: 3rpx; /* 1.5px 下划线输入 */
+
+  /* 焦点可见环 (WCAG 2.4.7) */
+  --focus-ring: 0 0 0 4rpx var(--c-primary);   /* 2px 主色外环 */
+  --focus-ring-offset: 4rpx;                    /* 与元素之间的间隙 */
+
+  /* 阴影 (克制，单层) */
+  --shadow-card: 0 2rpx 4rpx rgba(28, 28, 28, 0.06);
+
+  /* 动效 (product: 150–250ms，传递状态而非装饰) */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);  /* ease-out-quint */
+  --dur-fast: 300ms;    /* 按钮/选中态 */
+  --dur-base: 450ms;    /* 常规过渡 */
+  --dur-slow: 700ms;    /* 入场 fade-in / 进度条 */
+
+  /* z-index 语义刻度 (小程序无原生 dialog portal，需手控层级) */
+  --z-sticky:  100;
+  --z-dropdown: 200;
+  --z-modal-mask: 900;
+  --z-modal: 1000;
+  --z-toast: 1100;
+  --z-tooltip: 1200;
+}
+
+/* ============================================================
+   接入说明 (Migration)
+   1. app.wxss 顶部已加 @import 引入本文件。
+   2. 删除 app.wxss 中 page{} 内的 --c 令牌与 .h / .mt 等工具类的硬编码 px，
+      改为引用本文件令牌并把数值换成 rpx (1px=2rpx)。
+   3. 各页 wxss 中的硬编码色值 (如 #2e5d50 / #b4633a / #1f2d2a / #f5f7f6)
+      逐步替换为语义令牌: var(--c-primary) / var(--c-down-fg) /
+      var(--c-title) / var(--c-panel) 等。
+   4. 原 --c-white 为 #ffffff2 笔误，本文件已修正为 #ffffff。
+
+   注: 小程序 wxss @import 仅相对路径生效，本文件与 app.wxss 同级即可。
+   ============================================================ */

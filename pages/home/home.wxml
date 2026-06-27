@@ -1,0 +1,45 @@
+<view class="home-page">
+  <view class="home-hero">
+    <text class="home-title">30s 急速预测</text>
+    <text class="home-desc">选方向和 GPA，立刻知道你能申什么档位</text>
+  </view>
+
+  <view class="predict-card">
+    <text class="field-label">你的 GPA</text>
+    <input class="gpa-input" type="text" value="{{gpa}}" bindinput="onGpaInput" placeholder="3.4" />
+
+    <text class="field-label field-label-gap">专业方向</text>
+    <view class="major-row">
+      <view class="major-btn {{selectedMajor === 'CS' ? 'major-active' : ''}}" data-major="CS" bindtap="selectMajor">CS / DS</view>
+      <view class="major-btn {{selectedMajor === 'MKT' ? 'major-active' : ''}}" data-major="MKT" bindtap="selectMajor">MKT / BA</view>
+    </view>
+
+    <button class="predict-btn" bindtap="onPredict">预测</button>
+  </view>
+
+  <view class="result-card fade-in" wx:if="{{showResult}}">
+    <text class="result-title">预测结果</text>
+    <text class="result-score">综合评分 {{score}}</text>
+    <view class="result-grid">
+      <view class="result-item">
+        <text class="result-num">{{tier.reach}}</text>
+        <text class="result-label">冲刺</text>
+      </view>
+      <view class="result-item">
+        <text class="result-num">{{tier.match}}</text>
+        <text class="result-label">匹配</text>
+      </view>
+      <view class="result-item">
+        <text class="result-num">{{tier.safe}}</text>
+        <text class="result-label">保底</text>
+      </view>
+    </view>
+    <button class="match-btn" bindtap="goToMatch">查看完整选校</button>
+  </view>
+
+  <view class="guide-card">
+    <text class="guide-title">想要更精准的选校推荐？</text>
+    <text class="guide-desc">完成五步深度诊断，获取个性化选校、雷达图和提升方案</text>
+    <button class="guide-btn" bindtap="goToProfile">{{hasProfile ? '重新评估' : '完成五步深度诊断 →'}}</button>
+  </view>
+</view>

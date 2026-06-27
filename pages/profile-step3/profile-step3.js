@@ -43,7 +43,7 @@ Page({
 
   onPrev() { wx.navigateBack() },
 
-  onNext() {
+  async onNext() {
     const gpaNum = this.data.gpa === '' ? 0 : parseFloat(this.data.gpa) || 0
     const toeflNum = this.data.toefl === '' ? 0 : parseFloat(this.data.toefl) || 0
     const greNum = this.data.gre === '' ? 0 : parseFloat(this.data.gre) || 0
@@ -55,20 +55,22 @@ Page({
       gre: greNum,
       rank: this.data.rank
     }
-    wx.cloud.callFunction({
-      name: 'saveProfile',
-      data: {
-        profile: {
-          gpa: gpaNum,
-          gpaScale: this.data.gpaScale,
-          toefl: toeflNum,
-          gre: greNum,
-          rank: this.data.rank
+    try {
+      await wx.cloud.callFunction({
+        name: 'saveProfile',
+        data: {
+          profile: {
+            gpa: gpaNum,
+            gpaScale: this.data.gpaScale,
+            toefl: toeflNum,
+            gre: greNum,
+            rank: this.data.rank
+          }
         }
-      }
-    }).catch(err => {
+      })
+    } catch (err) {
       console.error('[saveProfile]', err)
-    })
+    }
     wx.navigateTo({ url: '/pages/profile-step4/profile-step4' })
   }
 })

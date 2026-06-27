@@ -15,15 +15,22 @@ Page({
     this.setData({ selected: e.currentTarget.dataset.value })
   },
 
-  onNext() {
+  async onNext() {
     if (!this.data.selected) {
       wx.showToast({ title: '请选择学校层次', icon: 'none' })
       return
     }
-    app.globalData.userProfile = { ...app.globalData.userProfile, schoolLevel: this.data.selected, school: this.data.selected.replace(/ ·.*$/, '') }
-    wx.cloud.callFunction({ name: 'saveProfile', data: { profile: { schoolLevel: this.data.selected } } }).catch(err => {
+    const school = this.data.selected.replace(/ ·.*$/, '')
+    app.globalData.userProfile = { ...app.globalData.userProfile, schoolLevel: this.data.selected, school }
+    // 同步持久化 schoolLevel 与 school，避免本地有 school 而云端缺失
+    try {
+      await wx.cloud.callFunction({
+        name: 'saveProfile',
+        data: { profile: { schoolLevel: this.data.selected, school } }
+      })
+    } catch (err) {
       console.error('[saveProfile]', err)
-    })
+    }
     wx.navigateTo({ url: '/pages/profile-step2/profile-step2' })
   }
 })

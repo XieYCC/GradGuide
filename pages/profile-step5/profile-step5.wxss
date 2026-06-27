@@ -1,78 +1,31 @@
-.page-profile-step {
-  padding: 24px 16px 96px;
-  min-height: 100vh;
-  background: #fff;
-  display: flex;
-  flex-direction: column;
-}
-.profile-step-header {
-  margin-bottom: 24px;
-}
-.profile-step-num {
-  font-size: 12px;
-  color: var(--c-primary);
-  font-weight: 600;
-  display: block;
-  margin-bottom: 8px;
-}
-.profile-step-title {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--c-ink);
-  display: block;
-}
-.profile-step-form {
-  flex: 1;
-}
-.profile-section-block {
-  margin-bottom: 24px;
-}
-.profile-sub-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--c-ink);
-  display: block;
-  margin-bottom: 8px;
-}
+@import "../../styles/profile-step.wxss";
+
+/* step5: 目标地区/专业 (chip 多选) + 优先级 picker。
+   表单原语已在共享文件，本页仅定义 chip 与宽 picker。 */
+
 .profile-chip-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--sp-2);
 }
 .profile-chip {
-  padding: 8px 16px;
-  border-radius: 999px;
-  border: 1px solid var(--c-line);
-  font-size: 13px;
+  padding: var(--sp-2) var(--sp-4);
+  border-radius: var(--radius-full);
+  border: var(--border-1) solid var(--c-line);
+  font-size: var(--fs-body);
   color: var(--c-ink-2);
 }
 .chip-active {
   border-color: var(--c-primary);
   background: var(--c-primary-l);
   color: var(--c-primary);
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
 }
 .profile-picker-wide {
-  padding: 12px;
-  border: 1px solid var(--c-line);
-  border-radius: 8px;
-  font-size: 14px;
+  padding: var(--pad-field);
+  border: var(--border-1) solid var(--c-line);
+  border-radius: var(--radius-field);
+  font-size: var(--fs-body-md);
   color: var(--c-ink-2);
   display: block;
-}
-.profile-step-footer {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 10;
-  display: flex;
-  gap: 12px;
-  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-  background: #fff;
-  border-top: 1px solid var(--c-line);
-  box-sizing: border-box;
-}
-.profile-step-footer .btn {
-  flex: 1;
 }
