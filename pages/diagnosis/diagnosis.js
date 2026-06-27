@@ -46,6 +46,7 @@ function calcUserDimensions(profile) {
 
 Page({
   data: {
+    loading: true,  // 添加加载状态
     benchTier: 'match',
     userData: [60, 60, 0, 0, 0, 0, 0],
     benchByTier: {
@@ -68,8 +69,11 @@ Page({
   },
 
   onShow() {
-    this.calcDimensionsFromProfile();
-    this.drawRadarAnimated();
+    // 仅在数据加载完成后渲染，避免首屏显示 0 分空状态
+    if (!this.data.loading) {
+      this.calcDimensionsFromProfile();
+      this.drawRadarAnimated();
+    }
   },
 
   onHide() {
@@ -95,12 +99,12 @@ Page({
     wx.stopPullDownRefresh();
   },
 
-  // app.js 登录完成后回调——loadBenchmarks 已在 onLoad 触发，
-  // 若 onProfileReady 晚于 loadBenchmarks 回调，用 _radarAnimating 防重播
+  // app.js 登录完成后回调
   onProfileReady() {
-    if (this._radarAnimating) return;
-    this.calcDimensionsFromProfile();
-    this.drawRadarAnimated();
+    // 加载基准数据（已完成则不再重复）
+    if (!this._benchmarksLoaded) {
+      this.loadBenchmarks();
+    }
   },
 
   calcDimensionsFromProfile() {
@@ -376,6 +380,27 @@ Page({
   },
 
   async loadBenchmarks() {
+    // 防止重复加载（onLoad + onProfileReady 都可能触发）
+    if (this._benchmarksLoading) return;
+    this._benchmarksLoading = true;
+
+    // ==============================================
+    // 【核心优化】优先读缓存：登录时已在后台预加载
+    // ==============================================
+    const app = getApp();
+    const cached = app.getCachedBenchmarks();
+    if (cached && Object.keys(cached).length > 0) {
+      console.log('[diagnosis] using cache benchmarks (no API call)');
+      this.setData({ benchByTier: cached });
+      this.calcDimensionsFromProfile();
+      this.drawRadarAnimated();
+      this.setData({ loading: false });
+      this._benchmarksLoaded = true;
+      this._benchmarksLoading = false;
+      return;
+    }
+
+    // 缓存未命中：正常请求
     try {
       const res = await wx.cloud.callFunction({ name: 'getBenchmarks' });
       const benchMap = res.result.benchmarks || {};
@@ -385,8 +410,15 @@ Page({
     } catch (err) {
       console.error('[loadBenchmarks] 云端加载失败，使用本地硬编码数据', err);
     }
+
+    // 数据准备完成，计算并渲染
     this.calcDimensionsFromProfile();
     this.drawRadarAnimated();
+
+    // 结束 loading，标记已加载
+    this.setData({ loading: false });
+    this._benchmarksLoaded = true;
+    this._benchmarksLoading = false;
   },
 
   goToSimulator() {

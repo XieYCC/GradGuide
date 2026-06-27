@@ -86,8 +86,9 @@
   align-items: center;
   gap: var(--sp-2);
   padding: var(--sp-3);
-  border-radius: var(--radius-md);
-  border: var(--border-1) solid var(--c-line);
+  border-radius: var(--radius-lg);             /* 10px 增大圆角 */
+  border: none;                                 /* 移除边框 */
+  background: var(--c-surface);                 /* 用底色替代边框 */
 }
 
 .sim-boost-check {
@@ -156,7 +157,7 @@
 
 .sim-pool-item {
   flex: 1;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-card-list);     /* 14px 增大圆角 */
   padding: var(--sp-4);
 }
 
@@ -483,7 +484,7 @@
 .sim-consult-icon {
   width: 112rpx;
   height: 112rpx;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-card-list);     /* 14px 增大圆角 */
   background: var(--c-accent-l);
   display: flex;
   align-items: center;

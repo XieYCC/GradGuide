@@ -6,7 +6,9 @@ Page({
     profile: {},
     hasProfile: false,
     wxProfile: {},
-    avatarText: '?'
+    avatarText: '?',
+    showDevTools: false,  // 开发者工具开关
+    _avatarTapCount: 0     // 头像点击计数器
   },
 
   onLoad() {
@@ -55,6 +57,51 @@ Page({
       wxProfile,
       avatarText
     })
+  },
+
+  // 点击头像解锁开发者工具（连续点击 5 次）
+  onAvatarTap() {
+    this.data._avatarTapCount++
+    console.log('[dev] avatar tap', this.data._avatarTapCount)
+    if (this.data._avatarTapCount >= 5) {
+      this.setData({ showDevTools: true, _avatarTapCount: 0 })
+      wx.showToast({ title: '开发者工具已解锁 🛠️', icon: 'none', duration: 2000 })
+    }
+  },
+
+  // 模拟新用户：清除缓存 + 清除 hasOnboarded + 重启
+  simulateNewUser() {
+    wx.showModal({
+      title: '模拟新用户体验',
+      content: '将清除本地缓存，重启小程序模拟首次登录。确定吗？',
+      success: (res) => {
+        if (res.confirm) {
+          // 1. 清除本地缓存
+          wx.removeStorageSync('hasOnboarded')
+          // 2. 清除全局预加载缓存
+          app.globalData._cache.matchResult = null
+          app.globalData._cache.benchmarks = null
+          app.globalData._cache.favorites = null
+          // 3. 重置登录状态
+          app.globalData.isLoggedIn = false
+          // 4. 提示并重启
+          wx.showToast({ title: '准备重启...', icon: 'loading', duration: 1500 })
+          setTimeout(() => {
+            // 小程序冷启动
+            wx.reLaunch({ url: '/pages/onboarding/onboarding' })
+          }, 1500)
+        }
+      }
+    })
+  },
+
+  // 仅清除缓存：测试骨架屏显示
+  clearCacheOnly() {
+    app.globalData._cache.matchResult = null
+    app.globalData._cache.benchmarks = null
+    app.globalData._cache.favorites = null
+    wx.showToast({ title: '预加载缓存已清空 ✅', icon: 'success' })
+    console.log('[dev] 预加载缓存已清空，切换到 match/diagnosis 页面可测试骨架屏')
   },
 
   goToProfile() {

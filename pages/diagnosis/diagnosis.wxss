@@ -1,5 +1,95 @@
 /* 短板诊断样式 */
 
+/* —— 骨架屏 Skeleton —— */
+.skeleton-diag-header {
+  padding: var(--sp-6) var(--sp-4) var(--sp-4);
+}
+.skeleton-diag-grid {
+  padding: 0 var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+.skeleton-diag-radar {
+  padding: var(--sp-5);
+}
+.skeleton-diag-radar-circle {
+  width: 300rpx;
+  height: 300rpx;
+  margin: 0 auto;
+  border: 2rpx dashed var(--c-line);
+  border-radius: 50%;
+}
+.skeleton-diag-radar-legend {
+  display: flex;
+  justify-content: center;
+  gap: var(--sp-5);
+  margin-top: var(--sp-3);
+}
+.skeleton-diag-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.skeleton-diag-right {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+.skeleton-diag-score {
+  background: var(--c-primary);
+  padding: var(--sp-5);
+}
+.skeleton-diag-score .skeleton-line,
+.skeleton-diag-score .skeleton-rect {
+  --skeleton-color: rgba(255,255,255,0.15);
+}
+.skeleton-diag-score-num {
+  display: flex;
+  align-items: baseline;
+  margin-top: var(--sp-2);
+}
+.skeleton-diag-strength {
+  padding: var(--sp-5);
+}
+.skeleton-diag-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+.skeleton-diag-detail {
+  margin: var(--sp-3) var(--sp-4) 0;
+  padding: var(--sp-5);
+}
+.skeleton-diag-detail-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+.skeleton-diag-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.skeleton-diag-detail-item:nth-child(1) { animation-delay: 0ms; }
+.skeleton-diag-detail-item:nth-child(2) { animation-delay: 80ms; }
+.skeleton-diag-detail-item:nth-child(3) { animation-delay: 160ms; }
+.skeleton-diag-detail-item:nth-child(4) { animation-delay: 240ms; }
+.skeleton-diag-detail-item:nth-child(5) { animation-delay: 320ms; }
+.skeleton-diag-detail-item:nth-child(6) { animation-delay: 400ms; }
+.skeleton-diag-detail-item:nth-child(7) { animation-delay: 480ms; }
+.skeleton-diag-detail-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.skeleton-diag-detail-bar {
+  height: 32rpx;
+  width: 100%;
+}
+
 .diag-header {
   display: flex;
   justify-content: space-between;
@@ -27,8 +117,8 @@
 .diag-radar-card {
   padding: var(--pad-card-main);
   background: var(--c-card);
-  border-radius: var(--radius-card-main);
-  border: var(--border-1) solid var(--c-line-soft);
+  border-radius: var(--radius-card-main);      /* 16px */
+  border: none;                                 /* DESIGN.md: 移除边框 */
   box-shadow: var(--shadow-card-up);
 }
 
@@ -76,10 +166,10 @@
 /* 总评 */
 .diag-score-card {
   background: var(--c-primary);
-  border-radius: var(--radius-card-hero);
+  border-radius: var(--radius-card-hero);      /* 20px 大圆角 */
   padding: var(--pad-card-hero);
   color: var(--gg-white);
-  box-shadow: var(--shadow-card-up);
+  box-shadow: var(--shadow-card-hero);       /* 增强阴影 */
 }
 
 .diag-score-label {
@@ -136,8 +226,8 @@
 .diag-short-card {
   padding: var(--pad-card-main);
   background: var(--c-card);
-  border-radius: var(--radius-card-main);
-  border: var(--border-1) solid var(--c-line-soft);
+  border-radius: var(--radius-card-main);      /* 16px */
+  border: none;                                 /* DESIGN.md: 移除边框 */
   box-shadow: var(--shadow-card-up);
 }
 
@@ -162,7 +252,7 @@
 .diag-short-num {
   width: 64rpx;
   height: 64rpx;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-card-list);     /* 14px 增大圆角 */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -317,7 +407,7 @@
 /* 引导 */
 .diag-cta {
   background: var(--c-primary);
-  border-radius: var(--radius-3xl);
+  border-radius: var(--radius-card-hero);      /* 20px 大圆角 */
   padding: var(--sp-6);
   margin: var(--sp-4);
   display: flex;
@@ -326,6 +416,7 @@
   flex-wrap: wrap;
   gap: var(--sp-3);
   color: var(--gg-white);
+  box-shadow: var(--shadow-card-hero);       /* 增强阴影 */
 }
 
 .diag-cta-title {

@@ -1,4 +1,3 @@
-// app.js
 App({
   globalData: {
     userProfile: null,      // 纯档案字段(gpa/toefl/research...),不含微信资料
@@ -13,7 +12,13 @@ App({
     // 减弱动效偏好(用户在「我的」设置中开关，持久化于 storage)。
     // 小程序无法读取系统 prefers-reduced-motion，故由用户显式控制。
     // 各页面根节点据此绑定 class="reduced-motion" 触发 app.wxss 兜底样式。
-    reducedMotion: false
+    reducedMotion: false,
+    // 预加载数据缓存：登录后静默拉取，切页秒开
+    _cache: {
+      matchResult: null,     // 选校匹配结果
+      benchmarks: null,      // 诊断基准数据
+      favorites: null        // 收藏列表
+    }
   },
 
   // 读取减弱动效偏好(供页面根节点 class 绑定用)
@@ -72,6 +77,12 @@ App({
       this.globalData.isLoggedIn = true
       console.log('[getUser] profile loaded')
 
+      // 【核心优化】后台静默预加载：选校匹配 + 诊断基准 + 收藏列表
+      // 不 await，不阻塞登录流程，后台并行拉取
+      this._preloadMatchResult(user)
+      this._preloadBenchmarks()
+      this._preloadFavorites()
+
       // 通知各页面数据已就绪
       const pages = getCurrentPages()
       pages.forEach(page => {
@@ -84,6 +95,74 @@ App({
       // 降级：用空 profile 继续使用，不阻塞用户
       this.globalData.userProfile = {}
       this.globalData.isLoggedIn = false
+    }
+  },
+
+  // 预加载选校匹配结果（后台静默）
+  async _preloadMatchResult(user) {
+    try {
+      // 优先读云端已有的 matchResult
+      if (user && user.matchResult && user.matchResult.reach) {
+        this.globalData._cache.matchResult = user.matchResult
+        console.log('[preload] matchResult from user record')
+        return
+      }
+      // 云端没有，触发一次匹配计算
+      const res = await wx.cloud.callFunction({ name: 'matchPrograms' })
+      this.globalData._cache.matchResult = res.result
+      console.log('[preload] matchResult calculated')
+    } catch (err) {
+      console.warn('[preload] matchResult failed', err)
+      // 失败不报错，页面自己会 fallback
+    }
+  },
+
+  // 预加载诊断基准数据（后台静默）
+  async _preloadBenchmarks() {
+    try {
+      const res = await wx.cloud.callFunction({ name: 'getBenchmarks' })
+      this.globalData._cache.benchmarks = res.result.benchmarks || {}
+      console.log('[preload] benchmarks loaded')
+    } catch (err) {
+      console.warn('[preload] benchmarks failed', err)
+    }
+  },
+
+  // 预加载收藏列表（后台静默）
+  async _preloadFavorites() {
+    try {
+      const res = await wx.cloud.callFunction({ name: 'getFavorites' })
+      this.globalData._cache.favorites = res.result.list || []
+      console.log('[preload] favorites loaded')
+    } catch (err) {
+      console.warn('[preload] favorites failed', err)
+    }
+  },
+
+  // 供页面调用：获取缓存的匹配结果，null = 未就绪
+  getCachedMatchResult() {
+    return this.globalData._cache.matchResult
+  },
+
+  // 供页面调用：获取缓存的基准数据，null = 未就绪
+  getCachedBenchmarks() {
+    return this.globalData._cache.benchmarks
+  },
+
+  // 供页面调用：获取缓存的收藏列表
+  getCachedFavorites() {
+    return this.globalData._cache.favorites
+  },
+
+  // 页面保存档案后，刷新缓存
+  async refreshMatchCache() {
+    try {
+      const res = await wx.cloud.callFunction({ name: 'matchPrograms' })
+      this.globalData._cache.matchResult = res.result
+      return res.result
+    } catch (err) {
+      console.warn('[refreshMatchCache] failed', err)
+      return null
     }
   }
 })

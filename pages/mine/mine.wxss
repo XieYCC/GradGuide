@@ -7,6 +7,9 @@
   gap: 28rpx;
   padding: var(--sp-5);
   margin-bottom: var(--sp-4);
+  background: var(--c-card);                    /* 增加底色 */
+  border-radius: var(--radius-card-main);      /* 16px 增大圆角 */
+  box-shadow: var(--shadow-card-up);           /* 增加阴影 */
 }
 .mine-avatar-wrap {
   width: 112rpx;
@@ -53,6 +56,39 @@
   border: var(--border-1) solid var(--c-primary);
   border-radius: var(--radius-2xl);
 }
+/* 开发者工具样式 */
+.dev-tools {
+  padding: var(--sp-5);
+  margin-bottom: var(--sp-4);
+  background: #fffbeb;
+  border: 2rpx solid #f59e0b;
+}
+.dev-tools-title {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-semibold);
+  color: #92400e;
+  display: block;
+  margin-bottom: var(--sp-3);
+}
+.dev-tools-btn {
+  padding: var(--sp-3);
+  background: #ffffff;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--sp-2);
+  border: 1rpx solid #fcd34d;
+}
+.dev-tools-btn text:first-child {
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-semibold);
+  color: #92400e;
+  display: block;
+}
+.dev-tools-desc {
+  font-size: var(--fs-caption-xs);
+  color: #b45309;
+  display: block;
+  margin-top: 4rpx;
+}
 .mine-debug {
   margin: var(--sp-2) 0 var(--sp-4);
   padding: 20rpx;
@@ -75,8 +111,9 @@
 }
 .mine-menu {
   background: var(--c-card);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-card-main);      /* 16px 增大圆角 */
   overflow: hidden;
+  box-shadow: var(--shadow-card);             /* 增加柔和阴影 */
 }
 .mine-menu-item {
   display: flex;
@@ -96,7 +133,7 @@
   align-items: center;
   justify-content: center;
   background: var(--c-primary-l);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);            /* 10px 增大圆角 */
 }
 .mine-menu-icon text {
   font-size: var(--fs-body-lg);

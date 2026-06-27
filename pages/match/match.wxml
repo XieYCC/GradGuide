@@ -1,8 +1,69 @@
 <!-- 选校匹配 -->
 <view class="page-match">
 
+  <!-- 加载骨架屏: loading=true 且没有错误时显示 -->
+  <view class="skeleton-match" wx:if="{{loading && !loadError}}">
+    <!-- 概览卡骨架 -->
+    <view class="skeleton-card skeleton-match-overview">
+      <view class="skeleton-match-overview-top">
+        <view class="skeleton-line skeleton-line-sm skeleton-stagger-1" style="width: 180rpx"></view>
+        <view class="skeleton-line skeleton-line-sm skeleton-stagger-2" style="width: 240rpx; margin-top: 16rpx"></view>
+      </view>
+      <view class="skeleton-match-overview-stats">
+        <view class="skeleton-match-stat">
+          <view class="skeleton-line skeleton-line-xl skeleton-stagger-2" style="width: 80rpx"></view>
+          <view class="skeleton-line skeleton-line-sm skeleton-stagger-3" style="width: 60rpx; margin-top: 8rpx"></view>
+        </view>
+        <view class="skeleton-match-stat">
+          <view class="skeleton-line skeleton-line-xl skeleton-stagger-3" style="width: 80rpx"></view>
+          <view class="skeleton-line skeleton-line-sm skeleton-stagger-4" style="width: 60rpx; margin-top: 8rpx"></view>
+        </view>
+        <view class="skeleton-match-stat">
+          <view class="skeleton-line skeleton-line-xl skeleton-stagger-4" style="width: 80rpx"></view>
+          <view class="skeleton-line skeleton-line-sm skeleton-stagger-5" style="width: 60rpx; margin-top: 8rpx"></view>
+        </view>
+      </view>
+      <view class="skeleton-match-overview-actions">
+        <view class="skeleton-rect skeleton-stagger-5" style="width: 220rpx; height: 72rpx"></view>
+        <view class="skeleton-rect skeleton-stagger-6" style="width: 220rpx; height: 72rpx"></view>
+      </view>
+    </view>
+
+    <!-- 筛选栏骨架 -->
+    <view class="skeleton-card skeleton-match-filter">
+      <view class="skeleton-match-filter-row">
+        <view class="skeleton-line skeleton-line-sm skeleton-stagger-3" style="width: 60rpx"></view>
+        <view class="skeleton-match-filter-btns">
+          <view class="skeleton-rect skeleton-stagger-4" style="width: 80rpx; height: 48rpx"></view>
+          <view class="skeleton-rect skeleton-stagger-4" style="width: 80rpx; height: 48rpx"></view>
+          <view class="skeleton-rect skeleton-stagger-5" style="width: 80rpx; height: 48rpx"></view>
+          <view class="skeleton-rect skeleton-stagger-5" style="width: 80rpx"></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 3 个项目卡片骨架 -->
+    <view class="skeleton-match-programs">
+      <view class="skeleton-card skeleton-match-program skeleton-stagger-4" wx:for="{{[1,2,3]}}" wx:key="*this">
+        <view class="skeleton-match-program-top">
+          <view class="skeleton-match-program-info">
+            <view class="skeleton-line skeleton-line-lg" style="width: 300rpx"></view>
+            <view class="skeleton-line skeleton-line-sm" style="width: 120rpx; margin-top: 8rpx"></view>
+          </view>
+          <view class="skeleton-rect" style="width: 100rpx; height: 48rpx"></view>
+        </view>
+        <view class="skeleton-match-program-details">
+          <view class="skeleton-rect" style="width: 48%; height: 56rpx"></view>
+          <view class="skeleton-rect" style="width: 48%; height: 56rpx"></view>
+          <view class="skeleton-rect" style="width: 48%; height: 56rpx"></view>
+          <view class="skeleton-rect" style="width: 48%; height: 56rpx"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
   <!-- 概览卡 -->
-  <view class="overview-card" wx:if="{{!noMatchData}}">
+  <view class="overview-card" wx:if="{{!noMatchData && !loading}}">
     <view class="overview-top">
       <view class="overview-info">
         <view class="overview-tag">
@@ -39,8 +100,8 @@
     </view>
   </view>
 
-  <!-- 无匹配数据时展示的概览卡 -->
-  <view class="overview-card overview-empty" wx:else>
+  <!-- 无匹配数据时展示的概览卡:只有加载完成且真的无数据才显示 -->
+  <view class="overview-card overview-empty" wx:if="{{noMatchData && !loading}}">
     <!-- 加载失败:网络/云端异常，给重试而非误导去填信息 -->
     <block wx:if="{{loadError}}">
       <text>加载失败，请检查网络后重试</text>
@@ -53,8 +114,8 @@
     </block>
   </view>
 
-  <!-- 筛选 -->
-  <view class="filter-bar card">
+  <!-- 筛选:加载完成后显示 -->
+  <view class="filter-bar card" wx:if="{{!loading}}">
     <view class="filter-group">
       <text class="filter-label">地区:</text>
       <view class="filter-btns">
@@ -75,8 +136,8 @@
     </view>
   </view>
 
-  <!-- 三档结果 -->
-  <view class="tier-container">
+  <!-- 三档结果:加载完成且有数据时显示 -->
+  <view class="tier-container" wx:if="{{!loading && !noMatchData}}">
     <!-- 冲刺 -->
     <view class="tier-section" wx:if="{{reach.length > 0}}">
       <view class="tier-header">
@@ -261,8 +322,8 @@
     </view>
   </view>
 
-  <!-- 引流条 -->
-  <view class="cta-card card">
+  <!-- 引流条:加载完成后显示 -->
+  <view class="cta-card card" wx:if="{{!loading && !noMatchData}}">
     <view class="cta-left">
       <view class="cta-icon">
         <text>💬</text>

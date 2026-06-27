@@ -1,13 +1,80 @@
 /* 选校匹配样式 */
 
+/* —— 骨架屏 Skeleton —— */
+.skeleton-match-overview {
+  margin: var(--sp-4);
+  padding: var(--pad-card-hero);
+  background: var(--c-primary);
+}
+.skeleton-match-overview .skeleton-line,
+.skeleton-match-overview .skeleton-rect {
+  --skeleton-color: rgba(255,255,255,0.15);
+  --skeleton-highlight: rgba(255,255,255,0.25);
+}
+.skeleton-match-overview-top {
+  margin-bottom: var(--sp-4);
+}
+.skeleton-match-overview-stats {
+  display: flex;
+  gap: var(--sp-6);
+  margin-bottom: var(--sp-5);
+}
+.skeleton-match-stat {
+  text-align: center;
+}
+.skeleton-match-overview-actions {
+  display: flex;
+  gap: var(--sp-2);
+}
+
+.skeleton-match-filter {
+  margin: 0 var(--sp-4) var(--sp-4);
+  padding: var(--sp-3);
+}
+.skeleton-match-filter-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+.skeleton-match-filter-btns {
+  flex: 1;
+  display: flex;
+  gap: var(--sp-2);
+}
+
+.skeleton-match-programs {
+  padding: 0 var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+.skeleton-match-program {
+  padding: var(--sp-5);
+}
+.skeleton-match-program-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
+}
+.skeleton-match-program-info {
+  flex: 1;
+}
+.skeleton-match-program-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
 /* 概览卡 (hero 层) */
 .overview-card {
   background: var(--c-primary);
-  border-radius: var(--radius-card-hero);
+  border-radius: var(--radius-card-hero);        /* 20px 大圆角 */
   padding: var(--pad-card-hero);
   margin: var(--sp-4);
   color: var(--gg-white);
-  box-shadow: var(--shadow-card-up);
+  box-shadow: var(--shadow-card-hero);         /* 增强阴影 */
 }
 
 .overview-top {
@@ -110,9 +177,10 @@
 
 .filter-btn {
   padding: var(--sp-1) 20rpx;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);              /* 8px 增大圆角 */
   font-size: var(--fs-body-sm);
-  border: var(--border-1) solid var(--c-line);
+  border: none;                                  /* DESIGN.md: 移除边框 */
+  background: var(--c-surface);                 /* 用底色替代边框 */
   color: var(--c-ink-2);
 }
 
@@ -134,7 +202,7 @@
 }
 
 .tier-section {
-  margin-bottom: var(--sp-6);
+  margin-bottom: 40rpx;                       /* 20px 增大区块间距 */
 }
 
 .tier-header {
@@ -233,9 +301,9 @@
   font-size: var(--fs-caption-xs);
   color: var(--c-ink-3);
   text-align: center;
-  padding: var(--sp-1) 0;
+  padding: var(--sp-2) 0;                     /* 增大内边距 */
   background: var(--c-surface);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);            /* 8px 增大圆角 */
   box-sizing: border-box;
 }
 
@@ -353,7 +421,7 @@
 .cta-icon {
   width: 96rpx;
   height: 96rpx;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-card-list);     /* 14px 增大圆角 */
   background: var(--c-accent-l);
   display: flex;
   align-items: center;

@@ -16,7 +16,7 @@ Page({
     safety: [],
     tierCounts: { reach: 0, match: 0, safety: 0 },
     loading: true,
-    noMatchData: true,
+    noMatchData: false,  // 初始 false，加载完成后再判断是否真的无数据
     loadError: false,
     favoriteIds: [],
     togglingIds: {},
@@ -55,7 +55,36 @@ Page({
   },
 
   async loadMatchResult() {
-    this.setData({ loading: true, loadError: false });
+    this.setData({ loadError: false });
+
+    // ==============================================
+    // 【核心优化】优先读缓存：登录时已在后台预加载
+    // ==============================================
+    const app = getApp();
+    const cached = app.getCachedMatchResult();
+    const cachedFavs = app.getCachedFavorites();
+
+    if (cached && cached.reach) {
+      console.log('[match] using cache data (no API call)');
+      this.setData({
+        reach: cached.reach || [],
+        match: cached.match || [],
+        safety: cached.safety || [],
+        extremeReachCount: cached.extremeReachCount || 0,
+        loading: false,
+        noMatchData: false
+      });
+      // 收藏列表也读缓存（如果有）
+      if (cachedFavs) {
+        this.setData({ favoriteIds: cachedFavs.map(p => p._id) });
+      } else {
+        this.loadFavorites();
+      }
+      return;
+    }
+
+    // 缓存未命中：正常请求
+    this.setData({ loading: true });
     try {
       const matchRes = await wx.cloud.callFunction({ name: 'getUser' });
       const match = matchRes.result?.matchResult;

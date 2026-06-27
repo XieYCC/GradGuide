@@ -57,11 +57,12 @@ page {
 .btn-light { background: var(--c-card); color: var(--c-primary); }
 .btn-block { width: 100%; }
 
-/* —— 卡片 (主卡层) —— */
+/* —— 卡片 (主卡层) ——
+   DESIGN.md: 无边框设计，仅靠阴影和圆角营造柔和层次感 */
 .card {
   background: var(--c-card);
   border-radius: var(--radius-card-main);
-  border: var(--border-1) solid var(--c-line-soft);
+  border: none;
   box-shadow: var(--shadow-card-up);
 }
 
@@ -259,3 +260,69 @@ input:focus, .filter-btn:focus, .program-action:focus,
 }
 /* flex 子项防溢出:允许收缩到内容尺寸以下 */
 .min-w-0 { min-width: 0; }
+
+/* ============================================================
+   骨架屏 Skeleton — Shimmer 扫光动效版
+   App Store / 大厂同款高级加载动画，比简单脉冲更有质感
+   ============================================================ */
+.skeleton {
+  --skeleton-color: var(--c-surface);
+  --skeleton-highlight: #f0f2f5;
+}
+
+/* 骨架元素：渐变底色 + Shimmer 扫光 */
+.skeleton-line,
+.skeleton-rect,
+.skeleton-circle {
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-color) 0%,
+    var(--skeleton-highlight) 50%,
+    var(--skeleton-color) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.8s ease-in-out infinite;
+}
+
+.skeleton-line {
+  height: 24rpx;
+  border-radius: 4rpx;
+}
+.skeleton-line-sm { height: 20rpx; }
+.skeleton-line-lg { height: 32rpx; }
+.skeleton-line-xl { height: 40rpx; }
+.skeleton-circle {
+  border-radius: 50%;
+}
+.skeleton-rect {
+  border-radius: var(--radius-card-list);
+}
+.skeleton-card {
+  background: var(--c-card);
+  border-radius: var(--radius-card-main);
+  box-shadow: var(--shadow-card-up);
+}
+
+/* Shimmer 扫光动效 — 光泽从左到右扫过，比简单 pulse 高级得多 */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+    opacity: 0.75;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    background-position: -200% 0;
+    opacity: 0.75;
+  }
+}
+
+/* 骨架元素错开动画 — 营造内容"依次出现"的流动感 */
+.skeleton-stagger-1 { animation-delay: 0ms; }
+.skeleton-stagger-2 { animation-delay: 80ms; }
+.skeleton-stagger-3 { animation-delay: 160ms; }
+.skeleton-stagger-4 { animation-delay: 240ms; }
+.skeleton-stagger-5 { animation-delay: 320ms; }
+.skeleton-stagger-6 { animation-delay: 400ms; }
+.skeleton-stagger-7 { animation-delay: 480ms; }
